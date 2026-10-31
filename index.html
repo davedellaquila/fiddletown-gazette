@@ -357,25 +357,51 @@ document.getElementById('sugg-send').addEventListener('click', function(){
 });
 </script>
 <script>
-/* Tip jar flyby: the jar zooms across the top of the page trailing puffs of smoke (Dave, Oct 31 2026). Skips entirely under Reduce Motion. */
+/* Tip jar crossings — a randomized repertoire, about once every couple of minutes (Dave, Oct 31 2026). Short, never blocking (pointer-events none), and skipped entirely under Reduce Motion. */
 (function(){
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var st=document.createElement('style');
-  st.textContent='.jar-flyby{position:fixed;top:58px;left:-70px;font-size:34px;z-index:999;pointer-events:none;animation:jar-zoom 2.2s cubic-bezier(.45,.05,.55,.95) forwards;text-shadow:0 6px 14px rgba(0,0,0,.25)}@keyframes jar-zoom{0%{transform:translateX(0) translateY(0) rotate(0deg)}25%{transform:translateX(30vw) translateY(-14px) rotate(140deg)}55%{transform:translateX(62vw) translateY(10px) rotate(300deg)}100%{transform:translateX(115vw) translateY(-6px) rotate(560deg)}}.jar-puff{position:fixed;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle,rgba(235,230,220,.85),rgba(235,230,220,0) 70%);filter:blur(3px);z-index:998;pointer-events:none;animation:jar-pufffade .95s ease-out forwards}@keyframes jar-pufffade{from{transform:scale(.6);opacity:.9}to{transform:scale(2.4) translateY(-10px);opacity:0}}';
+  st.textContent=[
+   '.jar-flyby{position:fixed;left:-70px;font-size:34px;z-index:999;pointer-events:none;text-shadow:0 6px 14px rgba(0,0,0,.25)}',
+   '.jf-race{top:58px;animation:jf-race 1.5s cubic-bezier(.55,.06,.75,.4) forwards}',
+   '@keyframes jf-race{from{transform:translateX(0) rotate(0deg)}to{transform:translateX(118vw) rotate(24deg)}}',
+   '.jf-tumble{top:72px;animation:jf-tumble 2.6s linear forwards}',
+   '@keyframes jf-tumble{0%{transform:translateX(0) translateY(0) rotate(0deg)}25%{transform:translateX(28vw) translateY(-18px) rotate(270deg)}50%{transform:translateX(56vw) translateY(0) rotate(540deg)}75%{transform:translateX(84vw) translateY(-18px) rotate(810deg)}100%{transform:translateX(114vw) translateY(0) rotate(1080deg)}}',
+   '.jf-march{top:52px;animation:jf-march 4.6s linear forwards}',
+   '@keyframes jf-march{0%{transform:translateX(0) scale(1)}12%{transform:translateX(13vw) scale(1.35)}25%{transform:translateX(27vw) scale(.78)}37%{transform:translateX(40vw) scale(1.35)}50%{transform:translateX(54vw) scale(.78)}62%{transform:translateX(67vw) scale(1.35)}75%{transform:translateX(81vw) scale(.78)}87%{transform:translateX(94vw) scale(1.35)}100%{transform:translateX(112vw) scale(1)}}',
+   '.jf-bounce{top:66px;animation:jf-bounce 2.8s linear forwards}',
+   '@keyframes jf-bounce{0%{transform:translateX(0) translateY(0)}15%{transform:translateX(16vw) translateY(-46px)}30%{transform:translateX(32vw) translateY(0)}45%{transform:translateX(48vw) translateY(-38px)}60%{transform:translateX(64vw) translateY(0)}75%{transform:translateX(80vw) translateY(-26px)}90%{transform:translateX(96vw) translateY(0)}100%{transform:translateX(114vw) translateY(-8px)}}',
+   '.jf-sneak{top:36px;font-size:26px;animation:jf-sneak 5.2s ease-in-out forwards}',
+   '@keyframes jf-sneak{0%{transform:translateX(0) rotate(-8deg)}35%{transform:translateX(38vw) rotate(-8deg)}55%{transform:translateX(38vw) rotate(6deg)}62%{transform:translateX(38vw) rotate(-8deg)}100%{transform:translateX(114vw) rotate(-8deg)}}',
+   '.jf-victory{top:60px;animation:jf-victory 4.4s ease-in-out forwards}',
+   '@keyframes jf-victory{0%{transform:translateX(0) rotate(0deg)}42%{transform:translateX(110vw) rotate(0deg)}50%{transform:translateX(110vw) rotateY(180deg)}92%{transform:translateX(-4vw) rotateY(180deg)}100%{transform:translateX(-14vw) rotateY(180deg)}}',
+   '.jar-puff{position:fixed;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle,rgba(235,230,220,.85),rgba(235,230,220,0) 70%);filter:blur(3px);z-index:998;pointer-events:none;animation:jar-pufffade .95s ease-out forwards}',
+   '@keyframes jar-pufffade{from{transform:scale(.6);opacity:.9}to{transform:scale(2.4) translateY(-10px);opacity:0}}'
+  ].join('');
   document.head.appendChild(st);
-  function flyby(){
-    if (document.hidden) return;
-    var jar=document.createElement('div'); jar.textContent='\u{1FAD9}'; jar.className='jar-flyby'; jar.setAttribute('aria-hidden','true');
+  var MODES=['race','tumble','march','bounce','sneak','victory'];
+  var DUR={race:1700,tumble:2800,march:4800,bounce:3000,sneak:5400,victory:4600};
+  var last=-1;
+  function cross(){
+    if (document.hidden){ schedule(); return; }
+    var i; do { i=Math.floor(Math.random()*MODES.length); } while (i===last);
+    last=i; var mode=MODES[i];
+    var jar=document.createElement('div');
+    jar.textContent='\u{1FAD9}'; jar.className='jar-flyby jf-'+mode; jar.setAttribute('aria-hidden','true');
     document.body.appendChild(jar);
-    var iv=setInterval(function(){
-      var r=jar.getBoundingClientRect(); if(!r.width){clearInterval(iv);return;}
-      var s=document.createElement('div'); s.className='jar-puff';
-      s.style.left=(r.left+r.width*0.25)+'px'; s.style.top=(r.top+r.height*0.55)+'px';
-      document.body.appendChild(s); setTimeout(function(){s.remove();},1000);
-    },110);
-    setTimeout(function(){clearInterval(iv); jar.remove();},2350);
+    var iv=null;
+    if (mode==='race'){
+      iv=setInterval(function(){
+        var r=jar.getBoundingClientRect(); if(!r.width){clearInterval(iv);return;}
+        var s=document.createElement('div'); s.className='jar-puff';
+        s.style.left=(r.left+r.width*0.2)+'px'; s.style.top=(r.top+r.height*0.6)+'px';
+        document.body.appendChild(s); setTimeout(function(){s.remove();},1000);
+      },90);
+    }
+    setTimeout(function(){ if(iv) clearInterval(iv); jar.remove(); schedule(); }, DUR[mode]+250);
   }
-  setTimeout(flyby,20000); setInterval(flyby,55000);
+  function schedule(){ setTimeout(cross, 100000 + Math.random()*60000); }
+  setTimeout(cross, 40000);
 })();
 </script>
 <script>
