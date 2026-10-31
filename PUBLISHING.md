@@ -33,7 +33,7 @@ If any answer is wrong, the item does not print. This line is from Guardian Budd
 ## Standing feature — Star Chart (added Oct 31, 2026, Dave's word)
 - Its own section: `<h2>🔭 Star Chart — Tonight over Fiddletown</h2>` + `<div class="card" id="star-chart">`, sidebar under This Day in History.
 - Contents every day: an evening star chart for Fiddletown (a simple labeled schematic of the evening sky is fine), the moon phase, which planets are up and when, and notable events (meteor showers, bright passes, eclipses) when they come.
-- Pitch: dark-sky country is part of valley life. Sources: public astronomy data (e.g. TheSkyLive, StarWalk/Sky Tonight, Astronomy Magazine, timeanddate) and the fleet's Astronomy Buddy as the sky desk when reachable — always in the paper's own words, with a source line.
+- Pitch: dark-sky country is part of foothill life. Sources: public astronomy data (e.g. TheSkyLive, StarWalk/Sky Tonight, Astronomy Magazine, timeanddate) and the fleet's Astronomy Buddy as the sky desk when reachable — always in the paper's own words, with a source line.
 - **Set by the Morning Edition; carried forward by Midday/Evening** (Evening may refresh the viewing note). Always carry an honest viewing note tied to the actual forecast — if it's cloudy, say so; never oversell a sky nobody can see.
 - Staged research may live in `sky/YYYY-MM-DD.md`.
 
@@ -43,3 +43,6 @@ If any answer is wrong, the item does not print. This line is from Guardian Budd
 - **Safety-relevant weather events lead the Safety Wire**, as chartered (Red Flag, storm damage risk, chain control, PSPS-relevant wind, flood risk). The hourly safety poll treats a newly-issued severe weather alert as qualifying.
 - Weather events *develop* between editions (unlike the history/sky boxes): each edition updates the coverage — rain totals, clearing timing, chain-control changes — with fresh timestamps.
 - Worked example, Oct 31, 2026: the season's first real autumn storm system (rain + afternoon thunderstorms, chain control on SR-4) leads the launch editions.
+
+## Language rule (Dave, Oct 31, 2026)
+Fiddletown is in the Sierra **foothills** (Gold Country) — never frame the beat generically as "the valley." The events section is **Today in the Foothills**. "Shenandoah Valley" is a proper name and stays (including the masthead line); other proper names (Death Valley) are untouched.
