@@ -46,3 +46,11 @@ If any answer is wrong, the item does not print. This line is from Guardian Budd
 
 ## Language rule (Dave, Oct 31, 2026)
 Fiddletown is in the Sierra **foothills** (Gold Country) — never frame the beat generically as "the valley." The events section is **Today in the Foothills**. "Shenandoah Valley" is a proper name and stays (including the masthead line); other proper names (Death Valley) are untouched.
+
+## Community Wire — watch list & importance bar (Dave, Oct 31, 2026)
+Dave's ask, adopted: yes — important messages/posts from Facebook (and other social media where a public, connected route exists) belong in the paper, via the Community Wire. Wired as follows:
+- **Watch topics/places:** FPPOA, Fiddletown, Plymouth, Drytown, and Sutter Creek (Amador foothills towns in the paper's orbit; Sutter Creek rides the wire/Around Town, the dateline stays Fiddletown).
+- **Sources:** official/public pages first — Amador County, City of Plymouth, City of Sutter Creek, Amador County Sheriff, CAL FIRE AEU, CHP, FPPOA's public presence, winery/business pages (Feist/Drytown Social Club and peers) — plus only the community groups Dave names and already belongs to. The paper never joins a group on its own.
+- **Importance bar (what earns print):** safety and emergency information, civic decisions and public meetings, road/water/power disruptions, public events, business openings/closures, lost-and-found style factual notices. NOT printed: gossip, arguments, private residents' personal posts beyond a short factual notice (no photos, no personal details).
+- **Form:** summarized in the paper's own words, attributed to the posting page, linked to the original post. Never copied wholesale. Every item passes the privacy gate like everything else.
+- **Not sources:** Nextdoor (excluded by the privacy line, always). Other platforms only when they offer a public page/post readable through a connected route — same rules as Facebook.
