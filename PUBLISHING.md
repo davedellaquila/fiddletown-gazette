@@ -54,3 +54,9 @@ Dave's ask, adopted: yes — important messages/posts from Facebook (and other s
 - **Importance bar (what earns print):** safety and emergency information, civic decisions and public meetings, road/water/power disruptions, public events, business openings/closures, lost-and-found style factual notices. NOT printed: gossip, arguments, private residents' personal posts beyond a short factual notice (no photos, no personal details).
 - **Form:** summarized in the paper's own words, attributed to the posting page, linked to the original post. Never copied wholesale. Every item passes the privacy gate like everything else.
 - **Not sources:** Nextdoor (excluded by the privacy line, always). Other platforms only when they offer a public page/post readable through a connected route — same rules as Facebook.
+
+## Events sweep — corrected (Oct 31, 2026, after Dave's "how many events today?")
+The launch edition printed 3 of the day's 11 public events. Two process errors, now fixed:
+1. **Hallo-Wine on Omo was in the desk's records marked public and got held anyway.** The events desk's local intake files DO carry the gate: ~/workspace/goals/event-manager/hidden_files/event-buddy/intake-*.json — every record has `isPublic`. READ THOSE FILES at press time; print every isPublic=true item in the beat for the edition day. (Earlier editions of this playbook wrongly said the flag wasn't visible.)
+2. **Press-time sweep was too narrow.** Every edition ALSO sweeps the public calendars: amadorwine.com/events, bestofamador.com events, events.lodedown.com (Amador), Visit Amador, plus venue pages for anything the desk lists thin. Public events found there print with the calendar credited.
+- Count honestly in the report: desk items + calendar finds. If the area is having a big day, the section should show it.
