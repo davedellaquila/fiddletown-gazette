@@ -29,3 +29,17 @@ If any answer is wrong, the item does not print. This line is from Guardian Budd
 - A few crisp items per day, each with its year, written in the paper's own words from public historical sources, attributed in the box's source line.
 - **The Morning Edition sets it for the day; Midday and Evening carry it forward unchanged** (unless correcting an error).
 - First appearance: the Midday Edition of Sat Oct 31, 2026 (the first edition after the site went live). Researched items for a date may be staged ahead in `history/YYYY-MM-DD.md`.
+
+## Standing feature — Star Chart (added Oct 31, 2026, Dave's word)
+- Its own section: `<h2>🔭 Star Chart — Tonight over Fiddletown</h2>` + `<div class="card" id="star-chart">`, sidebar under This Day in History.
+- Contents every day: an evening star chart for Fiddletown (a simple labeled schematic of the evening sky is fine), the moon phase, which planets are up and when, and notable events (meteor showers, bright passes, eclipses) when they come.
+- Pitch: dark-sky country is part of valley life. Sources: public astronomy data (e.g. TheSkyLive, StarWalk/Sky Tonight, Astronomy Magazine, timeanddate) and the fleet's Astronomy Buddy as the sky desk when reachable — always in the paper's own words, with a source line.
+- **Set by the Morning Edition; carried forward by Midday/Evening** (Evening may refresh the viewing note). Always carry an honest viewing note tied to the actual forecast — if it's cloudy, say so; never oversell a sky nobody can see.
+- Staged research may live in `sky/YYYY-MM-DD.md`.
+
+## Standing treatment — Weather Events (added Oct 31, 2026, Dave's word: "obviously the weather events")
+- Weather *events* are news, not just a forecast box: storm systems moving in, first rain/snow of the season, heat and freeze events, burn-day status changes, wind events.
+- When a weather event is in progress or credibly forecast, the edition carries it as a news item in the main flow (Lead or Around Town, as its importance earns) in addition to the Weather box.
+- **Safety-relevant weather events lead the Safety Wire**, as chartered (Red Flag, storm damage risk, chain control, PSPS-relevant wind, flood risk). The hourly safety poll treats a newly-issued severe weather alert as qualifying.
+- Weather events *develop* between editions (unlike the history/sky boxes): each edition updates the coverage — rain totals, clearing timing, chain-control changes — with fresh timestamps.
+- Worked example, Oct 31, 2026: the season's first real autumn storm system (rain + afternoon thunderstorms, chain control on SR-4) leads the launch editions.
