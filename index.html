@@ -68,6 +68,14 @@ h2{font-size:22px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin:2
 .topbar .header-tip{margin-left:auto;font-size:12.5px;padding:6px 11px;flex:none}
 }
 </style>
+<style>
+/* Gazette tip jar — livelier: wiggle-spin cycle + glow pulse (Dave, Oct 31 2026) */
+.header-tip{animation:tip-breathe 3.2s ease-in-out infinite,jar-glow 4.5s ease-in-out infinite}
+@keyframes jar-glow{0%,100%{box-shadow:0 4px 14px rgba(124,77,255,.35)}50%{box-shadow:0 4px 28px rgba(124,77,255,.8)}}
+.header-tip .jar{animation:jar-party 9s ease-in-out infinite;transform-origin:50% 60%}
+@keyframes jar-party{0%,64%{transform:rotate(0deg) scale(1)}70%{transform:rotate(-16deg) scale(1.14)}76%{transform:rotate(12deg) scale(1.14)}84%{transform:rotate(372deg) scale(1.3)}92%,100%{transform:rotate(360deg) scale(1)}}
+@media (prefers-reduced-motion: reduce){.header-tip .jar{animation:none}.header-tip{animation:none}}
+</style>
 </head>
 <body>
 <div class="topbar"><span>🗞️ The Fiddletown Gazette</span><nav><a href="index.html">Front Page</a><a href="archive.html">Editions Archive</a><a href="#colophon">About</a></nav><a class="header-tip" href="https://ko-fi.com/davedellaquila" target="_blank" rel="noopener" aria-label="Tip Jar — if this page helped you, you can leave Dave a tip on Ko-fi"><span class="jar" aria-hidden="true">🫙</span><span>Tip Jar</span></a></div>
@@ -176,6 +184,13 @@ h2{font-size:22px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin:2
     <p class="meta" style="margin-top:8px">What's Carl Working On — always in rhyme · Updated Oct 31 — scooter, Vidmar &amp; canoe added at Carl's own request</p>
   </div>
 
+  <h2>🏆 The Winsteds' Bocce Court</h2>
+  <div class="card" id="winsteds">
+    <p>Every neighborhood has a capital, and around here it's the Winsteds' bocce court. Carol keeps the bracket, the scorebook, and — when a throw lands close enough to argue about — the final word. Joe tends the coals, because the court comes with the other half of the institution: <b>the fabulous barbecue</b>, the kind where the brisket has a schedule, the sides appear like magic, and nobody has ever left hungry or entirely sure how the last game ended.</p>
+    <p style="margin-top:6px">House rules, as best the Gazette can establish them: winners eat first, losers wash up, and a ball within a finger's width of the pallino is settled by Carol — appeal is not a thing.</p>
+    <p class="meta" style="margin-top:6px">Neighbor color from the Gazette · Oct 31</p>
+  </div>
+
   <h2>The Community Wire</h2>
   <div id="community-wire"><p class="empty">No Community Wire items qualify at press time — the wire was checked at 7:01 AM against local public pages (county, city, sheriff, CAL FIRE AEU, CHP, FPPOA, wineries and businesses) and no post in the last two days met the bar (safety, civic decisions/meetings, road/water/power disruptions, public events, openings/closures). Items are summarized and linked, never copied.</p></div>
   <h2>Weather</h2>
@@ -252,6 +267,28 @@ document.getElementById('sugg-send').addEventListener('click', function(){
   var body=text + (name ? '\n\n— ' + name : '') + '\n\n( sent from The Fiddletown Gazette front page )';
   window.location.href='mailto:dave@dellaquila.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 });
+</script>
+<script>
+/* Tip jar flyby: the jar zooms across the top of the page trailing puffs of smoke (Dave, Oct 31 2026). Skips entirely under Reduce Motion. */
+(function(){
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var st=document.createElement('style');
+  st.textContent='.jar-flyby{position:fixed;top:58px;left:-70px;font-size:34px;z-index:999;pointer-events:none;animation:jar-zoom 2.2s cubic-bezier(.45,.05,.55,.95) forwards;text-shadow:0 6px 14px rgba(0,0,0,.25)}@keyframes jar-zoom{0%{transform:translateX(0) translateY(0) rotate(0deg)}25%{transform:translateX(30vw) translateY(-14px) rotate(140deg)}55%{transform:translateX(62vw) translateY(10px) rotate(300deg)}100%{transform:translateX(115vw) translateY(-6px) rotate(560deg)}}.jar-puff{position:fixed;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle,rgba(235,230,220,.85),rgba(235,230,220,0) 70%);filter:blur(3px);z-index:998;pointer-events:none;animation:jar-pufffade .95s ease-out forwards}@keyframes jar-pufffade{from{transform:scale(.6);opacity:.9}to{transform:scale(2.4) translateY(-10px);opacity:0}}';
+  document.head.appendChild(st);
+  function flyby(){
+    if (document.hidden) return;
+    var jar=document.createElement('div'); jar.textContent='\u{1FAD9}'; jar.className='jar-flyby'; jar.setAttribute('aria-hidden','true');
+    document.body.appendChild(jar);
+    var iv=setInterval(function(){
+      var r=jar.getBoundingClientRect(); if(!r.width){clearInterval(iv);return;}
+      var s=document.createElement('div'); s.className='jar-puff';
+      s.style.left=(r.left+r.width*0.25)+'px'; s.style.top=(r.top+r.height*0.55)+'px';
+      document.body.appendChild(s); setTimeout(function(){s.remove();},1000);
+    },110);
+    setTimeout(function(){clearInterval(iv); jar.remove();},2350);
+  }
+  setTimeout(flyby,20000); setInterval(flyby,55000);
+})();
 </script>
 </body>
 </html>
