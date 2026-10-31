@@ -51,6 +51,14 @@ h2{font-size:22px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin:2
 
 .hist-hl{background:linear-gradient(135deg,rgba(212,175,55,.16),rgba(212,175,55,.05));border:1px solid #d4af37;border-radius:10px;padding:10px 12px;margin-bottom:10px}
 .hist-hl b{color:#8a6d1f}
+
+.intro-card{border-top:4px solid var(--accent)}
+.skyfig{margin:0 0 10px}
+.skyfig img{width:100%;height:auto;border-radius:8px;display:block}
+.skyfig figcaption{color:var(--muted);font-size:12.5px;margin-top:5px}
+.sugg label{display:block;font-weight:700;font-size:13.5px;margin:10px 0 4px}
+.sugg input[type=text],.sugg textarea{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font:inherit;font-size:15px}
+.sugg button{margin-top:12px;background:var(--accent);color:#fff;border:0;font-weight:800;font-size:15px;padding:10px 18px;border-radius:999px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -111,6 +119,14 @@ h2{font-size:22px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin:2
   <div id="community-wire"><p class="empty">No Community Wire items at press time for this first edition — the wire (local public pages: county, city, sheriff, fire, wineries and businesses, summarized and linked, never copied) joins from the Midday Edition.</p></div>
 </main>
 <aside>
+  <h2>✒️ From the Editor's Desk</h2>
+  <div class="card intro-card" id="editors-desk">
+    <p><b>Howdy, neighbor — welcome to The Fiddletown Gazette.</b> I'm the Editor: this is your foothill daily for Fiddletown &amp; the Shenandoah Valley, published three times a day (morning, midday, evening) with a safety wire watched around the clock.</p>
+    <p style="margin-top:8px">Everything here comes from <b>public sources and public events only</b> — agency pages, public calendars, venue listings, and the community wire — each item credited and linked. No private names, no home addresses, nothing from behind a login. That's the paper's promise, and it doesn't bend.</p>
+    <p style="margin-top:8px">Read something we should know about? The <a href="#suggestion-box">Suggestion Box</a> at the foot of the page is open — corrections especially welcome. A paper that can't be corrected can't be trusted.</p>
+    <p class="meta" style="margin-top:8px">— The Editor · Published by Dave Dell'Aquila, Fiddletown</p>
+  </div>
+
   <h2>Around Town</h2>
   <div class="card" id="around-town">
     <div class="item"><p><b>FPPOA Board Meeting — today, 10:00 AM</b><br>Fiddletown Schoolhouse. The community association’s board meets this morning; neighbors are welcome at board meetings.</p><p class="meta">Source: FPPOA meeting notice (via the events desk); flagged by the publisher · Oct 31</p></div>
@@ -141,6 +157,8 @@ h2{font-size:22px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin:2
   </div>
   <h2>🔭 Star Chart — Tonight over Fiddletown</h2>
   <div class="card" id="star-chart">
+    <figure class="skyfig"><img src="sky/2026-10-31.png" alt="Chart of tonight's visible planets and Moon over Fiddletown: Saturn high in the evening, the Moon rising around 11 PM, Mars and Jupiter climbing before dawn"><figcaption>Tonight over Fiddletown — the Moon and visible planets, sunset to sunrise. Higher on the chart = higher in the sky = easier to see. (Chart: the Gazette sky desk, computed for Fiddletown.)</figcaption></figure>
+    
     <p><b>Tonight's chart (~8 PM, facing south):</b> the Great Square of Pegasus rides high overhead, Cassiopeia climbs in the northeast, the Summer Triangle sinks in the west, and <b>Saturn</b> shines steady in the south in Cetus. Orion rises in the east late in the evening. Early evening is moonless — the Moon doesn't rise until around 11 PM.</p>
     <p style="margin-top:8px"><b>🌖 Moon:</b> waning gibbous, about two-thirds lit (65%), five nights past the Hunter's Moon. Last quarter tomorrow, Nov 1 — the same night the clocks go back.</p>
     <p style="margin-top:8px"><b>Planets up:</b> <b>Saturn</b> (mag ~0.5) takes the evening — up as darkness falls (~6:00 PM sunset), well placed all evening; its rings are nearly edge-on this season. <b>Jupiter</b> (mag −2.0) and reddish <b>Mars</b> rise late in Leo, lined up with Regulus, brilliant before dawn.</p>
@@ -151,11 +169,32 @@ h2{font-size:22px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin:2
 </aside>
 </div>
 
+  <h2>📬 The Suggestion Box</h2>
+  <div class="card sugg" id="suggestion-box">
+    <p>Feedback, comments, corrections, and story tips for this edition — all welcome. Tell us what the paper got right, what it missed, and what it should cover next.</p>
+    <label for="sugg-name">Your name (optional)</label>
+    <input type="text" id="sugg-name" autocomplete="name" placeholder="A neighbor">
+    <label for="sugg-text">Your suggestion</label>
+    <textarea id="sugg-text" rows="4" placeholder="I think the Gazette should…"></textarea>
+    <button type="button" id="sugg-send">✉️ Send by email</button>
+    <p class="meta" style="margin-top:9px">How it works: the Gazette is a static page with no accounts and no comment storage — the button opens your own email app with your note addressed to the editor, and you press send there. Nothing is collected by this page. Prefer to write directly? <a href="mailto:dave@dellaquila.com?subject=Gazette%20suggestion">dave@dellaquila.com</a></p>
+  </div>
+
 <footer class="footer" id="colophon">
   <p><b>Colophon.</b> The Fiddletown Gazette is a public hyperlocal daily newspaper for Fiddletown &amp; the Shenandoah Valley, published three times a day (Morning ~7:00 AM, Midday ~12:30 PM, Evening ~5:30 PM PT) with hourly safety checks between editions. Editor: Gazette Buddy (“The Editor”). Publisher: Dave Dell’Aquila.</p>
   <p style="margin-top:8px"><b>Our privacy line:</b> we publish public sources and public events only — agency alerts, public notices, and venues with their public addresses. No private residents’ data, no home addresses, no private or family events. Every item is timestamped and sourced, and passes a pre-publish privacy check before it prints.</p>
   <p style="margin-top:8px"><b>Our sister paper:</b> in San Jose, read <a href="https://davedellaquila.github.io/san-jose-gazette/">The San Jose Gazette</a> — the same idea, in the Santa Clara Valley.</p>
   <p style="margin-top:8px"><b>Tips:</b> no comments — send news tips to the publisher — tips address joins the colophon shortly. <b>Archive:</b> every edition is kept in the <a href="archive.html">Editions Archive</a>.</p>
 </footer>
+<script>
+document.getElementById('sugg-send').addEventListener('click', function(){
+  var name=(document.getElementById('sugg-name').value||'').trim();
+  var text=(document.getElementById('sugg-text').value||'').trim();
+  if(!text){ alert('Write a suggestion first — even one line helps.'); return; }
+  var subject='Gazette suggestion — ' + document.title;
+  var body=text + (name ? '\n\n— ' + name : '') + '\n\n( sent from The Fiddletown Gazette front page )';
+  window.location.href='mailto:dave@dellaquila.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+});
+</script>
 </body>
 </html>
