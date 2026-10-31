@@ -22,3 +22,10 @@ If any answer is wrong, the item does not print. This line is from Guardian Budd
 
 ## Front-page markers
 `index.html` carries named comment markers (`EDITION:NAME`, `LEAD:*`, `WEATHER:BUG`, section div ids `safety-wire`, `today-events`, `week-events`, `community-wire`, `around-town`, `weather`, and `#safety-banner`) so the edition builder replaces content in place without redesigning the page.
+
+## Standing feature — This Day in History (added Oct 31, 2026, Dave's word)
+- A standing box on the front page: sidebar card under Weather (`<h2>This Day in History</h2>` + `<div class="card" id="history">`).
+- Keyed to the calendar date of the edition. **Local first** — Fiddletown, Amador County, Gold Country (1849 founding era, the mining years, Shenandoah Valley milestones); a wider California/national item only when the local well runs dry on that date (say so honestly if it does).
+- A few crisp items per day, each with its year, written in the paper's own words from public historical sources, attributed in the box's source line.
+- **The Morning Edition sets it for the day; Midday and Evening carry it forward unchanged** (unless correcting an error).
+- First appearance: the Midday Edition of Sat Oct 31, 2026 (the first edition after the site went live). Researched items for a date may be staged ahead in `history/YYYY-MM-DD.md`.
