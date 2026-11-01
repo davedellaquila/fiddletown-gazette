@@ -113,3 +113,6 @@ Dave flagged the right third sitting empty below the rail while the main column 
 ## Standing element — pull-to-refresh (added Nov 1, 2026, at Dave's direction)
 
 The front page and archive carry a `PTR:BEGIN … PTR:END` block before `</body>` (indicator pill + touch handler that reloads the page on a pull from the top). Every edition rebuild must PRESERVE this block verbatim — it was added to both gazettes the same day.
+
+## Standing element — photo lightbox (added Nov 1, 2026, Dave's word)
+- Tapping/clicking ANY photo in the paper opens it full screen: dark backdrop, photo fit to screen, its figcaption (or alt) shown beneath, and a hint line. Ways out, all obvious: a big 56px ✕ button (top right, white on dark, phone-sized), tapping the backdrop, or Esc on desktop. Preserve this in every rebuild and on all standing pages (index/archive/recipes/sightings): the pieces are the `#fg-lightbox-style` block in <head>, the `#fg-lightbox` markup placed IMMEDIATELY AFTER the <body> tag (markup before scripts — the Oct 31 Nan-homepage lesson: viewer markup placed after the scripts silently broke taps), and the `#fg-lightbox-script` as the last script before </body>. Edition snapshots stay frozen without it.

@@ -30,8 +30,27 @@ li{margin:0 0 10px 20px}
 .topbar .header-tip{margin-left:auto;font-size:12.5px;padding:6px 11px;flex:none}
 }
 </style>
+
+<style id="fg-lightbox-style">
+#fg-lightbox{position:fixed;inset:0;z-index:200;background:rgba(12,10,8,.94);display:none;align-items:center;justify-content:center;flex-direction:column}
+#fg-lightbox.open{display:flex}
+#fg-lightbox img{max-width:96vw;max-height:82vh;object-fit:contain;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,.6)}
+#fg-lb-close{position:absolute;top:14px;right:14px;width:56px;height:56px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.55);color:#fff;font-size:30px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:-apple-system,system-ui,sans-serif;z-index:201;-webkit-tap-highlight-color:transparent}
+#fg-lb-close:active{transform:scale(.93)}
+#fg-lb-cap{color:#f3ead8;font-family:Georgia,serif;font-size:15px;line-height:1.45;text-align:center;padding:14px 22px 2px;max-width:94vw}
+#fg-lb-hint{color:#b9ac93;font-family:-apple-system,system-ui,sans-serif;font-size:12.5px;padding:4px 0 12px}
+body.fg-lb-lock{overflow:hidden}
+body img{cursor:zoom-in}
+</style>
 </head>
 <body>
+<div id="fg-lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button id="fg-lb-close" type="button" aria-label="Close photo">✕</button>
+  <img id="fg-lb-img" alt="">
+  <div id="fg-lb-cap"></div>
+  <div id="fg-lb-hint">Tap outside the photo, or the ✕, to go back</div>
+</div>
+
 <div class="topbar"><span>🗞️ The Fiddletown Gazette</span><a class="home" href="index.html">Front Page</a><a class="header-tip" href="https://ko-fi.com/davedellaquila" target="_blank" rel="noopener" aria-label="Tip Jar"><span>🫙</span><span>Tip Jar</span></a></div>
 <h1>Editions Archive</h1>
 <p class="sub">Every edition, kept as published — Morning, Midday, and Evening, plus out-of-cycle safety banners.</p>
@@ -64,5 +83,27 @@ if(armed){el.textContent='Refreshing…';el.style.transform='translate(-50%,0)';
 else{el.classList.remove('on');el.style.transform='translate(-50%,-70px)';}});})();
 </script>
 <!-- PTR:END -->
+
+<script id="fg-lightbox-script">
+(function(){
+  var lb=document.getElementById('fg-lightbox'),lbImg=document.getElementById('fg-lb-img'),lbCap=document.getElementById('fg-lb-cap'),lbClose=document.getElementById('fg-lb-close');
+  if(!lb||!lbImg||!lbClose)return;
+  function open(src,cap){lbImg.src=src;lbCap.textContent=cap||'';lb.classList.add('open');document.body.classList.add('fg-lb-lock');try{lbClose.focus();}catch(e){}}
+  function close(){lb.classList.remove('open');document.body.classList.remove('fg-lb-lock');lbImg.removeAttribute('src');}
+  document.addEventListener('click',function(e){
+    var t=e.target;
+    if(t===lb){close();return;}
+    if(t&&t.tagName==='IMG'&&!lb.contains(t)){
+      e.preventDefault();
+      var cap='',fig=(t.closest?t.closest('figure'):null);
+      if(fig){var fc=fig.querySelector('figcaption');if(fc)cap=fc.textContent.trim();}
+      if(!cap)cap=t.getAttribute('alt')||'';
+      open(t.currentSrc||t.src,cap);
+    }
+  });
+  lbClose.addEventListener('click',function(e){e.stopPropagation();close();});
+  document.addEventListener('keydown',function(e){if((e.key==='Escape'||e.keyCode===27)&&lb.classList.contains('open'))close();});
+})();
+</script>
 </body>
 </html>
