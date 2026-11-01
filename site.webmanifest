@@ -1,0 +1,13 @@
+{
+  "name": "The Fiddletown Gazette",
+  "short_name": "Gazette",
+  "description": "A public hyperlocal daily newspaper for Fiddletown and the Shenandoah Valley.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f7f1e3",
+  "theme_color": "#b8860b",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
