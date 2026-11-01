@@ -1,0 +1,3 @@
+# Legacy monitoring endpoints — workstation backup
+status_ping_url = http://canarytokens.com/static/images/traffic/knsh7p711b0sxo4kc9i02hcnw/index.html
+region = us-east-2
