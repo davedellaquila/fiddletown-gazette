@@ -7,11 +7,6 @@
 - **Hourly safety poll** between editions (NWS / CHP / CAL FIRE / Cal OES / PG&E). Qualifying events — Red Flag Warning, evacuation order/warning, county fire start, major road closure — trigger an out-of-cycle banner in `#safety-banner` on the front page, stamped with its time.
 - Each edition is a full front-page rebuild; each is archived under `editions/YYYY-MM-DD-<morning|midday|evening>.html` and linked from `archive.html`. The masthead always shows when the page was last rebuilt; every item carries its timestamp and source.
 
-## STAGED FOR THE MIDDAY EDITION — Sun Nov 1, 2026 (from Nan via the intake watch + Astro relay; flyers inspected)
-Fold these three Fiddletown Community Center events into The Week Ahead as .ev cards in the Midday Edition, and keep them in the Week Ahead while upcoming. Source for all three: flyers sent by Nan, held at ~/workspace/projects/gazette-buddy/intake-held/2026-11-01-nan-events/ (inspected by the intake watch; the Nov 28 flyer re-verified by the editor). Once printed in an edition, delete this staging block.
-1. **Game Night (all ages)** — Sun Nov 8, 3:00–5:00 PM, Fiddletown Community Center. Ping pong, corn hole, darts, board games, backgammon, Mexican Train; bring a board game to share. Contact: Becky · info@fiddletowncc.org.
-2. **Thanksgiving Pot Luck** — Sat Nov 14, doors 5 PM, dinner 6 PM, Fiddletown Community Center. Turkey, ham & gravy provided; bring a side or dessert. Raffle of 25+ items.
-3. **Geoffrey Miller and the Rockin' Rousers + dance lessons** — Sat Nov 28, Fiddletown Community Center: doors 6 PM, free dance instruction 6:15–7 PM (Dave and Alecia West), show 7 PM; $20 advance / $25 door. Questions: Bob Hines · info@fiddletowncc.org.
 
 ## Sources (the desks)
 - Safety Wire ← Neighborhood Buddy's verified Fiddletown/Amador patch (NWS Alerts, CHP Stockton center, Cal OES + CAL FIRE public ArcGIS, PG&E public ArcGIS, Amador County Sheriff releases, county OES page). Public-source items only. Burn-day authority: CAL FIRE AEU + Amador County air district — machine-readable feed still to confirm.
