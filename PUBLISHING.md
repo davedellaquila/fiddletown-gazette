@@ -1,7 +1,7 @@
 # Publishing — The Fiddletown Gazette
 
 ## Rhythm
-- **Morning Edition ~7:00 AM PT** — after Event Buddy's 06:41 intake sweep.
+- **Morning Edition 6:00 AM PT** — reads the Event Buddy intake files on disk at run time. (Time corrected Nov 1, 2026 at Dave's word: the playbook's old ~7:00 AM was stale; the cron runs at 06:00.)
 - **Midday Edition ~12:30 PM PT.**
 - **Evening Edition ~5:30 PM PT** — evening events + overnight alert picture.
 - **Hourly safety poll** between editions (NWS / CHP / CAL FIRE / Cal OES / PG&E). Qualifying events — Red Flag Warning, evacuation order/warning, county fire start, major road closure — trigger an out-of-cycle banner in `#safety-banner` on the front page, stamped with its time.
