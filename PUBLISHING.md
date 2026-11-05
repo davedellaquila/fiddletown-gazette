@@ -5,7 +5,7 @@
 - **Midday Edition ~12:30 PM PT.**
 - **Evening Edition ~5:30 PM PT** — evening events + overnight alert picture.
 - **Hourly safety poll** between editions (NWS / CHP / CAL FIRE / Cal OES / PG&E). Qualifying events — Red Flag Warning, evacuation order/warning, county fire start, major road closure — trigger an out-of-cycle banner in `#safety-banner` on the front page, stamped with its time.
-- Each edition is a full front-page rebuild; each is archived under `editions/YYYY-MM-DD-<morning|midday|evening>.html` and linked from `archive.html`. The masthead always shows when the page was last rebuilt; every item carries its timestamp and source.
+- Each edition is a full front-page rebuild; each is archived under `editions/YYYY-MM-DD-<morning|midday|evening>.html` and linked from `archive.html`. **Edition thumbnails (Dave, Nov 5, 2026):** every `archive.html` entry carries a thumbnail of that edition's front page — a real 480×360 capture of the edition's top (masthead + dateline + weather banner), saved as `editions/thumbs/<same-name>.jpg` and shown with the `.ed-thumb` treatment (96×72 desktop / 72×56 phone, flexed beside the listing text, the image itself linking to the edition, alt = "Front page of the <edition name>"). Capture it in the same push that archives the edition (render the archived HTML and screenshot its top). An entry whose thumbnail isn't on file stays text-only — never a placeholder or stock image (same rule as the Sightings Archive photos). The masthead always shows when the page was last rebuilt; every item carries its timestamp and source.
 
 
 ## Sources (the desks)
