@@ -544,6 +544,7 @@ document.getElementById('sugg-send').addEventListener('click', function(){
   document.head.appendChild(st);
   var MODES=['race','tumble','march','bounce','sneak','victory'];
   var DUR={race:1700,tumble:2800,march:4800,bounce:3000,sneak:5400,victory:4600};
+  var PILL_PAUSE=1000; /* Dave, Nov 5 2026: a crossing pauses ~1s directly under the Tip Jar pill, so eyes land on it */
   var last=-1;
   function cross(){
     if (document.hidden){ schedule(); return; }
@@ -552,16 +553,44 @@ document.getElementById('sugg-send').addEventListener('click', function(){
     var jar=document.createElement('div');
     jar.textContent='\u{1FAD9}'; jar.className='jar-flyby jf-'+mode; jar.setAttribute('aria-hidden','true');
     document.body.appendChild(jar);
+    /* Pill pause: watch the crossing (rAF); the moment the jar's center aligns with the Tip Jar
+       pill's center, freeze its animation for PILL_PAUSE ms, then let it play on. Works for every
+       gait and any window width; re-arms once the jar is well past, so victory's return pass
+       pauses again. Fails safe: no pill or no Animations API = crossing runs as it always has. */
+    var pill=document.querySelector('.header-tip');
+    var paused=false, armed=true, rafId=null, deadline=Date.now()+DUR[mode]+250;
+    var anims=[]; try{ anims=jar.getAnimations?jar.getAnimations():[]; }catch(e){ anims=[]; }
+    function watch(){
+      if(!jar.isConnected){ rafId=null; return; }
+      if(pill && anims.length && !paused){
+        var jr=jar.getBoundingClientRect(), pr=pill.getBoundingClientRect();
+        if(jr.width && pr.width){
+          var d=(jr.left+jr.width/2)-(pr.left+pr.width/2);
+          if(armed && Math.abs(d)<=Math.max(6,jr.width*0.18)){
+            paused=true; armed=false; deadline+=PILL_PAUSE;
+            anims.forEach(function(a){ try{a.pause();}catch(e){} });
+            setTimeout(function(){ anims.forEach(function(a){ try{a.play();}catch(e){} }); paused=false; }, PILL_PAUSE);
+          }
+          if(Math.abs(d)>70) armed=true;
+        }
+      }
+      rafId=requestAnimationFrame(watch);
+    }
+    rafId=requestAnimationFrame(watch);
     var iv=null;
     if (mode==='race'){
       iv=setInterval(function(){
+        if(paused) return;
         var r=jar.getBoundingClientRect(); if(!r.width){clearInterval(iv);return;}
         var s=document.createElement('div'); s.className='jar-puff';
         s.style.left=(r.left+r.width*0.2)+'px'; s.style.top=(r.top+r.height*0.6)+'px';
         document.body.appendChild(s); setTimeout(function(){s.remove();},1000);
       },90);
     }
-    setTimeout(function(){ if(iv) clearInterval(iv); jar.remove(); schedule(); }, DUR[mode]+250);
+    (function cleanup(){
+      if(paused || Date.now()<deadline){ setTimeout(cleanup,150); return; }
+      if(iv) clearInterval(iv); if(rafId) cancelAnimationFrame(rafId); jar.remove(); schedule();
+    })();
   }
   function schedule(){ setTimeout(cross, 100000 + Math.random()*60000); }
   setTimeout(cross, 40000);
