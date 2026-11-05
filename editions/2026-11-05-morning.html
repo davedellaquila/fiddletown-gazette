@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<title>The Fiddletown Gazette — Fiddletown &amp; the Shenandoah Valley</title>
+<meta name="description" content="A public hyperlocal daily newspaper for Fiddletown and the Shenandoah Valley: safety news neighbors need, plus the foothills' complete public events listing. Updated all day.">
+<style>
+:root{--bg:#f7f1e3;--paper:#fffdf6;--text:#1c1917;--muted:#6b6259;--border:#d8cdb4;--ink:#1c1917;--accent:#8a1f1f;--gold:#b8860b;--ok:#1b7a2e}
+@media (prefers-color-scheme: dark){:root{--bg:#141210;--paper:#1e1b18;--text:#ece5d8;--muted:#a89f92;--border:#3d362e;--ink:#ece5d8;--accent:#e0685f;--gold:#e3b341;--ok:#5fd08a}}
+*{box-sizing:border-box;margin:0;padding:0} body{font-family:Georgia,'Times New Roman',serif;background:var(--bg);color:var(--text);line-height:1.55;padding:0 16px 48px;max-width:1020px;margin:0 auto;overflow-x:hidden}
+a{color:var(--accent)}
+.topbar{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:10px;background:var(--bg);border-bottom:3px double var(--ink);padding:10px 2px;font-family:-apple-system,sans-serif;font-weight:700}
+.topbar nav{margin-left:auto;display:flex;gap:14px;font-size:13.5px}.topbar nav a{color:var(--text);text-decoration:none}.topbar nav a:hover{text-decoration:underline}
+.masthead{text-align:center;padding:30px 8px 16px}
+.kicker{font-family:-apple-system,sans-serif;letter-spacing:.22em;text-transform:uppercase;font-size:11px;color:var(--gold);font-weight:800}
+.masthead h1{font-size:clamp(36px,7.5vw,64px);line-height:1.02;margin:8px 0 6px}
+.dateline{color:var(--muted);font-style:italic}
+.weatherbug{display:inline-block;margin-top:10px;border:1px solid var(--border);border-radius:999px;padding:5px 14px;background:var(--paper);font-size:13.5px;font-family:-apple-system,sans-serif}
+.rule{height:4px;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);margin:16px 0}
+.banner{border:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--paper));border-radius:12px;padding:16px 20px;margin-bottom:18px}
+.banner b{color:var(--accent)}
+.grid{display:grid;grid-template-columns:1fr;gap:22px}@media(min-width:760px){.grid{grid-template-columns:2fr 1fr}}
+h2{font-size:22px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin:26px 0 12px}
+.lead h2{border-bottom:0;font-size:clamp(26px,4.5vw,38px);line-height:1.15;margin-top:0}
+.item{padding:10px 0;border-bottom:1px dashed var(--border)}.item:last-child{border-bottom:0}
+.meta{font-family:-apple-system,sans-serif;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.empty{color:var(--muted);font-style:italic;padding:8px 0}
+.card{background:var(--paper);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.footer{margin-top:44px;padding-top:18px;border-top:3px double var(--ink);color:var(--muted);font-size:13.5px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+.header-tip{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:.45em;padding:6px 12px;border-radius:999px;text-decoration:none;font-size:13px;font-weight:800;line-height:1;color:#fff;background:linear-gradient(135deg,#7c4dff,#b388ff);box-shadow:0 4px 14px rgba(124,77,255,.35);animation:tip-breathe 3.2s ease-in-out infinite;white-space:nowrap;font-family:-apple-system,sans-serif}
+.header-tip::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(105deg,rgba(255,255,255,0) 35%,rgba(255,255,255,.45) 50%,rgba(255,255,255,0) 65%);transform:translateX(-110%);animation:tip-sheen 8s ease-in-out infinite}
+.header-tip .jar{display:inline-block;font-size:1.1em}.header-tip:hover .jar{animation:tip-spin .7s cubic-bezier(.34,1.56,.64,1)}
+.header-tip:focus-visible{outline:3px solid #ffd54f;outline-offset:3px}
+@keyframes tip-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+@keyframes tip-sheen{0%{transform:translateX(-110%)}16%{transform:translateX(110%)}100%{transform:translateX(110%)}}
+@keyframes tip-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.header-tip,.header-tip:hover .jar{animation:none}.header-tip::after{display:none}}
+
+.ev{display:flex;gap:14px;background:var(--card);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:10px;padding:12px 14px;margin:10px 0}
+.ev-time{font-weight:800;color:var(--accent);min-width:92px;font-size:14px;line-height:1.4;padding-top:2px}
+.ev-time span{color:var(--muted);font-weight:600;font-size:12.5px}
+.ev-body{flex:1;min-width:0}
+.ev-body h3{font-size:17px;line-height:1.3;margin-bottom:3px}
+.ev-venue{color:var(--muted);font-size:14px;margin-bottom:4px}
+.ev-venue a{color:var(--accent);text-decoration:none}
+.ev-body p{font-size:15px;line-height:1.5}
+.burn-call{display:inline-block;background:var(--accent);color:#fff !important;font-weight:800;font-size:19px;padding:10px 18px;border-radius:999px;text-decoration:none;letter-spacing:.2px}
+@media (max-width:560px){.ev{flex-direction:column;gap:2px}.ev-time{min-width:0}}
+
+.hist-hl{background:linear-gradient(135deg,rgba(212,175,55,.16),rgba(212,175,55,.05));border:1px solid #d4af37;border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.hist-hl b{color:#8a6d1f}
+
+.intro-card{border-top:4px solid var(--accent)}
+.skyfig{margin:0 0 10px}
+.skyfig img{width:100%;height:auto;border-radius:8px;display:block}
+.skyfig figcaption{color:var(--muted);font-size:12.5px;margin-top:5px}
+.sugg label{display:block;font-weight:700;font-size:13.5px;margin:10px 0 4px}
+.sugg input[type=text],.sugg textarea{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font:inherit;font-size:15px}
+.sugg button{margin-top:12px;background:var(--accent);color:#fff;border:0;font-weight:800;font-size:15px;padding:10px 18px;border-radius:999px;cursor:pointer}
+
+@media (max-width:640px){
+.topbar{flex-wrap:wrap;gap:6px 10px;padding:8px 2px}
+.topbar>span{font-size:14px;white-space:nowrap}
+.topbar nav{order:3;flex:1 1 100%;margin-left:0;gap:16px;font-size:13px;flex-wrap:wrap}
+.topbar nav a{white-space:nowrap}
+.topbar .header-tip{margin-left:auto;font-size:12.5px;padding:6px 11px;flex:none}
+}
+</style>
+<style>
+/* Gazette tip jar — livelier: wiggle-spin cycle + glow pulse (Dave, Oct 31 2026) */
+.header-tip{animation:tip-breathe 3.2s ease-in-out infinite,jar-glow 4.5s ease-in-out infinite}
+@keyframes jar-glow{0%,100%{box-shadow:0 4px 14px rgba(124,77,255,.35)}50%{box-shadow:0 4px 28px rgba(124,77,255,.8)}}
+.header-tip .jar{animation:jar-party 9s ease-in-out infinite;transform-origin:50% 60%}
+@keyframes jar-party{0%,64%{transform:rotate(0deg) scale(1)}70%{transform:rotate(-16deg) scale(1.14)}76%{transform:rotate(12deg) scale(1.14)}84%{transform:rotate(372deg) scale(1.3)}92%,100%{transform:rotate(360deg) scale(1)}}
+@media (prefers-reduced-motion: reduce){.header-tip .jar{animation:none}.header-tip{animation:none}}
+</style>
+<style>
+/* Ticker bar (Dave, Nov 4, 2026) — the IN THIS EDITION strip is ONE sticky row in ticker style:
+   it sticks under the topbar, and the section list slides horizontally (drag with mouse, swipe on
+   touch, wheel/trackpad natively). The builder script below still generates the items live from the
+   page's own <h2>s; the static items in #toc-list are only a no-JS fallback. */
+#toc{position:sticky;top:52px;z-index:55;display:flex;align-items:center;gap:10px;background:var(--bg);border-top:3px double var(--ink);border-bottom:1px solid var(--border);padding:7px 0;margin:16px 0 6px}
+.ticker-slug{flex:none;font-family:-apple-system,sans-serif;font-size:10.5px;font-weight:800;letter-spacing:.14em;color:var(--gold);text-transform:uppercase;white-space:nowrap}
+.ticker-wrap{position:relative;flex:1;min-width:0}
+#toc-list{display:flex;flex-wrap:nowrap;align-items:center;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;cursor:grab;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+#toc-list::-webkit-scrollbar{display:none}
+#toc-list.dragging{cursor:grabbing}
+#toc-list.dragging a{pointer-events:none}
+.ticker-item{flex:none;white-space:nowrap;color:var(--text);text-decoration:none;font-family:-apple-system,sans-serif;font-size:13px;font-weight:600;line-height:1.5;padding:3px 0}
+.ticker-item:hover{color:var(--accent)}
+.ticker-item + .ticker-item::before{content:'•';margin:0 9px;color:var(--gold);font-weight:400}
+.ticker-arch{color:var(--gold);font-weight:700}
+.ticker-fade{position:absolute;top:0;bottom:0;width:46px;pointer-events:none;display:flex;align-items:center;transition:opacity .25s}
+.ticker-fade.right{right:0;justify-content:flex-end;background:linear-gradient(to right,transparent,var(--bg) 78%)}
+.ticker-fade.left{left:0;justify-content:flex-start;background:linear-gradient(to left,transparent,var(--bg) 78%);opacity:0}
+.ticker-fade .chev{font-family:-apple-system,sans-serif;font-size:20px;font-weight:800;color:var(--accent);padding:0 2px;animation:ticker-chev 1.8s ease-in-out infinite}
+@keyframes ticker-chev{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
+@media (prefers-reduced-motion: reduce){.ticker-fade .chev{animation:none}}
+@media (max-width:640px){.ticker-slug{display:none}.ticker-item{font-size:12.5px}}
+[id]{scroll-margin-top:112px}
+@media (max-width:640px){[id]{scroll-margin-top:150px}}
+</style>
+
+<style id="fg-lightbox-style">
+#fg-lightbox{position:fixed;inset:0;z-index:200;background:rgba(12,10,8,.94);display:none;align-items:center;justify-content:center;flex-direction:column}
+#fg-lightbox.open{display:flex}
+#fg-lightbox img{max-width:96vw;max-height:82vh;object-fit:contain;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,.6)}
+#fg-lb-close{position:absolute;top:14px;right:14px;width:56px;height:56px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.55);color:#fff;font-size:30px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:-apple-system,system-ui,sans-serif;z-index:201;-webkit-tap-highlight-color:transparent}
+#fg-lb-close:active{transform:scale(.93)}
+#fg-lb-cap{color:#f3ead8;font-family:Georgia,serif;font-size:15px;line-height:1.45;text-align:center;padding:14px 22px 2px;max-width:94vw}
+#fg-lb-hint{color:#b9ac93;font-family:-apple-system,system-ui,sans-serif;font-size:12.5px;padding:4px 0 12px}
+body.fg-lb-lock{overflow:hidden}
+body img{cursor:zoom-in}
+</style>
+</head>
+<body>
+<div id="fg-lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button id="fg-lb-close" type="button" aria-label="Close photo">✕</button>
+  <img id="fg-lb-img" alt="">
+  <div id="fg-lb-cap"></div>
+  <div id="fg-lb-hint">Tap outside the photo, or the ✕, to go back</div>
+</div>
+
+<div class="topbar"><span>🗞️ The Fiddletown Gazette</span><nav><a href="index.html">Front Page</a><a href="archive.html">Editions Archive</a><a href="#colophon">About</a></nav><a class="header-tip" href="https://ko-fi.com/davedellaquila" target="_blank" rel="noopener" aria-label="Tip Jar — if this page helped you, you can leave Dave a tip on Ko-fi"><span class="jar" aria-hidden="true">🫙</span><span>Tip Jar</span></a></div>
+
+<header class="masthead">
+  <div class="kicker">Fiddletown &amp; the Shenandoah Valley · Updated all day</div>
+  <h1>The Fiddletown Gazette</h1>
+  <p class="dateline"><!-- EDITION:DATE -->Thursday, November 5, 2026<!-- /EDITION:DATE --> · <!-- EDITION:NAME -->Morning Edition — published 6:00 AM PT<!-- /EDITION:NAME --></p>
+  <div><span class="weatherbug">🌤️ <!-- WEATHER:BUG -->Sunny today, high 66° — tonight mostly clear, low 46°; no NWS alerts; all foothill highways clear, no restrictions (NWS / Caltrans)<!-- /WEATHER:BUG --></span></div>
+  <div class="rule"></div>
+</header>
+
+<!-- BANNER: out-of-cycle safety banner is injected here by the hourly poll when a qualifying event breaks. -->
+<div id="safety-banner"></div>
+
+<nav id="toc" aria-label="Table of contents">
+<span class="ticker-slug" aria-hidden="true">In this edition</span>
+<div class="ticker-wrap">
+<div id="toc-list"><a class="ticker-item" href="#the-lead">The Lead</a><a class="ticker-item" href="#safety-wire">🚨 Need to Know — the Safety Wire</a><a class="ticker-item" href="#today-events">Today in the Foothills</a><a class="ticker-item" href="#week-events">The Week Ahead</a><a class="ticker-item" href="#community-center">🎻 At the Fiddletown Community Center</a><a class="ticker-item" href="#history">📜 This Day in History</a><a class="ticker-item" href="#star-chart">🔭 Star Chart</a><a class="ticker-item" href="#on-the-wing">🐦 On the Wing</a><a class="ticker-item" href="#critter-desk">🌲 The Wild Side</a><a class="ticker-item" href="#nans-corner">✉️ Nan's Corner</a><a class="ticker-item" href="#editors-desk">✒️ From the Editor's Desk</a><a class="ticker-item" href="#around-town">Around Town</a><a class="ticker-item" href="#carl">🚜 What's Carl Working On</a><a class="ticker-item" href="#kathys-corner">✉️ Kathy's Corner</a><a class="ticker-item" href="#winsteds">🏆 The Winsteds' Bocce Court</a><a class="ticker-item" href="#community-wire">The Community Wire</a><a class="ticker-item" href="#weather">Weather</a><a class="ticker-item" href="#almanac">🌅 The Almanac</a><a class="ticker-item" href="#recipe-corner">🍞 Nan's Recipe Corner</a><a class="ticker-item" href="#swagger">🍺 Swager's Clubhouse</a><a class="ticker-item" href="#marcis-corner">✉️ Marci's Corner</a><a class="ticker-item" href="#burn-line">🔥 Burn Day Line</a><a class="ticker-item" href="#more-gazette">🗞️ More from the Gazette</a><a class="ticker-item" href="#suggestion-box">📬 The Suggestion Box</a><a class="ticker-item ticker-arch" href="recipes.html">📚 Recipe Archive</a><a class="ticker-item ticker-arch" href="sightings.html">📚 Sightings Archive</a><a class="ticker-item ticker-arch" href="archive.html">📚 Editions Archive</a></div>
+<div class="ticker-fade left" id="ticker-fade-l" aria-hidden="true"><span class="chev">‹</span></div>
+<div class="ticker-fade right" id="ticker-fade-r" aria-hidden="true"><span class="chev">›</span></div>
+</div>
+</nav>
+<section class="lead" id="the-lead">
+  <p class="meta">The Lead</p>
+  <h2><!-- LEAD:HEADLINE -->Thursday in the foothills: sun and 66°, a business morning in Jackson and rail bikes out of Ione — and tonight, the clearest sky of the week<!-- /LEAD:HEADLINE --></h2>
+  <p><!-- LEAD:BODY -->Thursday, November 5 — the foothills get the week's plainest, best forecast: <b>sunny, high near 66°</b>, and <b>no National Weather Service alerts</b> in effect. The roads match it: Caltrans' 6:08 AM report lists <b>no restrictions on SR-88, SR-49, or SR-124</b>, and the CHP's live CAD board for the Stockton center, checked at 6:13 AM, shows <b>no incidents in the foothills</b> — its three calls are all down in Stockton and Tracy. The events desk carries no public items in the beat today, so the day's schedule comes from the morning calendar sweep: <b>Brewing Business in Amador</b> meets 8:00–10:00 AM on Main Street, Jackson, and the <b>Amador Rail Explorers</b> run 8:00 AM–5:30 PM out of Ione. One caution rides with the calendar: the Amador County Museum's listing shows Thursday hours its own description contradicts — the paper prints both, below, so nobody drives on a maybe. Tonight turns <b>mostly clear, low 46°</b> — the best sky of the week after last night's cloudy Taurid peak: Saturn from dusk, the Moon down until 4:10 AM, and Taurid fireballs still active after midnight. And the paper has a name to announce: the Critter Desk ballot has closed, and the desk is <b>The Wild Side</b> from today.<!-- /LEAD:BODY --></p>
+</section>
+
+<div class="grid">
+<main>
+  <h2>🚨 Need to Know — the Safety Wire</h2>
+<div id="safety-wire">
+    <div class="item"><p><b>Roads — all foothill highways clear; the CHP board is quiet for the foothills.</b> Caltrans' morning report (6:08–6:09 AM) lists <b>no traffic restrictions on SR-88, SR-49 in the central area, or SR-124</b> — SR-49's only listed work is one-way controlled traffic far north in Nevada and Sierra counties, outside the beat. The CHP's live CAD Traffic board (Stockton center), read at 6:13 AM, shows 3 incidents, <b>none of them in the foothills</b> — a traffic hazard and a maintenance assist in Stockton and a traffic hazard in Tracy, all on I-5/I-205. Nothing on SR-49, SR-88, SR-124, or SR-16, and nothing in Fiddletown, Plymouth, Jackson, or Sutter Creek. Foothill driving today is dry and unrestricted.</p><p class="meta">Sources: <a href="https://roads.dot.ca.gov/?roadnumber=88">Caltrans highway information (SR-88)</a> · <a href="https://roads.dot.ca.gov/?roadnumber=49">SR-49</a> · <a href="https://roads.dot.ca.gov/?roadnumber=124">SR-124</a> · <a href="https://cad.chp.ca.gov/Traffic.aspx">CHP CAD Traffic (Stockton center)</a> · checked 6:08–6:13 AM PT, Nov 5</p></div>
+    <div class="item"><p><b>Weather — no alerts; a sunny day, a mostly clear night.</b> <b>No NWS alerts are in effect for the Fiddletown area at the 6:00 AM check</b> — no warnings, watches, or advisories (alerts feed verified empty at press time). Today is sunny with a high near 66°, temperatures falling to around 61° in the afternoon, northwest wind 1 to 5 mph. Tonight is mostly clear with a low around 46°. The fair run holds: Friday mostly sunny 68°, Saturday sunny 72°, Sunday sunny 71°, with the week's first hint of rain not until a slight chance late Tuesday night. No weather event is in progress; nothing safety-relevant is forecast.</p><p class="meta">Source: National Weather Service (api.weather.gov), Sacramento forecast for Fiddletown · Checked 6:05 AM PT, Nov 5</p></div>
+    <div class="item"><p><b>Fire weather — no concerns.</b> Light winds and a clear, cool night ahead; no Red Flag Warnings. Burn-day status: the paper does not state it — the recorded Burn Day Line in the rail (updated daily 4–5 PM) is the authority; call before lighting any outdoor fire.</p><p class="meta">Source: National Weather Service, Sacramento · Nov 5</p></div>
+  </div>
+
+  <h2>Today in the Foothills</h2>
+<div id="today-events">
+    <p style="margin-bottom:6px"><b>Today in the foothills: a Jackson business morning and rail bikes out of Ione, under a sunny sky.</b> The events desk carries <b>no isPublic items in the beat for Thu Nov 5</b> (its Nov 5 public items are in San Francisco, San José, and Petaluma, an online talk, and two non-public listings — none in the beat, none printed). The morning sweep of the public calendars: <a href="https://www.visitamador.com/events">Visit Amador</a>, read live this morning, lists three entries for today — the two event cards below plus the museum note; <a href="https://amadorwine.com/events/">Amador Wine Country</a> lists 0 events for Nov 5 (its next listing is Sun Nov 8), <a href="https://bestofamador.com/events/">Best of Amador</a> shows no Nov 5 listing in the copy available to the paper's reader (that copy is stale — the desk says so plainly), and <a href="https://events.lodedown.com/amador/community">events.lodedown.com (Amador)</a>, read live this morning, shows nothing for Nov 5 (next is Fri Nov 6). Count for the record: desk items in the beat today, 0; calendar finds, 2; standing listings noted, 1 — with a conflict flagged.</p>
+    <article class="ev"><div class="ev-time">8:00 AM<br><span>– 10:00 AM</span></div><div class="ev-body"><h3>Brewing Business in Amador</h3><p class="ev-venue">📍 <a href="https://maps.apple.com/?q=215%20N%20Main%20St%2C%20Jackson%2C%20CA%2095642">215 N. Main St, Jackson</a></p><p>Thursday-morning business gathering in Jackson — the recurring series' final listed date on the Visit Amador calendar. A sunny 66° day for the drive in; doors under a clear morning sky.</p><p class="meta" style="margin-top:5px">Source: <a href="https://www.visitamador.com/events">Visit Amador — events</a> (read live) · Checked 6:11 AM PT, Nov 5</p></div></article>
+    <article class="ev"><div class="ev-time">8:00 AM<br><span>– 5:30 PM</span></div><div class="ev-body"><h3>Amador Rail Explorers</h3><p class="ev-venue">📍 Rail Explorers Amador Staging Area — parking &amp; check-in: <a href="https://maps.apple.com/?q=702%20Hunter%20Lane%2C%20Ione%2C%20CA%2095640">702 Hunter Lane, Ione</a></p><p>Rail-bike runs out of the Amador staging area, running Thu–Sun this week, 8:00 AM–5:30 PM each day. Today is the week's first run day, and the weather cooperates: sun all day, high near 66°.</p><p class="meta" style="margin-top:5px">Source: <a href="https://www.visitamador.com/events">Visit Amador — events</a> (read live) · Checked 6:11 AM PT, Nov 5</p></div></article>
+    <p style="margin-top:8px"><b>Standing listing — with a conflict the paper won't hide:</b> the <b>Amador County Museum</b>, <a href="https://maps.apple.com/?q=225%20Church%20St%2C%20Jackson%2C%20CA%2095642">225 Church St, Jackson</a>, is listed today at <b>11:00 AM – 3:00 PM</b> on Visit Amador — but the museum's own description on the same page says it is open <b>Fridays, Saturdays, and Sundays</b>, and today is a Thursday. The listing looks like a recurring entry the calendar surfaces daily. <b>Call before you drive:</b> <a href="tel:+12092571485">(209) 257-1485</a>.</p>
+    <p class="meta" style="margin-top:5px">Source: <a href="https://www.visitamador.com/events">Visit Amador — events</a> (read live) · Checked 6:11 AM PT, Nov 5</p>
+  </div>
+
+
+  <h2>The Week Ahead</h2>
+  <div id="week-events">
+    <div class="item"><p><b>Today, Thu Nov 5, 8:00–10:00 AM — Brewing Business in Amador,</b> <a href="https://maps.apple.com/?q=215%20N%20Main%20St%2C%20Jackson%2C%20CA%2095642">215 N. Main St, Jackson</a>; and the <b>Amador Rail Explorers</b> run Thu–Sun, 8:00 AM–5:30 PM from the Rail Explorers Amador Staging Area (check-in in Ione). See Today in the Foothills, above.</p><p class="meta">Source: <a href="https://www.visitamador.com/events">Visit Amador — events</a> (read live) · Checked Nov 5</p></div>
+    <div class="item"><p><b>Fri Nov 6, 11:30 AM–2:00 PM — Rob's Food Friday,</b> Bella Grace Vineyards, Plymouth. Chef Rob cooks lunch in the wine cave, with a wine pairing and a view across the vineyard. Lunch is $5 for club members and $10 for everyone else.</p><p class="meta">Source: events desk (public listing) · Nov 4</p></div>
+    <div class="item"><p><b>Fri Nov 6, 11:00 AM–1:00 PM — Art Hop,</b> Central Valley Training Center, Jackson; <b>6:00–8:00 PM — Christmas Boutique,</b> Grace Fellowship Church, Jackson (the boutique returns Sat Nov 7, 10:00 AM–3:00 PM); and <b>7:30–9:30 PM — On The Farce Day of Christmas (opening night),</b> Cobblestone Theatre, Volcano ($24; the Volcano Theatre Company holiday comedy runs through Dec 13).</p><p class="meta">Sources: <a href="https://events.lodedown.com/amador/community">LodeDown — Amador community events</a> · <a href="https://bestofamador.com/events/">Best of Amador — events calendar</a> · Checked Nov 4</p></div>
+    <div class="item"><p><b>Sat Nov 7, 9:00 AM–12:00 PM — Vermicomposting: Building Your Own Worm Bin,</b> GSA Building, Jackson; <b>1:00–3:00 PM — Candy Cash Out,</b> First 5 Amador, Jackson (kids trade leftover Halloween candy for games and prizes); and <b>6:00–9:00 PM — Italian Benefit Society Shrimp Feed,</b> Italian Picnic Grounds, Sutter Creek ($40).</p><p class="meta">Sources: <a href="https://events.lodedown.com/amador/community">LodeDown — Amador community events</a> · <a href="https://bestofamador.com/events/">Best of Amador — events calendar</a> · Checked Nov 4</p></div>
+    <div class="item"><p><b>Sat Nov 7, 11:00 AM — Fair Play Harvest Festival,</b> Golden Leaves Vineyard &amp; Winery, Somerset. Billed as the Fair Play event of the year; proceeds support the Fair Play Winery Association. <i>Note: the winery's newsletter gives the festival's dates two ways (Nov 6–7 in its text, Nov 7–8 in its heading) — check Golden Leaves before you drive.</i></p><p class="meta">Source: events desk (public listing) · Nov 4</p></div>
+    <div class="item"><p><b>Sat Nov 7, 4:00–9:00 PM — Ghosts of the Gold Rush World Premiere,</b> Kennedy Gold Mine, Jackson. General admission $40, VIP $100.</p><p class="meta">Source: <a href="https://events.lodedown.com/amador/community">LodeDown — Amador community events</a> · Checked Nov 4</p></div>
+    <div class="item"><p><b>Sat Nov 7, 5:15 PM — Peace Officer &amp; Citizen of the Year Awards Banquet,</b> American Legion Hall, Sutter Creek. $45; tickets in advance only, none at the door.</p><p class="meta">Source: <a href="https://events.lodedown.com/2026-peace-officer-and-citizen-of-the-year-awards-banquet-sutter-creek-2026-11-07">LodeDown event page</a> · Verified Oct 31</p></div>
+    <div class="item"><p><b>Sun Nov 8, 11:00 AM–5:00 PM — Art &amp; Wine Stroll in Sutter Creek,</b> Main Street, Sutter Creek. Six tasting rooms turn into galleries for the day; at Bella Grace's tasting room, meet painter Ron Antone and taste the 1646 Red Blend with a Tuscan squash soup. Tickets are $40. Also Sun Nov 8, <b>3:00–6:00 PM — Three for Silver</b> (live music), <a href="https://maps.apple.com/?q=15950%20Highway%2049%2C%20Drytown%2C%20CA%2095699">15950 Highway 49, Drytown</a>.</p><p class="meta">Sources: events desk (public listing) · <a href="https://www.visitamador.com/events">Visit Amador — events</a> · Nov 4</p></div>
+    <div class="item"><p><b>Tue Nov 10, 5:00–10:00 PM — Marine Corps Birthday Ball,</b> Castle Oaks Golf Course, Ione. $50 adults, $25 children. And <b>Wed Nov 11, 10:00 AM — Veterans Day Parade,</b> Jackson. Free.</p><p class="meta">Source: <a href="https://events.lodedown.com/amador/community">LodeDown — Amador community events</a> · Checked Nov 4</p></div>
+    <p class="meta" style="margin-top:8px">🏛️ Community Center doings have a hall of their own now — see <a href="#community-center" style="color:var(--accent)">At the Fiddletown Community Center</a>, just below.</p>
+  </div>
+
+<style id="fcc-style">
+.fcc-banner{display:block;position:relative;border-radius:10px;overflow:hidden;text-decoration:none;margin:-4px -4px 12px;background:#3a2c14 url('media/fcc-giant-fiddle.jpg') center 32%/cover no-repeat;min-height:158px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.25)}
+.fcc-banner::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(24,16,4,.80) 0%,rgba(24,16,4,.55) 48%,rgba(24,16,4,.06) 80%)}
+.fcc-banner .fcc-in{position:relative;z-index:1;padding:20px 18px 16px;max-width:64%}
+.fcc-banner .fcc-kick{font-size:11px;letter-spacing:.16em;font-weight:700;color:#ffd98a;text-transform:uppercase;margin:0 0 5px}
+.fcc-banner .fcc-t{font-family:Georgia,'Times New Roman',serif;font-size:25px;font-weight:700;line-height:1.18;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.55);margin:0 0 6px}
+.fcc-banner .fcc-sub{color:#f3e5c3;font-size:13.5px;margin:0;text-shadow:0 1px 6px rgba(0,0,0,.65)}
+.fcc-banner .fcc-go{color:#ffd98a;font-weight:700;white-space:nowrap}
+@media (max-width:640px){.fcc-banner .fcc-in{max-width:88%;padding:16px 14px 13px}.fcc-banner .fcc-t{font-size:20px}.fcc-banner{min-height:138px}}
+</style>
+<h2>🎻 At the Fiddletown Community Center</h2>
+<div class="card" id="community-center">
+<a class="fcc-banner" href="https://fiddletowncc.org/" aria-label="Fiddletown Community Center — fiddletowncc.org">
+  <div class="fcc-in">
+    <p class="fcc-kick">🏛️ Fiddletown Community Center</p>
+    <p class="fcc-t">Under the Big Fiddle</p>
+    <p class="fcc-sub">Home of the giant fiddle on the roof — and of half the town's calendar. <span class="fcc-go">fiddletowncc.org →</span></p>
+  </div>
+</a>
+<p style="margin-bottom:8px">Three dates to circle at the hall this month — all three came in on flyers from the Center, via Nan:</p>
+<article class="ev"><div class="ev-time">Sun Nov 8<br><span>3:00–5:00 PM</span></div><div class="ev-body"><h3>Game Night (all ages)</h3><p class="ev-venue">📍 <a href="https://maps.apple.com/?q=Fiddletown%20Community%20Center%2C%20Fiddletown%2C%20CA" style="color:var(--accent);text-decoration:none">Fiddletown Community Center</a></p><p>Ping pong, corn hole, darts, board games, backgammon, and Mexican Train — bring a board game to share. Contact: Becky · info@fiddletowncc.org.</p><p class="meta" style="margin-top:5px">Source: flyer sent by Nan (Fiddletown Community Center) · printed Nov 1</p></div></article>
+<article class="ev"><div class="ev-time">Sat Nov 14<br><span>doors 5 PM · dinner 6 PM</span></div><div class="ev-body"><h3>Thanksgiving Pot Luck</h3><p class="ev-venue">📍 <a href="https://maps.apple.com/?q=Fiddletown%20Community%20Center%2C%20Fiddletown%2C%20CA" style="color:var(--accent);text-decoration:none">Fiddletown Community Center</a></p><p>Turkey, ham &amp; gravy provided; bring a side or dessert. Raffle of 25+ items.</p><p class="meta" style="margin-top:5px">Source: flyer sent by Nan (Fiddletown Community Center) · printed Nov 1</p></div></article>
+<article class="ev"><div class="ev-time">Sat Nov 28<br><span>doors 6 PM · show 7 PM</span></div><div class="ev-body"><h3>Geoffrey Miller and the Rockin' Rousers + dance lessons</h3><p class="ev-venue">📍 <a href="https://maps.apple.com/?q=Fiddletown%20Community%20Center%2C%20Fiddletown%2C%20CA" style="color:var(--accent);text-decoration:none">Fiddletown Community Center</a></p><p>Free dance instruction 6:15–7 PM (Dave and Alecia West), then the show at 7 PM. $20 advance / $25 door. Questions: Bob Hines · info@fiddletowncc.org.</p><p class="meta" style="margin-top:5px">Source: flyer sent by Nan (Fiddletown Community Center) · printed Nov 1</p></div></article>
+<p class="meta" style="margin-top:8px">Banner photo: the big fiddle atop the Community Center roof, via <a href="https://sierranevadageotourism.org/entries/fiddletown-annual-fiddlers-jam/e3e5e72f-a0cd-477a-bc6d-a0b0a1cac2a2" style="color:var(--accent)">Sierra Nevada Geotourism</a>. The Center's own site: <a href="https://fiddletowncc.org/" style="color:var(--accent)">fiddletowncc.org</a>.</p>
+</div>
+
+<h2>📜 This Day in History — Nov 5</h2>
+  <div class="card" id="history">
+    <div class="hist-hl"><p>⭐ <b>From California — a Californian elected President, 1968:</b> on this day, <b>Tuesday, Nov 5, 1968</b>, Republican <b>Richard M. Nixon</b> — born in Yorba Linda, raised in California, and the state's former U.S. Senator — defeats Vice President Hubert Humphrey in one of the closest presidential elections in U.S. history. The same day, Shirley Chisholm of New York becomes the first Black woman elected to Congress. The editor dug back to 1848 for this date in our hills, as the publisher directed: <b>no verified Fiddletown or Amador event falls on Nov 5</b> in the Gold Rush years or since that the desk could confirm — so today's highlight is California's own on the national stage, labeled as such. (One near-miss the desk would not stretch: the Lancha Plana Dispatch moved to Jackson and took the Amador Dispatch name sometime that November of 1860 — no source pins it to Nov 5, so it does not run as a Nov 5 item.)</p></div>
+    <p><b>1872 — Susan B. Anthony votes.</b> In Rochester, New York, Anthony and 14 other women cast ballots in the presidential election — 48 years before the 19th Amendment gave women the vote nationwide. She was arrested two weeks later, convicted, and fined $100, which she famously never paid.</p>
+    <p style="margin-top:8px"><b>Nov 5 is an Election Day date:</b> Woodrow Wilson is elected in a four-way landslide in <b>1912</b> (435 electoral votes to Theodore Roosevelt's 88 and President Taft's 8), and Franklin D. Roosevelt wins an unprecedented <b>third term</b> in <b>1940</b>.</p>
+    <p style="margin-top:8px">Wider page: <b>1605</b> the Gunpowder Plot is foiled — Guy Fawkes found guarding the gunpowder under Parliament ("Remember, remember, the fifth of November") · <b>1994</b> former California governor Ronald Reagan releases a handwritten letter announcing his Alzheimer's diagnosis — the same day George Foreman, at 45, becomes boxing's oldest heavyweight champion.</p>
+    <p class="meta" style="margin-top:8px">Sources: HISTORY — This Day in History, November 5 · USA Today, Today in History — Nov 5 · Smithsonian Magazine (Anthony, 1872) · Wikipedia, Amador Ledger-Dispatch (the Dispatch's November 1860 move — month only) · Checked Nov 5, 2026</p>
+  </div>
+
+    <h2>🔭 Star Chart — Tonight over Fiddletown</h2>
+  <div class="card" id="star-chart">
+    <figure class="skyfig"><img src="sky/2026-11-05.png" alt="Chart of tonight's visible planets and Moon over Fiddletown: Saturn peaking at 53 degrees around 9:39 PM, Mars and Jupiter rising around midnight, the waning Moon rising at 4:10 AM, Venus before dawn"><figcaption>Tonight over Fiddletown — the Moon and visible planets, sunset to sunrise. Higher on the chart = higher in the sky = easier to see. (Chart: the Gazette sky desk, computed for Fiddletown.)</figcaption></figure>
+    <p><b>Tonight's chart (~8 PM, facing south):</b> <b>Saturn</b> owns the evening again — about 46° up in the southeast at 8 PM and peaking at 53° around 9:39 PM. The Great Square of Pegasus rides high overhead, Cassiopeia climbs in the northeast, and Taurus — the Taurid radiant — rides the east through the evening. The evening is moonless — the Moon doesn't rise until 4:10 AM.</p>
+    <p style="margin-top:8px"><b>🌒 Moon:</b> <b>waning crescent, about one-tenth lit (~10%)</b> — past last quarter (Nov 1) and thinning toward the Nov 9 new moon. It sets at 2:55 PM today and rises at 4:10 AM, so the whole evening is properly dark.</p>
+    <p style="margin-top:8px"><b>Planets up:</b> <b>Saturn</b> takes the evening — high in the south all evening, setting about 3:45 AM. <b>Mars</b> rises about 11:45 PM and <b>Jupiter</b> about 12:10 AM, both brilliant before dawn. <b>Venus</b> is a pre-dawn object only, rising about 5:05 AM. <b>Mercury</b> is below the horizon at sunset — not an evening target tonight.</p>
+    <p style="margin-top:8px"><b>Notable — the Southern Taurids, one night past peak:</b> the stream peaked last night (Nov 4–5) and is still active tonight — the slow, bright "fireballs" from Comet 2P/Encke's debris, at modest rates (about 5–10 meteors an hour under dark skies, per the American Meteor Society) with occasional fireballs brighter than Venus. Best hours are around and after midnight, when Taurus rides high. The Northern Taurids build toward Nov 11–12, and the Orionids wind down through Nov 7.</p>
+    <p style="margin-top:8px"><b>Viewing note (honest):</b> the best sky of the week so far — no gaps to work tonight. The fresh NWS forecast calls tonight <b>mostly clear</b> with a low around 46°, and the hourly picture stays clear to mostly clear all night. After last night's cloudy peak, tonight is the consolation prize, and it's a good one: Saturn from dusk under a moonless sky, fireball-watching after midnight. Dress warm — the low 40s by the small hours.</p>
+    <p class="meta" style="margin-top:8px">Sources: Gazette sky desk (skyfield, computed for Fiddletown) · American Meteor Society / EarthSky (Taurids) · NWS Sacramento (conditions) · Checked Nov 5</p>
+  </div>
+
+    <h2>🐦 On the Wing</h2>
+  <div class="card" id="on-the-wing">
+    <p class="meta" style="margin-bottom:6px">THE GAZETTE'S BIRD-WATCHING DESK</p>
+    <p><b>The desk is listening.</b> On the Wing carries the foothills' bird sightings — photos, footage, and field notes, town name only, as always. Pieces fly the front page for four days, then retire to the archive, where every published sighting stays on the record.</p>
+    <p style="margin-top:8px">Our first sighting — a red-shafted Northern Flicker filmed on a Fiddletown deck on Halloween morning — has retired to the archive on schedule: 📚 <a href="sightings.html"><b>The Sightings Archive</b></a>.</p>
+    <p style="margin-top:8px"><b>Send yours:</b> a photo or a few lines through the Suggestion Box below, and the desk will do the rest.</p>
+  </div>
+
+
+  <h2>🌲 The Wild Side</h2>
+  <div class="card" id="critter-desk">
+    <p class="meta" style="margin-bottom:6px">LOCAL CRITTER SIGHTINGS — THE DESK HAS ITS NAME, NOV 5, 2026</p>
+    <p><b>The ballot is closed, and the desk has a name: The Wild Side.</b> The reader ballot that opened Oct 31 closed today, Thu Nov 5, under the desk's standing close rule — no new ballots arrived by the deadline (the final check ran this morning; the count never moved after Nov 2). The final tally stands tied, <b>The Wild Side 1 · Who Goes There? 1</b>, two votes counted — and under the publisher's Nov 2 ruling, the desk takes the name of his original vote: <b>The Wild Side</b>. The ballot block and vote chart come out of the paper today, as the ruling directed; the Editor thanks the foothills for voting, all two of you, and notes the tie was broken the way ties around here usually are — by the fellow who owns the press, voting first.</p>
+    <p style="margin-top:8px">The foothills are full of neighbors who don't read the paper: deer in the garden, turkeys in the road, the occasional bobcat acting like it pays taxes. This desk carries their sightings — photos, footage, and field notes, town name only, as always.</p>
+    <p style="margin-top:8px"><b>Front-page retirements today:</b> the desk's two Nov 1 sightings — the doe ("The Morning Visitor") and the western gray squirrel ("Breakfast, Held in Both Paws") — retire from the front page on the paper's four-day rule. Both stay on the permanent record in the 📚 <a href="sightings.html"><b>Sightings Archive</b></a>.</p>
+    <p style="margin-top:8px"><b>Sightings are open:</b> send yours through the Suggestion Box below — every logged sighting joins the <a href="sightings.html">Sightings Archive</a>.</p>
+    <p class="meta" style="margin-top:6px">The desk opened Oct 31, 2026 as the Critter Desk · Named The Wild Side Nov 5, 2026 · Birds keep their own desk at On the Wing, above</p>
+  </div>
+
+    <h2>✉️ Nan's Corner</h2>
+  <div class="card" id="nans-corner">
+    <p class="meta" style="margin-bottom:6px">OUR FOUNDING CONTRIBUTOR</p>
+    <p>The Gazette has a correspondent. <b>Nan Dell'Aquila</b> writes this corner — dispatches, notes, and observations from her side of the foothills — filed by email and printed under her byline, as she sends them. (Her cooking lives in Nan's Recipe Corner, over in the rail; this corner is for everything else.)</p>
+    <div id="nan-pieces"><div class="item nan-piece" id="nan-1a1932a0"><h3>Bourbon Maple Old Fashioned</h3><p class="meta">By Nan Dell'Aquila · Sat Oct 31, 2026</p><a href="https://recipekeeperonline.com/recipe/Khzi-slNwU28iCbO6X4kcA"><img src="media/bourbon-maple-old-fashioned.jpg" alt="A Bourbon Maple Old Fashioned over one large cube, orange twist on the rim" style="width:100%;max-width:230px;border-radius:10px;display:block;margin:8px 0"></a><p>Nan's second filing of the day swaps the oven for the cocktail shaker: a <b>Bourbon Maple Old Fashioned</b>, straight from her recipe card — bourbon, maple syrup, and bitters, shaken twenty times and poured over one big cube. It runs in full in <a href="#recipe-corner">Nan's Recipe Corner</a>, photo included and tappable to the original, per her standing request.</p><p class="meta" style="margin-top:5px">Filed by email · Her card: <a href="https://recipekeeperonline.com/recipe/Khzi-slNwU28iCbO6X4kcA">Recipe Keeper — Bourbon Maple Old Fashioned</a> · Original recipe: The Wall Street Journal</p></div><div class="item nan-piece" id="nan-1a192f0d"><h3>Pecan Pie Brownies</h3><p class="meta">By Nan Dell'Aquila · Sat Oct 31, 2026</p><a href="https://recipekeeperonline.com/recipe/mYASZ4Kl80i3wPVxEw8I6g"><img src="media/pecan-pie-brownies.jpg" alt="Pecan pie brownie — Nan's first filed recipe" style="width:100%;max-width:230px;border-radius:10px;display:block;margin:8px 0"></a><p>Nan's first piece for the paper arrived the way her best things do — no preamble, just the goods: a link to her recipe card for <b>Pecan Pie Brownies</b>. It runs in full in <a href="#recipe-corner">Nan's Recipe Corner</a>, over in the rail. Welcome to the masthead, Nan.</p><p class="meta" style="margin-top:5px">Filed by email · Her card: <a href="https://recipekeeperonline.com/recipe/mYASZ4Kl80i3wPVxEw8I6g">Recipe Keeper — Pecan Pie Brownies</a></p></div></div>
+    <p style="margin-top:8px"><b>Retired today:</b> Nan's <b>Chicken Parmesan Rolls</b> piece (Nov 1) leaves the front page on the paper's four-day rule for contributed pieces. The recipe itself is not going anywhere — it stands in <a href="#recipe-corner">Nan's Recipe Corner</a> in the rail and on the permanent record in the <a href="recipes.html">Recipe Archive</a>.</p>
+    <p class="meta" style="margin-top:8px">Nan's Corner opened Oct 31, 2026</p>
+  </div>
+  <h2>😂 A Joke a Day</h2>
+  <div class="card" id="joke-of-the-day">
+    <p class="meta" style="margin-bottom:6px">THE DAILY CHUCKLE — PLUS A RIDDLE, ANSWERED TOMORROW</p>
+    <div class="item" id="joke-body">
+      <p><b>Today's joke:</b> Why did the student eat his homework? …Because the teacher told him it was a piece of cake.</p>
+    </div>
+    <div class="item" id="riddle-body">
+      <p><b>Yesterday's riddle:</b> What has a head and a tail, but no body? — <b>Answer: A coin.</b></p>
+      <p style="margin-top:6px"><b>Today's riddle:</b> What runs all around a backyard, yet never moves?</p>
+      <p class="meta" style="margin-top:6px">The answer runs in tomorrow's paper — the Gazette keeps a riddle overnight, the way it should be. Think on it.</p>
+    </div>
+    <div class="item">
+      <p><b>📬 Get the joke by mail — join The Joke Vault.</b> The Gazette's jokes have a sister act: one joke and one riddle by email, every day. Two doors in:</p>
+      <p style="margin-top:6px">• <b>The form:</b> sign up in one field on <a href="https://davedellaquila.github.io/buddy-system/joke-vault/" target="_blank" rel="noopener">The Joke Vault's homepage</a>.</p>
+      <p style="margin-top:4px">• <b>By email:</b> send a message with the subject <b>“Joke Vault JOIN”</b> to <a href="mailto:dave@dellaquila.com?subject=Joke%20Vault%20JOIN">dave@dellaquila.com</a> — tap that link and the subject fills itself in.</p>
+      <p class="meta" style="margin-top:6px">No account, no cost — one email a day, and reply STOP anytime to leave.</p>
+    </div>
+  </div>
+
+</main>
+<aside>
+  <h2>✒️ From the Editor's Desk</h2>
+  <div class="card intro-card" id="editors-desk">
+    <p><b>Howdy, neighbor — welcome to The Fiddletown Gazette.</b> I'm the Editor: this is your foothill daily for Fiddletown &amp; the Shenandoah Valley, published three times a day (morning, midday, evening) with a safety wire watched around the clock.</p>
+    <p style="margin-top:8px">Everything here comes from <b>public sources and public events only</b> — agency pages, public calendars, venue listings, and the community wire — each item credited and linked. No private names, no home addresses, nothing from behind a login. That's the paper's promise, and it doesn't bend.</p>
+    <p style="margin-top:8px">Read something we should know about? The <a href="#suggestion-box">Suggestion Box</a> at the foot of the page is open — corrections especially welcome. A paper that can't be corrected can't be trusted.</p>
+
+    <div class="item" style="margin-top:10px">
+      <p class="meta" style="margin-bottom:6px">FROM THE PUBLISHER'S OWN CAMERA · SUN NOV 1, 2026</p>
+      <figure style="margin:8px 0">
+        <img src="media/nan-coupe-drive-2026-11-01.jpg" alt="Nan standing by a maroon classic coupe with a white roundel, autumn vines in fall color rolling out behind her" style="width:100%;border-radius:12px;display:block">
+        <figcaption style="margin-top:6px">Out driving, enjoying the day. 📷 Dave</figcaption>
+      </figure>
+      <p>A fall Sunday drive — the two of us out enjoying the day, the hills gone red and gold behind the coupe.</p>
+      <p class="meta">By Dave Dell'Aquila · Nov 1, 2026</p>
+    </div>
+    <div class="item" style="margin-top:10px">
+      <p class="meta" style="margin-bottom:6px">FROM THE PUBLISHER'S OWN CAMERA · SAT OCT 31, 2026</p>
+      <figure style="margin:8px 0">
+        <img src="media/dave-cabin-halloween-2026-10-31.jpg" alt="Dave Dell'Aquila taking a selfie with three friends inside the log cabin, all raising copper cups in a toast" style="width:100%;border-radius:12px;display:block">
+        <figcaption style="margin-top:6px">Halloween at the cabin — a toast with friends. 📷 Dave</figcaption>
+      </figure>
+      <p class="meta">By Dave Dell'Aquila · Oct 31, 2026</p>
+    </div>
+    <p class="meta" style="margin-top:8px">— The Editor · Published by Dave Dell'Aquila, Fiddletown</p>
+  </div>
+
+  <h2>Around Town</h2>
+  <div class="card" id="around-town">
+    <div class="item"><p><b>A business morning, a rail-bike day.</b> Brewing Business in Amador meets 8:00–10:00 AM in Jackson, and the Amador Rail Explorers open their Thu–Sun run out of Ione at 8:00 AM. See Today in the Foothills.</p><p class="meta">Gazette note · Nov 5</p></div>
+    <div class="item"><p><b>Roads clear, board quiet.</b> Caltrans lists no restrictions on the foothill highways, and the CHP's live board shows no foothill incidents this morning. See the Safety Wire.</p><p class="meta">Gazette note · Nov 5</p></div>
+    <div class="item"><p><b>Before you drive to the museum — call.</b> The Amador County Museum's calendar listing shows Thursday hours its own description (open Fri–Sun) contradicts. The Gazette prints both and the phone number; see Today in the Foothills.</p><p class="meta">Gazette note · Nov 5</p></div>
+    <div class="item"><p><b>The desk has a name.</b> The Critter Desk ballot closed this morning, tied 1–1 — and under the publisher's ruling the desk is The Wild Side from today. Its two November 1 sightings retire to the archive on schedule. See The Wild Side, in the main column.</p><p class="meta">Gazette note · Nov 5</p></div>
+    <div class="item"><p><b>Tonight: the clear sky last night wasn't.</b> Mostly clear and 46° — Saturn from dusk, the Moon down until 4:10 AM, and the Taurids still active a night past their peak. Saturday note carried from yesterday's wire: Cooper Wines' tasting room is closed to the public Nov 7 for its members' release party. See the Star Chart and the Community Wire.</p><p class="meta">Gazette note · Nov 5</p></div>
+  </div>
+
+    <h2>🚜 What's Carl Working On</h2>
+  <div class="card" id="carl">
+    <p>The saga of the couch rolls on another week —<br>it's listed, it's measured, the outlook is bleak.<br>It promised to go, but it's still sitting tight;<br>Carl's verdict (print edition): <i>“a pain”</i> — and he's right.</p>
+    <p style="margin-top:8px">The tractor, meanwhile, got shown proper care:<br>new filter, greased pins, every bolt checked with care.<br>The brush hog's swapped out for the box blade's turn,<br>before rain makes the pasture too soft to churn.</p>
+    <p style="margin-top:8px">The burn pile stands stacked — tall, tidy, and neat —<br>awaiting its burn day; it won't cheat the heat.<br>Fresh gravel is down on the range's long lane,<br>new steel at a hundred yards waits there for aim.</p>
+    <p style="margin-top:8px">The scooter stands ready for one more warm run —<br>a last little loop in the late-season sun.<br>The Vidmar's drawers gleam, every tool in its row,<br>each socket and wrench in the place it should go.<br>The canoe hangs up high in the barn, dry and light,<br>dreaming of spring water, smooth and bright.</p>
+    <p style="margin-top:8px">So all of the ranch is set right for the snow —<br>except for that couch, which refuses to go.<br>And Carl's one demand, by text, has come in:<br>print scooter, Vidmar, and canoe — <b>he's locked in!</b></p>
+    <p class="meta" style="margin-top:8px">What's Carl Working On — always in rhyme · Updated Oct 31 — scooter, Vidmar &amp; canoe added at Carl's own request</p>
+  </div>
+
+  <h2>✉️ Kathy's Corner</h2>
+  <div class="card" id="kathys-corner">
+    <p class="meta" style="margin-bottom:6px">A CONTRIBUTOR'S DESK — KATHY TOWNE</p>
+    <p>Kathy Towne's own desk at the Gazette — her pieces, filed by email and printed under her byline, as she sends them.</p>
+    <div id="kathy-pieces"><p class="empty">Nothing filed yet — the corner is open, Kathy.</p></div>
+    <p class="meta" style="margin-top:8px">Kathy's Corner opened Oct 31, 2026</p>
+  </div>
+
+  <h2>🏆 The Winsteds' Bocce Court</h2>
+  <div class="card" id="winsteds">
+    <p>Every neighborhood has a capital, and around here it's the Winsteds' bocce court. Carol keeps the bracket, the scorebook, and — when a throw lands close enough to argue about — the final word. Joe tends the coals, because the court comes with the other half of the institution: <b>the fabulous barbecue</b>, the kind where the brisket has a schedule, the sides appear like magic, and nobody has ever left hungry or entirely sure how the last game ended.</p>
+    <p style="margin-top:6px">House rules, as best the Gazette can establish them: winners eat first, losers wash up, and a ball within a finger's width of the pallino is settled by Carol — appeal is not a thing.</p>
+    <p class="meta" style="margin-top:6px">Neighbor color from the Gazette · Oct 31</p>
+    <div class="item" style="margin-top:10px">
+      <h3>🏁 Postcard from Las Vegas</h3>
+      <p class="meta">THE SECTION'S FIRST POST · POSTED FOR CAROL BY THE PUBLISHER · SAT OCT 31, 2026</p>
+      <figure style="margin:10px 0">
+        <video controls playsinline preload="metadata" poster="media/winsteds-funny-cars-2026-10-31.jpg" style="width:100%;border-radius:12px;display:block">
+          <source src="media/winsteds-funny-cars-2026-10-31.mp4" type="video/mp4">
+        </video>
+        <figcaption class="meta" style="margin-top:6px">The sign says it plainly: DREAM RACING — drive exotic cars on track today. Outside Las Vegas Motor Speedway, from Carol &amp; Joe's Vegas trip this week.</figcaption>
+      </figure>
+      <p>Carol hasn't filed her first piece yet, so the publisher is planting a flag for her: a postcard from the Winsteds' Las Vegas trip, where the speedway does its own inviting. Bocce is a game of touch and patience; this is the other end of the sporting world — and the Gazette notes, for the record, that the court's defending champions are out of town and the title is safe until they're home.</p>
+      <p class="meta">Carol's own filings will run here under her byline whenever she's ready — the desk is hers.</p>
+    </div>
+  </div>
+
+  <h2>The Community Wire</h2>
+  <div id="community-wire"><div class="item"><p><b>Sheriff: yesterday's AT&amp;T outage was a cut fiber line — suspects arrested.</b> The Sheriff's Office reports that the AT&amp;T internet outage that ran from Lockeford to Plymouth yesterday (Tue Nov 3) afternoon, from about 3:40 PM, traces to fiber-optic cables found cut and stripped near the Highway 124 / Highway 88 junction, where Ione PD first spotted a vehicle. Deputies joined the search, and the suspects were taken into custody and booked into the Amador County Jail. Service restoration timing was not stated in the post.</p><p class="meta">Source: <a href="https://facebook.com/100064826464995/posts/pfbid02DRZPjWRnk9dMkjVdq2xGvgEVupNNHyXujq6LgysBH7Tb42NiTGhn6W5M6Ko4nxgkl/">Amador County Sheriff's Office — Facebook post, 10:40 AM PT, Nov 4</a> · Summarized by the Gazette</p></div>
+    <div class="item"><p><b>Cooper Wines tasting room closed this Saturday.</b> Cooper Wines posts that its tasting room will be <b>closed to the public on Saturday, Nov 7</b> while the winery hosts its Fall Wine Release celebration for its Cin! Cin! members, with normal tasting-room hours resuming Sunday, Nov 8. Worth knowing before a Saturday drive to the Shenandoah Valley side of the beat.</p><p class="meta">Source: <a href="https://facebook.com/100063787050422/posts/pfbid02aTSEE5BGo4ERMn96xPxQnXeLYuy2QV6UAkgGSpkp3v1VF1Qw2wrGcKUXmixG8SJ4l/">Cooper Wines — Facebook post, 9:46 AM PT, Nov 4</a> · Summarized by the Gazette</p></div>
+    <p class="meta" style="margin-top:6px">The wire was checked again this morning against local public pages (county, city, sheriff, CAL FIRE AEU, CHP, FPPOA, wineries and businesses) and the morning Facebook feed for the watch list (Fiddletown, Plymouth, Drytown, Sutter Creek) — no new items over the wire's importance bar since yesterday's editions, so the two items above stand. One honest limit: the feed's second page failed to load this morning, so today's check was partial. Items are summarized in the paper's own words and linked — never copied.</p></div>
+  <h2>Weather</h2>
+<div class="card" id="weather">
+    <p><b>Today:</b> Sunny, high near 66°, temperatures falling to around 61° in the afternoon. Northwest wind 1 to 5 mph. No alerts in effect — and no weather event is in progress or forecast; the week's story is simply fair.</p>
+    <p style="margin-top:8px"><b>Tonight:</b> Mostly clear, low around 46°. East northeast wind around 5 mph. Clear to mostly clear all night — the week's best stargazing window (see the Star Chart). Sunset 4:58 PM; sunrise tomorrow 6:35 AM.</p>
+    <p style="margin-top:8px"><b>Friday</b> mostly sunny, high near 68° (mostly clear at night, 48°); <b>Saturday</b> sunny at 72°; <b>Sunday</b> sunny at 71°; and the fair run holds into next week, with the first hint of rain a slight chance late Tuesday night.</p>
+    <p class="meta" style="margin-top:8px">Source: National Weather Service, Sacramento (Fiddletown zone) · Forecast checked 6:05 AM PT, Nov 5</p>
+  </div>
+        <h2>🌅 The Almanac</h2>
+  <div class="card" id="almanac">
+    <p><b>Sunrise</b> 6:34 AM · <b>Sunset</b> 4:58 PM — a 10-hour-24-minute day, and shrinking.</p>
+    <p style="margin-top:6px"><b>Moon:</b> waning crescent, about one-tenth lit (~10%), thinning toward the Nov 9 new moon. Moonset 2:55 PM today; moonrise 4:10 AM tonight, so the evening is moonless — good news for a night past the Taurid peak, and tonight the sky is actually clear for it.</p>
+    <p style="margin-top:6px"><b>📅 A naming day.</b> Today, Thu Nov 5, the foothills run on PST (standard time) until March — and the paper's critter desk gets its permanent name, The Wild Side, as the reader ballot closes. Next at the hall: Game Night at the Fiddletown Community Center, Sun Nov 8.</p>
+    <p class="meta" style="margin-top:6px">Day 309 of 2026 · 56 days left in the year</p>
+  </div>
+  <h2>🍞 Nan's Recipe Corner</h2>
+  <div class="card" id="recipe-corner">
+    <p><b>Chicken Parmesan Rolls</b> — Nan's Sunday filing, and a return to the oven: chicken cutlets rolled around mozzarella and basil, crumbed, baked in marinara, and finished under more mozzarella. Serves 4.</p>
+    <figure style="margin:10px 0"><a href="https://recipekeeperonline.com/recipe/PCB5fi6HjUan85UO6lzvqA" title="Tap through to the original recipe"><img src="media/chicken-parmesan-rolls.jpg" alt="A baking dish of eight Chicken Parmesan Rolls in marinara, each topped with a melted mozzarella slice and basil, on a teal table" style="width:100%;border-radius:12px;display:block"></a><figcaption class="meta" style="margin-top:5px">Photo: Southern Living, via Nan's Recipe Keeper — tap the photo to open the recipe, as Nan asked</figcaption></figure>
+    <p class="meta" style="margin-top:5px">By Nan Dell'Aquila · Filed by email, Nov 1</p>
+    <p style="margin-top:6px"><b>In the dish:</b> 2 cups marinara sauce (from a 24-oz. jar, such as Rao's), divided · 4 boneless, skinless chicken breasts (8 oz. each) · 2 tsp. kosher salt · 1 tsp. black pepper, plus more to garnish · 1 (16-oz.) pkg. sliced fresh mozzarella (16 slices) · 2 Tbsp. chopped fresh basil, plus torn leaves to garnish · 6 Tbsp. finely shredded Parmigiano-Reggiano, divided · 2 large eggs, lightly beaten · 1 cup seasoned Italian breadcrumbs · cooking spray</p>
+    <p style="margin-top:6px">Heat the oven to 450°F and spread 1 cup of the marinara in a 13- x 9-inch baking dish. Halve the chicken breasts horizontally into 8 cutlets, pound them to an even ¼ inch, and season all over with the salt and pepper. Crumble 8 of the mozzarella slices over the cutlets and scatter on the basil and 4 tablespoons of the Parmigiano-Reggiano; roll each cutlet up jellyroll-style from a short side, tucking in the edges. Dip the rolls in the beaten egg, then coat them in the breadcrumbs mixed with the remaining 2 tablespoons of cheese, pressing lightly. Set them seam-side down in the dish, spray lightly, and bake until a thermometer reads 165°F — 20 to 25 minutes. Spoon the remaining cup of marinara over the top, lay on the last 8 mozzarella slices, and bake 3 to 5 minutes more, until the cheese melts and the sauce is hot. Garnish with basil leaves and an extra turn of pepper.</p>
+    <p style="margin-top:6px"><b>Nan's note, from her card:</b> she made this on October 21 and reports it delicious and easy — a good one for a small group, served over pasta, with extra sauce for the pasta.</p>
+    <p style="margin-top:6px"><b>Nan's Halloween-night note, added Nov 1 at her request:</b> “We had a wonderful Halloween night hunkered in with Rachel and Robin. We toasted to the evening with a Bourbon Maple Old Fashioned (yum!), watched a scary movie and made this delicious version of chicken parm. It was easy to partially prepare ahead of time, making the chicken rolls and keeping them in the fridge. When I was ready to cook them I dipped them in the egg and breadcrumbs and followed the final steps before baking them. It is a great meal to make for a group and tasted absolutely delicious 😋”</p>
+    <p class="meta" style="margin-top:6px">Updated Nov 1 — Nan's own cook's notes from the night she served it, added to this post at her request.</p>
+    <p class="meta" style="margin-top:6px">Nan's recipe card: <a href="https://recipekeeperonline.com/recipe/PCB5fi6HjUan85UO6lzvqA">Recipe Keeper</a> · Original recipe: <a href="https://www.southernliving.com/chicken-parmesan-rolls-12108789">Southern Living</a></p>
+    <p style="margin-top:6px">📚 <a href="recipes.html"><b>The Recipe Archive</b></a> — every recipe Nan files, kept on the record.</p>
+  </div>
+  <h2>🍺 Swager's Clubhouse</h2>
+  <div class="card" id="swagger">
+    <p class="meta" style="margin-bottom:6px">BEER &amp; ASTRONOMY — WHAT TO SIP, WHAT TO SEE</p>
+    <p><b>The pour:</b> a sunny 66° afternoon that turns clear and cold by nightfall calls for a brown ale — malty, steady, built for a sky-watching evening that starts at a 4:58 PM sunset and cools toward 46°. Amber had yesterday; brown takes the clear one.</p>
+    <p style="margin-top:6px"><b>The sky:</b> no gap-working tonight — the sky is mostly clear end to end. Saturn is high in the south from dusk, peaking around 9:39 PM (see the Star Chart on the front page). The Southern Taurids are a night past their peak and still throwing the odd fireball after midnight; the Moon stays down until 4:10 AM, so the dark is uninterrupted.</p>
+    <p style="margin-top:6px"><b>🎱 The pool book:</b> Swager keeps the form book now — who won the last games, who's on fire, and whose stroke is pure. Last session's racks went the way they've gone all month: the quiet run-out artist from the end of the bar closed three straight, the chalk-dust veteran is <i>on fire</i> (hasn't missed a makeable eight in two weeks), and the best pure form at the table belongs, as ever, to the mechanic — textbook stance, no drama, ball goes where the eyes went first. The book stays open: send real scores through the Suggestion Box and they'll run here, names and all.</p>
+    <p style="margin-top:6px"><b>Swager's rule:</b> never trust a man who pairs a light lager with a meteor shower.</p>
+    <p class="meta" style="margin-top:6px">Swager's Clubhouse — beer &amp; astronomy, every edition · Updated Nov 5</p>
+  </div>
+  <h2>✉️ Marci's Corner</h2>
+  <div class="card" id="marcis-corner">
+    <p class="meta" style="margin-bottom:6px">A CONTRIBUTOR'S DESK — MARCI SWAGER</p>
+    <p>Marci Swager's own desk at the Gazette — her pieces, filed by email and printed under her byline, as she sends them.</p>
+    <div id="marci-pieces"><div class="item marci-piece">
+      <figure style="margin:4px 0">
+        <img src="media/marci-timothy-2026-11-03.jpg" alt="A circular woodcut-style illustration: a raccoon on a log in front of the Seattle skyline, the Space Needle and Mt. Rainier, wildflowers around the border, and the name Timothy in script across the bottom" style="width:100%;max-width:340px;border-radius:12px;display:block;margin:0 auto">
+        <figcaption style="margin-top:6px;text-align:center">Timothy</figcaption>
+      </figure>
+      <p class="meta" style="text-align:center">Art for Marci's Corner · Tue Nov 3, 2026</p>
+    </div></div>
+    <p class="meta" style="margin-top:8px">Marci's Corner opened Oct 31, 2026</p>
+  </div>
+
+  <h2>🎧 What We're Listening To</h2>
+  <div class="card" id="listening">
+    <p class="meta" style="margin-bottom:6px">THE GAZETTE'S LISTENING DESK — WHAT'S ON, AT THE CABIN AND AROUND THE NEIGHBORHOOD</p>
+    <div class="item" id="listen-1">
+      <h3>🪕 Billy Strings &amp; Friends — the Cabin Playlist</h3>
+      <p class="meta">FILED BY DAVE DELL'AQUILA · SAT OCT 31, 2026</p>
+      <p>First entry on the listening desk, and it's the sound of the cabin: <b>Billy Strings</b> and the picking circle around him — flatpicked guitar at full gallop, banjo and mandolin trading breaks, the whole bluegrass engine room running warm. This is woodstove music: built for a rainy Halloween in the foothills, a pot on the stove, and nowhere to be. When the boy from Michigan leans into a traditional number and the band leans with him, a cabin in Amador County is exactly the room it was mixed for.</p>
+      <p style="margin-top:8px">The playlist itself is called <b>Cabin Tunes</b> — Dave's running order, Billy Strings and friends sequenced for the woodstove hours.</p>
+      <p style="margin-top:8px"><a href="https://music.apple.com/us/playlist/cabin-tunes/pl.u-V9Am9CP6J97" target="_blank" rel="noopener" style="display:inline-block;background:var(--accent);color:#fff;padding:8px 18px;border-radius:999px;text-decoration:none;font-family:-apple-system,sans-serif;font-size:14px;font-weight:700">🎧 Listen — Cabin Tunes on Apple Music</a></p>
+    </div>
+    <p style="margin-top:8px">Listening notes are welcome from the neighborhood: what you're playing, and where it sounds best. File them through the Suggestion Box below, or by Gazette email if you're on the contributors' list.</p>
+  </div>
+
+  <h2>🔥 Burn Day Line</h2>
+  <div class="card" id="burn-line">
+    <p>Planning to burn? <b>Always call first.</b> The Amador County Burn Day Information Line tells you whether today is a permissive burn day and when a CAL FIRE permit is required. The recording is updated daily between 4–5 PM.</p>
+    <p style="margin-top:10px"><a class="burn-call" href="tel:+12092236246">📞 (209) 223-6246</a></p>
+    <p class="meta" style="margin-top:8px">Tap the number to call. Burn permits online: <a href="https://burnpermit.fire.ca.gov">burnpermit.fire.ca.gov</a> · County burning rules: <a href="https://www.amadorcounty.gov/services/amador-air-district/burning-and-burn-permits">Amador Air District — Burning &amp; Burn Permits</a></p>
+  </div>
+  
+  
+  
+  <h2>🗞️ More from the Gazette</h2>
+  <div class="card" id="more-gazette">
+    <p>📚 <a href="archive.html"><b>Editions Archive</b></a> — every edition since the paper's founding, kept on the record.</p>
+    <p style="margin-top:6px">📚 <a href="recipes.html"><b>The Recipe Archive</b></a> · <a href="sightings.html"><b>The Sightings Archive</b></a> — the paper's permanent records.</p>
+    <p style="margin-top:6px">📰 <b>Our sister paper:</b> in San Jose, read <a href="https://davedellaquila.github.io/lenwood-gazette/">The Lenwood Gazette</a> — the same idea, in the Santa Clara Valley.</p>
+    <p style="margin-top:6px">☕ Enjoying the paper? The <a href="https://ko-fi.com/davedellaquila">Tip Jar</a> keeps the presses oiled.</p>
+  </div>
+</aside>
+</div>
+
+  <h2>📬 The Suggestion Box</h2>
+  <div class="card sugg" id="suggestion-box">
+    <p>Feedback, comments, corrections, and story tips for this edition — all welcome. Tell us what the paper got right, what it missed, and what it should cover next.</p>
+    <label for="sugg-name">Your name (optional)</label>
+    <input type="text" id="sugg-name" autocomplete="name" placeholder="A neighbor">
+    <label for="sugg-text">Your suggestion</label>
+    <textarea id="sugg-text" rows="4" placeholder="I think the Gazette should…"></textarea>
+    <button type="button" id="sugg-send">✉️ Send by email</button>
+    <p class="meta" style="margin-top:9px">How it works: the Gazette is a static page with no accounts and no comment storage — the button opens your own email app with your note addressed to the editor, and you press send there. Nothing is collected by this page. Prefer to write directly? <a href="mailto:dave@dellaquila.com?subject=Gazette%20suggestion">dave@dellaquila.com</a></p>
+  </div>
+
+<footer class="footer" id="colophon">
+  <p><b>Colophon.</b> The Fiddletown Gazette is a public hyperlocal daily newspaper for Fiddletown &amp; the Shenandoah Valley, published three times a day (Morning 6:00 AM, Midday ~12:30 PM, Evening ~5:30 PM PT) with hourly safety checks between editions. Editor: Gazette Buddy (“The Editor”). Publisher: Dave Dell’Aquila.</p>
+  <p style="margin-top:8px"><b>Our privacy line:</b> we publish public sources and public events only — agency alerts, public notices, and venues with their public addresses. No private residents’ data, no home addresses, no private or family events. Every item is timestamped and sourced, and passes a pre-publish privacy check before it prints.</p>
+  <p style="margin-top:8px"><b>Our sister paper:</b> in San Jose, read <a href="https://davedellaquila.github.io/lenwood-gazette/">The Lenwood Gazette</a> — the same idea, in the Santa Clara Valley.</p>
+  <p style="margin-top:8px"><b>Tips:</b> no comments — send news tips to the publisher — tips address joins the colophon shortly. <b>Archive:</b> every edition is kept in the <a href="archive.html">Editions Archive</a>.</p>
+</footer>
+<script>
+document.getElementById('sugg-send').addEventListener('click', function(){
+  var name=(document.getElementById('sugg-name').value||'').trim();
+  var text=(document.getElementById('sugg-text').value||'').trim();
+  if(!text){ alert('Write a suggestion first — even one line helps.'); return; }
+  var subject='Gazette suggestion — ' + document.title;
+  var body=text + (name ? '\n\n— ' + name : '') + '\n\n( sent from The Fiddletown Gazette front page )';
+  window.location.href='mailto:dave@dellaquila.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+});
+</script>
+<script>
+/* Tip jar crossings — a randomized repertoire, about once every couple of minutes (Dave, Oct 31 2026). Short, never blocking (pointer-events none), and skipped entirely under Reduce Motion. */
+(function(){
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var st=document.createElement('style');
+  st.textContent=[
+   '.jar-flyby{position:fixed;left:-70px;font-size:34px;z-index:999;pointer-events:none;text-shadow:0 6px 14px rgba(0,0,0,.25)}',
+   '.jf-race{top:58px;animation:jf-race 1.5s cubic-bezier(.55,.06,.75,.4) forwards}',
+   '@keyframes jf-race{from{transform:translateX(0) rotate(0deg)}to{transform:translateX(118vw) rotate(24deg)}}',
+   '.jf-tumble{top:72px;animation:jf-tumble 2.6s linear forwards}',
+   '@keyframes jf-tumble{0%{transform:translateX(0) translateY(0) rotate(0deg)}25%{transform:translateX(28vw) translateY(-18px) rotate(270deg)}50%{transform:translateX(56vw) translateY(0) rotate(540deg)}75%{transform:translateX(84vw) translateY(-18px) rotate(810deg)}100%{transform:translateX(114vw) translateY(0) rotate(1080deg)}}',
+   '.jf-march{top:52px;animation:jf-march 4.6s linear forwards}',
+   '@keyframes jf-march{0%{transform:translateX(0) scale(1)}12%{transform:translateX(13vw) scale(1.35)}25%{transform:translateX(27vw) scale(.78)}37%{transform:translateX(40vw) scale(1.35)}50%{transform:translateX(54vw) scale(.78)}62%{transform:translateX(67vw) scale(1.35)}75%{transform:translateX(81vw) scale(.78)}87%{transform:translateX(94vw) scale(1.35)}100%{transform:translateX(112vw) scale(1)}}',
+   '.jf-bounce{top:66px;animation:jf-bounce 2.8s linear forwards}',
+   '@keyframes jf-bounce{0%{transform:translateX(0) translateY(0)}15%{transform:translateX(16vw) translateY(-46px)}30%{transform:translateX(32vw) translateY(0)}45%{transform:translateX(48vw) translateY(-38px)}60%{transform:translateX(64vw) translateY(0)}75%{transform:translateX(80vw) translateY(-26px)}90%{transform:translateX(96vw) translateY(0)}100%{transform:translateX(114vw) translateY(-8px)}}',
+   '.jf-sneak{top:36px;font-size:26px;animation:jf-sneak 5.2s ease-in-out forwards}',
+   '@keyframes jf-sneak{0%{transform:translateX(0) rotate(-8deg)}35%{transform:translateX(38vw) rotate(-8deg)}55%{transform:translateX(38vw) rotate(6deg)}62%{transform:translateX(38vw) rotate(-8deg)}100%{transform:translateX(114vw) rotate(-8deg)}}',
+   '.jf-victory{top:60px;animation:jf-victory 4.4s ease-in-out forwards}',
+   '@keyframes jf-victory{0%{transform:translateX(0) rotate(0deg)}42%{transform:translateX(110vw) rotate(0deg)}50%{transform:translateX(110vw) rotateY(180deg)}92%{transform:translateX(-4vw) rotateY(180deg)}100%{transform:translateX(-14vw) rotateY(180deg)}}',
+   '.jar-puff{position:fixed;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle,rgba(235,230,220,.85),rgba(235,230,220,0) 70%);filter:blur(3px);z-index:998;pointer-events:none;animation:jar-pufffade .95s ease-out forwards}',
+   '@keyframes jar-pufffade{from{transform:scale(.6);opacity:.9}to{transform:scale(2.4) translateY(-10px);opacity:0}}'
+  ].join('');
+  document.head.appendChild(st);
+  var MODES=['race','tumble','march','bounce','sneak','victory'];
+  var DUR={race:1700,tumble:2800,march:4800,bounce:3000,sneak:5400,victory:4600};
+  var last=-1;
+  function cross(){
+    if (document.hidden){ schedule(); return; }
+    var i; do { i=Math.floor(Math.random()*MODES.length); } while (i===last);
+    last=i; var mode=MODES[i];
+    var jar=document.createElement('div');
+    jar.textContent='\u{1FAD9}'; jar.className='jar-flyby jf-'+mode; jar.setAttribute('aria-hidden','true');
+    document.body.appendChild(jar);
+    var iv=null;
+    if (mode==='race'){
+      iv=setInterval(function(){
+        var r=jar.getBoundingClientRect(); if(!r.width){clearInterval(iv);return;}
+        var s=document.createElement('div'); s.className='jar-puff';
+        s.style.left=(r.left+r.width*0.2)+'px'; s.style.top=(r.top+r.height*0.6)+'px';
+        document.body.appendChild(s); setTimeout(function(){s.remove();},1000);
+      },90);
+    }
+    setTimeout(function(){ if(iv) clearInterval(iv); jar.remove(); schedule(); }, DUR[mode]+250);
+  }
+  function schedule(){ setTimeout(cross, 100000 + Math.random()*60000); }
+  setTimeout(cross, 40000);
+})();
+</script>
+<script>
+/* Table of contents — built live from the page's own section headings on every load, so a contributor's rename or a brand-new section appears here automatically. The static items in #toc-list are only a no-JS fallback. Rendered as the one-row ticker (see the ticker styles in <head>). */
+(function(){
+  var list=document.getElementById('toc-list'); if(!list) return;
+  var seen={}, chips=[];
+  document.querySelectorAll('h2').forEach(function(h2){
+    var host=h2.closest('section[id],div[id],article[id]');
+    var id=h2.id||(host&&host.id)||(h2.nextElementSibling&&h2.nextElementSibling.id)||'';
+    if(!id||seen[id]) return; seen[id]=1;
+    var label=h2.textContent.trim().replace(/\s+/g,' ');
+    if(h2.closest('.lead')) label='The Lead';
+    if(label) chips.push({id:id,label:label});
+  });
+  if(chips.length<5) return;
+  var extras=[['recipes.html','\u{1F4DA} Recipe Archive'],['sightings.html','\u{1F4DA} Sightings Archive'],['archive.html','\u{1F4DA} Editions Archive']];
+  list.innerHTML='';
+  chips.forEach(function(c){var a=document.createElement('a');a.href='#'+c.id;a.textContent=c.label;a.className='ticker-item';list.appendChild(a);});
+  extras.forEach(function(e){var a=document.createElement('a');a.href=e[0];a.textContent=e[1];a.className='ticker-item ticker-arch';list.appendChild(a);});
+})();
+/* Ticker bar behavior (Dave, Nov 4, 2026): stick exactly under the topbar; edge fades + chevrons show
+   there is more to slide to; mouse drag slides the row (past an 8px threshold a drag is not a tap);
+   touch swipe is native and vertical page scroll always wins (touch-action: pan-y). One gentle nudge
+   on load shows the row moves — never under prefers-reduced-motion, never auto-scrolls after. */
+(function(){
+  var toc=document.getElementById('toc'), list=document.getElementById('toc-list'); if(!toc||!list) return;
+  var topbar=document.querySelector('.topbar');
+  function stickTop(){ if(topbar) toc.style.top=topbar.offsetHeight+'px'; }
+  stickTop(); window.addEventListener('resize',stickTop);
+  var fl=document.getElementById('ticker-fade-l'), fr=document.getElementById('ticker-fade-r');
+  function fades(){ var max=list.scrollWidth-list.clientWidth, x=list.scrollLeft;
+    if(fr) fr.style.opacity=(max>2&&x<max-2)?'1':'0';
+    if(fl) fl.style.opacity=(x>2)?'1':'0'; }
+  list.addEventListener('scroll',fades,{passive:true});
+  window.addEventListener('resize',fades);
+  setTimeout(fades,0);
+  var down=false, dragged=false, startX=0, startL=0, suppress=false;
+  list.addEventListener('pointerdown',function(e){ if(e.pointerType==='touch') return;
+    down=true; dragged=false; startX=e.clientX; startL=list.scrollLeft; });
+  list.addEventListener('pointermove',function(e){ if(!down) return;
+    var dx=e.clientX-startX;
+    if(!dragged&&Math.abs(dx)>8){ dragged=true; list.classList.add('dragging'); }
+    if(dragged) list.scrollLeft=startL-dx; });
+  function endDrag(){ if(down&&dragged){ suppress=true; setTimeout(function(){ list.classList.remove('dragging'); },60); } down=false; }
+  list.addEventListener('pointerup',endDrag);
+  list.addEventListener('pointercancel',endDrag);
+  list.addEventListener('click',function(e){ if(suppress){ e.preventDefault(); e.stopPropagation(); suppress=false; } },true);
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!reduce) setTimeout(function(){
+    if(list.scrollLeft!==0||list.scrollWidth-list.clientWidth<10) return;
+    var t0=null;
+    function step(ts){ if(!t0) t0=ts; var p=(ts-t0)/650;
+      if(p>=1){ list.scrollLeft=0; fades(); return; }
+      list.scrollLeft=26*Math.sin(p*Math.PI); requestAnimationFrame(step); }
+    requestAnimationFrame(step);
+  },700);
+})();
+</script>
+
+<!-- PTR:BEGIN — pull-to-refresh (standing element, added Nov 1, 2026 at Dave's direction; edition rebuilds must preserve this block) -->
+<style>
+#ptr{position:fixed;top:10px;left:50%;transform:translate(-50%,-70px);z-index:200;background:#10262e;color:#e8f2f0;font-family:-apple-system,sans-serif;font-size:13px;font-weight:700;padding:8px 16px;border-radius:999px;box-shadow:0 4px 16px rgba(0,0,0,.3);transition:transform .18s ease;pointer-events:none;white-space:nowrap}
+#ptr.on{transform:translate(-50%,0)}
+@media (prefers-color-scheme: dark){#ptr{background:#e8f2f0;color:#10262e}}
+</style>
+<div id="ptr" aria-hidden="true">↓ Pull to refresh</div>
+<script>
+(function(){var el=document.getElementById('ptr'),startY=null,armed=false;
+addEventListener('touchstart',function(e){if(scrollY<=0){startY=e.touches[0].clientY;armed=false;}},{passive:true});
+addEventListener('touchmove',function(e){if(startY===null)return;var dy=e.touches[0].clientY-startY;
+if(dy>8&&scrollY<=0){e.preventDefault();el.classList.add('on');el.style.transform='translate(-50%,'+Math.min(dy-70,0)+'px)';
+if(dy>72){armed=true;el.textContent='↻ Release to refresh';}else{armed=false;el.textContent='↓ Pull to refresh';}}},{passive:false});
+addEventListener('touchend',function(){if(startY===null)return;startY=null;
+if(armed){el.textContent='Refreshing…';el.style.transform='translate(-50%,0)';setTimeout(function(){location.reload();},250);}
+else{el.classList.remove('on');el.style.transform='translate(-50%,-70px)';}});})();
+</script>
+<!-- PTR:END -->
+
+<script id="fg-lightbox-script">
+(function(){
+  var lb=document.getElementById('fg-lightbox'),lbImg=document.getElementById('fg-lb-img'),lbCap=document.getElementById('fg-lb-cap'),lbClose=document.getElementById('fg-lb-close');
+  if(!lb||!lbImg||!lbClose)return;
+  function open(src,cap){lbImg.src=src;lbCap.textContent=cap||'';lb.classList.add('open');document.body.classList.add('fg-lb-lock');try{lbClose.focus();}catch(e){}}
+  function close(){lb.classList.remove('open');document.body.classList.remove('fg-lb-lock');lbImg.removeAttribute('src');}
+  document.addEventListener('click',function(e){
+    var t=e.target;
+    if(t===lb){close();return;}
+    if(t&&t.tagName==='IMG'&&!lb.contains(t)){
+      e.preventDefault();
+      var cap='',fig=(t.closest?t.closest('figure'):null);
+      if(fig){var fc=fig.querySelector('figcaption');if(fc)cap=fc.textContent.trim();}
+      if(!cap)cap=t.getAttribute('alt')||'';
+      open(t.currentSrc||t.src,cap);
+    }
+  });
+  lbClose.addEventListener('click',function(e){e.stopPropagation();close();});
+  document.addEventListener('keydown',function(e){if((e.key==='Escape'||e.keyCode===27)&&lb.classList.contains('open'))close();});
+})();
+</script>
+</body>
+</html>
