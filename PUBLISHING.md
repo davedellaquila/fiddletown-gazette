@@ -14,6 +14,11 @@
 - Weather ← NWS API, Fiddletown zone.
 - Community Wire ← local Facebook public/official pages + only groups Dave names and already belongs to. Summarize in our own words, attribute, link the original. Never copy wholesale; never join a group.
 
+## CHP source — CAD + Caltrans primary (Dave's ruling, Nov 4, 2026)
+- **Diagnosed Nov 4, 2026:** CHP's legacy XML incident feed (`media.chp.ca.gov/sa_xml.xml`) died Sun Nov 1, 2026 (~12:18 PM PT — 500s, then hard IIS 404s on every legacy path, one brief flicker Nov 2). The server itself is healthy and now hosts the Traffic app at its root; the feed FILE was removed — a CHP-side retirement during a site migration, not an outage on our end. Do NOT describe it in the paper as "temporarily down."
+- **Primary CHP source is the live CAD Traffic page** — https://cad.chp.ca.gov/Traffic.aspx (Stockton center, foothills-filtered; same app served at media.chp.ca.gov/Traffic.aspx), read via the browser, **plus Caltrans** road reports for closures and chain control. If CAD itself is ever unreachable, say exactly that in the Safety Wire and lean on Caltrans; never fall back to calling the retired XML feed "unavailable."
+- **Weekly probe:** the `gazette-chp-feed-probe` job checks the old feed address every Monday. If it ever answers 200 with real XML again, it reports to the Gazette thread and this section gets revisited.
+
 ## Pre-publish privacy gate (every item, every edition — all three must pass)
 1. Public source?
 2. Public event? (for events: `isPublic = true`)
