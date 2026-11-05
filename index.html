@@ -17,7 +17,10 @@
 a{color:var(--accent)}
 .topbar{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:10px;background:var(--bg);border-bottom:3px double var(--ink);padding:10px 2px;font-family:-apple-system,sans-serif;font-weight:700}
 .topbar nav{margin-left:auto;display:flex;gap:14px;font-size:13.5px}.topbar nav a{color:var(--text);text-decoration:none}.topbar nav a:hover{text-decoration:underline}
-.masthead{text-align:center;padding:30px 8px 16px}
+.masthead{text-align:center;padding:30px 8px 16px;position:relative;overflow:hidden}
+.masthead .mast-wm{position:absolute;inset:0;background:url('media/fcc-giant-fiddle.jpg') center 30%/cover no-repeat;opacity:.10;filter:saturate(.55) sepia(.18);pointer-events:none;z-index:0}
+.masthead>*{position:relative;z-index:1}
+.masthead>.mast-wm{position:absolute;z-index:0}
 .kicker{font-family:-apple-system,sans-serif;letter-spacing:.22em;text-transform:uppercase;font-size:11px;color:var(--gold);font-weight:800}
 .masthead h1{font-size:clamp(36px,7.5vw,64px);line-height:1.02;margin:8px 0 6px}
 .dateline{color:var(--muted);font-style:italic}
@@ -168,6 +171,7 @@ html.fs-0{zoom:.88}html.fs-1{zoom:.94}html.fs-2{zoom:1}html.fs-3{zoom:1.08}html.
 <div class="topbar"><span>🗞️ The Fiddletown Gazette</span><nav><a href="index.html">Front Page</a><a href="archive.html">Editions Archive</a><a href="#colophon">About</a></nav><div class="fsctl" role="group" aria-label="Text size"><button type="button" class="fs-btn fs-down" id="fs-down" aria-label="Smaller text">A</button><span class="fs-dots"><button type="button" class="fs-dot" data-lvl="0" aria-label="Text size level 1 of 5" aria-pressed="false"></button><button type="button" class="fs-dot" data-lvl="1" aria-label="Text size level 2 of 5" aria-pressed="false"></button><button type="button" class="fs-dot" data-lvl="2" aria-label="Text size level 3 of 5" aria-pressed="false"></button><button type="button" class="fs-dot" data-lvl="3" aria-label="Text size level 4 of 5" aria-pressed="false"></button><button type="button" class="fs-dot" data-lvl="4" aria-label="Text size level 5 of 5" aria-pressed="false"></button></span><button type="button" class="fs-btn fs-up" id="fs-up" aria-label="Larger text">A</button></div><a class="header-tip" href="https://ko-fi.com/davedellaquila" target="_blank" rel="noopener" aria-label="Tip Jar — if this page helped you, you can leave Dave a tip on Ko-fi"><span class="jar" aria-hidden="true">🫙</span><span>Tip Jar</span></a></div>
 
 <header class="masthead">
+  <div class="mast-wm" aria-hidden="true"></div>
   <div class="kicker">Fiddletown &amp; the Shenandoah Valley · Updated all day</div>
   <h1>The Fiddletown Gazette</h1>
   <p class="dateline"><!-- EDITION:DATE -->Thursday, November 5, 2026<!-- /EDITION:DATE --> · <!-- EDITION:NAME -->Morning Edition — published 6:00 AM PT<!-- /EDITION:NAME --></p>
