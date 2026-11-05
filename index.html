@@ -139,6 +139,23 @@ body img{cursor:zoom-in}
 .fc-pop{font-family:-apple-system,sans-serif;font-size:10.5px;color:#4a7fa5;min-height:1.25em;margin-top:1px}
 @media (max-width:380px){.fc-day svg{width:28px;height:28px}.fc-temps{font-size:14px}.fc-name{font-size:10px}.fc-cond{font-size:10px}}
 </style>
+<script id="fsctl-boot">/* Text-size control (Dave, Nov 5, 2026): apply the reader's saved level before first paint. */
+try{var n=parseInt(localStorage.getItem('fg-font-size'),10);if(!(n>=0&&n<=4))n=2;document.documentElement.classList.add('fs-'+n);}catch(e){document.documentElement.classList.add('fs-2');}</script>
+<style id="fsctl-style">
+/* Text-size control (Dave, Nov 5, 2026): five reader-chosen levels, default in the middle (level 3 of 5).
+   The paper's type is set in px throughout, so levels scale the whole page with CSS zoom on <html>;
+   the choice persists in localStorage ('fg-font-size'). Standing element — preserve in every rebuild. */
+html.fs-0{zoom:.88}html.fs-1{zoom:.94}html.fs-2{zoom:1}html.fs-3{zoom:1.08}html.fs-4{zoom:1.16}
+.fsctl{display:flex;align-items:center;gap:7px;flex:none}
+.fs-btn{background:none;border:none;color:var(--text);cursor:pointer;font-family:Georgia,serif;font-weight:700;line-height:1;padding:4px 2px;-webkit-tap-highlight-color:transparent}
+.fs-btn.fs-down{font-size:11px}
+.fs-btn.fs-up{font-size:18px}
+.fs-btn[disabled]{opacity:.3;cursor:default}
+.fs-dots{display:flex;gap:5px}
+.fs-dot{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--muted,#6b6259);background:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.fs-dot.on{background:var(--gold);border-color:var(--gold)}
+@media (max-width:640px){.fsctl{gap:5px}.fs-dot{width:8px;height:8px}}
+</style>
 </head>
 <body>
 <div id="fg-lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
@@ -148,7 +165,7 @@ body img{cursor:zoom-in}
   <div id="fg-lb-hint">Tap outside the photo, or the ✕, to go back</div>
 </div>
 
-<div class="topbar"><span>🗞️ The Fiddletown Gazette</span><nav><a href="index.html">Front Page</a><a href="archive.html">Editions Archive</a><a href="#colophon">About</a></nav><a class="header-tip" href="https://ko-fi.com/davedellaquila" target="_blank" rel="noopener" aria-label="Tip Jar — if this page helped you, you can leave Dave a tip on Ko-fi"><span class="jar" aria-hidden="true">🫙</span><span>Tip Jar</span></a></div>
+<div class="topbar"><span>🗞️ The Fiddletown Gazette</span><nav><a href="index.html">Front Page</a><a href="archive.html">Editions Archive</a><a href="#colophon">About</a></nav><div class="fsctl" role="group" aria-label="Text size"><button type="button" class="fs-btn fs-down" id="fs-down" aria-label="Smaller text">A</button><span class="fs-dots"><button type="button" class="fs-dot" data-lvl="0" aria-label="Text size level 1 of 5" aria-pressed="false"></button><button type="button" class="fs-dot" data-lvl="1" aria-label="Text size level 2 of 5" aria-pressed="false"></button><button type="button" class="fs-dot" data-lvl="2" aria-label="Text size level 3 of 5" aria-pressed="false"></button><button type="button" class="fs-dot" data-lvl="3" aria-label="Text size level 4 of 5" aria-pressed="false"></button><button type="button" class="fs-dot" data-lvl="4" aria-label="Text size level 5 of 5" aria-pressed="false"></button></span><button type="button" class="fs-btn fs-up" id="fs-up" aria-label="Larger text">A</button></div><a class="header-tip" href="https://ko-fi.com/davedellaquila" target="_blank" rel="noopener" aria-label="Tip Jar — if this page helped you, you can leave Dave a tip on Ko-fi"><span class="jar" aria-hidden="true">🫙</span><span>Tip Jar</span></a></div>
 
 <header class="masthead">
   <div class="kicker">Fiddletown &amp; the Shenandoah Valley · Updated all day</div>
@@ -646,6 +663,26 @@ else{el.classList.remove('on');el.style.transform='translate(-50%,-70px)';}});})
   });
   lbClose.addEventListener('click',function(e){e.stopPropagation();close();});
   document.addEventListener('keydown',function(e){if((e.key==='Escape'||e.keyCode===27)&&lb.classList.contains('open'))close();});
+})();
+</script>
+
+<script id="fsctl-script">
+/* Text-size control behavior (Dave, Nov 5, 2026): small A steps down, big A steps up, the five dots
+   show the level and jump straight to it. Level persists per reader in localStorage. */
+(function(){
+  var KEY='fg-font-size', lvl=2;
+  try{var n=parseInt(localStorage.getItem(KEY),10); if(n>=0&&n<=4) lvl=n;}catch(e){}
+  var root=document.documentElement;
+  var dots=[].slice.call(document.querySelectorAll('.fs-dot'));
+  var down=document.getElementById('fs-down'), up=document.getElementById('fs-up');
+  function apply(){ for(var i=0;i<5;i++) root.classList.remove('fs-'+i); root.classList.add('fs-'+lvl);
+    dots.forEach(function(d,i){ d.classList.toggle('on', i<=lvl); d.setAttribute('aria-pressed', i===lvl?'true':'false'); });
+    if(down) down.disabled=(lvl===0); if(up) up.disabled=(lvl===4);
+    try{localStorage.setItem(KEY,String(lvl));}catch(e){} }
+  if(down) down.addEventListener('click',function(){ if(lvl>0){lvl--; apply();} });
+  if(up) up.addEventListener('click',function(){ if(lvl<4){lvl++; apply();} });
+  dots.forEach(function(d,i){ d.addEventListener('click',function(){ lvl=i; apply(); }); });
+  apply();
 })();
 </script>
 </body>
