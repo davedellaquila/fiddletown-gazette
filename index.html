@@ -536,19 +536,42 @@ document.getElementById('sugg-send').addEventListener('click', function(){
    '.jf-victory{top:60px;animation:jf-victory 4.4s ease-in-out forwards}',
    '@keyframes jf-victory{0%{transform:translateX(0) rotate(0deg)}42%{transform:translateX(110vw) rotate(0deg)}50%{transform:translateX(110vw) rotateY(180deg)}92%{transform:translateX(-4vw) rotateY(180deg)}100%{transform:translateX(-14vw) rotateY(180deg)}}',
    '.jar-puff{position:fixed;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle,rgba(235,230,220,.85),rgba(235,230,220,0) 70%);filter:blur(3px);z-index:998;pointer-events:none;animation:jar-pufffade .95s ease-out forwards}',
-   '@keyframes jar-pufffade{from{transform:scale(.6);opacity:.9}to{transform:scale(2.4) translateY(-10px);opacity:0}}'
+   '@keyframes jar-pufffade{from{transform:scale(.6);opacity:.9}to{transform:scale(2.4) translateY(-10px);opacity:0}}',
+   '.jar-fx{display:inline-block;will-change:transform}'
   ].join('');
   document.head.appendChild(st);
   var MODES=['race','tumble','march','bounce','sneak','victory'];
   var DUR={race:1700,tumble:2800,march:4800,bounce:3000,sneak:5400,victory:4600};
   var PILL_PAUSE=1000; /* Dave, Nov 5 2026: a crossing pauses ~1s directly under the Tip Jar pill, so eyes land on it */
+  /* Pause flair (Dave, Nov 5 2026): during the pill pause the jar does a brief effect instead of
+     just sitting there — a random pick each stop, never the same one twice running. The flair
+     animates the jar's inner span, so it composes with whatever gait transform the crossing is
+     frozen in, and lives inside the pause window (880ms of the 1000ms). */
+  var FX=[
+    {name:'spin',    frames:[{transform:'rotate(0deg)'},{transform:'rotate(360deg)'}], ease:'cubic-bezier(.3,.7,.4,1)'},
+    {name:'bounce',  frames:[{transform:'translateY(0)'},{transform:'translateY(-17px)',offset:.32},{transform:'translateY(0)',offset:.55},{transform:'translateY(-10px)',offset:.78},{transform:'translateY(0)'}], ease:'ease-in-out'},
+    {name:'expand',  frames:[{transform:'scale(1,1)'},{transform:'scale(1.65,1.18)',offset:.38},{transform:'scale(1.65,1.18)',offset:.72},{transform:'scale(1,1)'}], ease:'ease-out'},
+    {name:'grow',    frames:[{transform:'scale(1)'},{transform:'scale(1.5)',offset:.5},{transform:'scale(1)'}], ease:'ease-in-out'},
+    {name:'shrink',  frames:[{transform:'scale(1)'},{transform:'scale(.5)',offset:.45},{transform:'scale(.5)',offset:.65},{transform:'scale(1)'}], ease:'ease-in-out'},
+    {name:'pulsate', frames:[{transform:'scale(1)'},{transform:'scale(1.28)',offset:.22},{transform:'scale(1)',offset:.45},{transform:'scale(1.28)',offset:.68},{transform:'scale(1)'}], ease:'ease-in-out'}
+  ];
+  var lastFx=-1;
+  function flair(span){
+    if(!span || !span.animate) return;
+    var i; do { i=Math.floor(Math.random()*FX.length); } while (i===lastFx);
+    lastFx=i; var fx=FX[i];
+    try{ span.animate(fx.frames,{duration:880,easing:fx.ease,fill:'none'}); }catch(e){}
+  }
   var last=-1;
   function cross(){
     if (document.hidden){ schedule(); return; }
     var i; do { i=Math.floor(Math.random()*MODES.length); } while (i===last);
     last=i; var mode=MODES[i];
     var jar=document.createElement('div');
-    jar.textContent='\u{1FAD9}'; jar.className='jar-flyby jf-'+mode; jar.setAttribute('aria-hidden','true');
+    jar.className='jar-flyby jf-'+mode; jar.setAttribute('aria-hidden','true');
+    var jarFx=document.createElement('span');
+    jarFx.className='jar-fx'; jarFx.textContent='\u{1FAD9}';
+    jar.appendChild(jarFx);
     document.body.appendChild(jar);
     /* Pill pause: watch the crossing (rAF); the moment the jar's center aligns with the Tip Jar
        pill's center, freeze its animation for PILL_PAUSE ms, then let it play on. Works for every
@@ -566,6 +589,7 @@ document.getElementById('sugg-send').addEventListener('click', function(){
           if(armed && Math.abs(d)<=Math.max(6,jr.width*0.18)){
             paused=true; armed=false; deadline+=PILL_PAUSE;
             anims.forEach(function(a){ try{a.pause();}catch(e){} });
+            flair(jarFx);
             setTimeout(function(){ anims.forEach(function(a){ try{a.play();}catch(e){} }); paused=false; }, PILL_PAUSE);
           }
           if(Math.abs(d)>70) armed=true;
