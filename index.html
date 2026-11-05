@@ -82,11 +82,30 @@ h2{font-size:22px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin:2
 @media (prefers-reduced-motion: reduce){.header-tip .jar{animation:none}.header-tip{animation:none}}
 </style>
 <style>
-#toc-list{display:flex;flex-wrap:wrap;gap:6px}
-.toc-chip{display:inline-block;padding:4px 11px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--text);text-decoration:none;font-family:-apple-system,sans-serif;font-size:12.5px;font-weight:600;line-height:1.5}
-.toc-chip:hover{border-color:var(--accent);color:var(--accent)}
-.toc-arch{background:#f3e9d2}
-@media (max-width:640px){.toc-chip{font-size:12px;padding:3px 9px}#toc-list{gap:5px}}
+/* Ticker bar (Dave, Nov 4, 2026) — the IN THIS EDITION strip is ONE sticky row in ticker style:
+   it sticks under the topbar, and the section list slides horizontally (drag with mouse, swipe on
+   touch, wheel/trackpad natively). The builder script below still generates the items live from the
+   page's own <h2>s; the static items in #toc-list are only a no-JS fallback. */
+#toc{position:sticky;top:52px;z-index:55;display:flex;align-items:center;gap:10px;background:var(--bg);border-top:3px double var(--ink);border-bottom:1px solid var(--border);padding:7px 0;margin:16px 0 6px}
+.ticker-slug{flex:none;font-family:-apple-system,sans-serif;font-size:10.5px;font-weight:800;letter-spacing:.14em;color:var(--gold);text-transform:uppercase;white-space:nowrap}
+.ticker-wrap{position:relative;flex:1;min-width:0}
+#toc-list{display:flex;flex-wrap:nowrap;align-items:center;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;cursor:grab;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+#toc-list::-webkit-scrollbar{display:none}
+#toc-list.dragging{cursor:grabbing}
+#toc-list.dragging a{pointer-events:none}
+.ticker-item{flex:none;white-space:nowrap;color:var(--text);text-decoration:none;font-family:-apple-system,sans-serif;font-size:13px;font-weight:600;line-height:1.5;padding:3px 0}
+.ticker-item:hover{color:var(--accent)}
+.ticker-item + .ticker-item::before{content:'•';margin:0 9px;color:var(--gold);font-weight:400}
+.ticker-arch{color:var(--gold);font-weight:700}
+.ticker-fade{position:absolute;top:0;bottom:0;width:46px;pointer-events:none;display:flex;align-items:center;transition:opacity .25s}
+.ticker-fade.right{right:0;justify-content:flex-end;background:linear-gradient(to right,transparent,var(--bg) 78%)}
+.ticker-fade.left{left:0;justify-content:flex-start;background:linear-gradient(to left,transparent,var(--bg) 78%);opacity:0}
+.ticker-fade .chev{font-family:-apple-system,sans-serif;font-size:20px;font-weight:800;color:var(--accent);padding:0 2px;animation:ticker-chev 1.8s ease-in-out infinite}
+@keyframes ticker-chev{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
+@media (prefers-reduced-motion: reduce){.ticker-fade .chev{animation:none}}
+@media (max-width:640px){.ticker-slug{display:none}.ticker-item{font-size:12.5px}}
+[id]{scroll-margin-top:112px}
+@media (max-width:640px){[id]{scroll-margin-top:150px}}
 </style>
 
 <style id="fg-lightbox-style">
@@ -122,9 +141,13 @@ body img{cursor:zoom-in}
 <!-- BANNER: out-of-cycle safety banner is injected here by the hourly poll when a qualifying event breaks. -->
 <div id="safety-banner"></div>
 
-<nav id="toc" aria-label="Table of contents" style="margin:16px 0 6px;border-top:3px double var(--ink);border-bottom:1px solid var(--line);padding:10px 0 4px">
-<p class="meta" style="margin-bottom:7px">IN THIS EDITION — TAP TO JUMP</p>
-<div id="toc-list"><a class="toc-chip" href="#the-lead">The Lead</a><a class="toc-chip" href="#safety-wire">🚨 Need to Know — the Safety Wire</a><a class="toc-chip" href="#today-events">Today in the Foothills</a><a class="toc-chip" href="#week-events">The Week Ahead</a><a class="toc-chip" href="#community-center">🎻 At the Fiddletown Community Center</a><a class="toc-chip" href="#history">📜 This Day in History</a><a class="toc-chip" href="#star-chart">🔭 Star Chart</a><a class="toc-chip" href="#on-the-wing">🐦 On the Wing</a><a class="toc-chip" href="#critter-desk">🦌 The Critter Desk</a><a class="toc-chip" href="#nans-corner">✉️ Nan's Corner</a><a class="toc-chip" href="#editors-desk">✒️ From the Editor's Desk</a><a class="toc-chip" href="#around-town">Around Town</a><a class="toc-chip" href="#carl">🚜 What's Carl Working On</a><a class="toc-chip" href="#kathys-corner">✉️ Kathy's Corner</a><a class="toc-chip" href="#winsteds">🏆 The Winsteds' Bocce Court</a><a class="toc-chip" href="#community-wire">The Community Wire</a><a class="toc-chip" href="#weather">Weather</a><a class="toc-chip" href="#almanac">🌅 The Almanac</a><a class="toc-chip" href="#recipe-corner">🍞 Nan's Recipe Corner</a><a class="toc-chip" href="#swagger">🍺 Swager's Clubhouse</a><a class="toc-chip" href="#marcis-corner">✉️ Marci's Corner</a><a class="toc-chip" href="#burn-line">🔥 Burn Day Line</a><a class="toc-chip" href="#more-gazette">🗞️ More from the Gazette</a><a class="toc-chip" href="#suggestion-box">📬 The Suggestion Box</a><a class="toc-chip toc-arch" href="recipes.html">📚 Recipe Archive</a><a class="toc-chip toc-arch" href="sightings.html">📚 Sightings Archive</a><a class="toc-chip toc-arch" href="archive.html">📚 Editions Archive</a></div>
+<nav id="toc" aria-label="Table of contents">
+<span class="ticker-slug" aria-hidden="true">In this edition</span>
+<div class="ticker-wrap">
+<div id="toc-list"><a class="ticker-item" href="#the-lead">The Lead</a><a class="ticker-item" href="#safety-wire">🚨 Need to Know — the Safety Wire</a><a class="ticker-item" href="#today-events">Today in the Foothills</a><a class="ticker-item" href="#week-events">The Week Ahead</a><a class="ticker-item" href="#community-center">🎻 At the Fiddletown Community Center</a><a class="ticker-item" href="#history">📜 This Day in History</a><a class="ticker-item" href="#star-chart">🔭 Star Chart</a><a class="ticker-item" href="#on-the-wing">🐦 On the Wing</a><a class="ticker-item" href="#critter-desk">🦌 The Critter Desk</a><a class="ticker-item" href="#nans-corner">✉️ Nan's Corner</a><a class="ticker-item" href="#editors-desk">✒️ From the Editor's Desk</a><a class="ticker-item" href="#around-town">Around Town</a><a class="ticker-item" href="#carl">🚜 What's Carl Working On</a><a class="ticker-item" href="#kathys-corner">✉️ Kathy's Corner</a><a class="ticker-item" href="#winsteds">🏆 The Winsteds' Bocce Court</a><a class="ticker-item" href="#community-wire">The Community Wire</a><a class="ticker-item" href="#weather">Weather</a><a class="ticker-item" href="#almanac">🌅 The Almanac</a><a class="ticker-item" href="#recipe-corner">🍞 Nan's Recipe Corner</a><a class="ticker-item" href="#swagger">🍺 Swager's Clubhouse</a><a class="ticker-item" href="#marcis-corner">✉️ Marci's Corner</a><a class="ticker-item" href="#burn-line">🔥 Burn Day Line</a><a class="ticker-item" href="#more-gazette">🗞️ More from the Gazette</a><a class="ticker-item" href="#suggestion-box">📬 The Suggestion Box</a><a class="ticker-item ticker-arch" href="recipes.html">📚 Recipe Archive</a><a class="ticker-item ticker-arch" href="sightings.html">📚 Sightings Archive</a><a class="ticker-item ticker-arch" href="archive.html">📚 Editions Archive</a></div>
+<div class="ticker-fade left" id="ticker-fade-l" aria-hidden="true"><span class="chev">‹</span></div>
+<div class="ticker-fade right" id="ticker-fade-r" aria-hidden="true"><span class="chev">›</span></div>
+</div>
 </nav>
 <section class="lead" id="the-lead">
   <p class="meta">The Lead</p>
@@ -536,7 +559,7 @@ document.getElementById('sugg-send').addEventListener('click', function(){
 })();
 </script>
 <script>
-/* Table of contents — built live from the page's own section headings on every load, so a contributor's rename or a brand-new section appears here automatically. The static chips in #toc-list are only a no-JS fallback. */
+/* Table of contents — built live from the page's own section headings on every load, so a contributor's rename or a brand-new section appears here automatically. The static items in #toc-list are only a no-JS fallback. Rendered as the one-row ticker (see the ticker styles in <head>). */
 (function(){
   var list=document.getElementById('toc-list'); if(!list) return;
   var seen={}, chips=[];
@@ -551,8 +574,45 @@ document.getElementById('sugg-send').addEventListener('click', function(){
   if(chips.length<5) return;
   var extras=[['recipes.html','\u{1F4DA} Recipe Archive'],['sightings.html','\u{1F4DA} Sightings Archive'],['archive.html','\u{1F4DA} Editions Archive']];
   list.innerHTML='';
-  chips.forEach(function(c){var a=document.createElement('a');a.href='#'+c.id;a.textContent=c.label;a.className='toc-chip';list.appendChild(a);});
-  extras.forEach(function(e){var a=document.createElement('a');a.href=e[0];a.textContent=e[1];a.className='toc-chip toc-arch';list.appendChild(a);});
+  chips.forEach(function(c){var a=document.createElement('a');a.href='#'+c.id;a.textContent=c.label;a.className='ticker-item';list.appendChild(a);});
+  extras.forEach(function(e){var a=document.createElement('a');a.href=e[0];a.textContent=e[1];a.className='ticker-item ticker-arch';list.appendChild(a);});
+})();
+/* Ticker bar behavior (Dave, Nov 4, 2026): stick exactly under the topbar; edge fades + chevrons show
+   there is more to slide to; mouse drag slides the row (past an 8px threshold a drag is not a tap);
+   touch swipe is native and vertical page scroll always wins (touch-action: pan-y). One gentle nudge
+   on load shows the row moves — never under prefers-reduced-motion, never auto-scrolls after. */
+(function(){
+  var toc=document.getElementById('toc'), list=document.getElementById('toc-list'); if(!toc||!list) return;
+  var topbar=document.querySelector('.topbar');
+  function stickTop(){ if(topbar) toc.style.top=topbar.offsetHeight+'px'; }
+  stickTop(); window.addEventListener('resize',stickTop);
+  var fl=document.getElementById('ticker-fade-l'), fr=document.getElementById('ticker-fade-r');
+  function fades(){ var max=list.scrollWidth-list.clientWidth, x=list.scrollLeft;
+    if(fr) fr.style.opacity=(max>2&&x<max-2)?'1':'0';
+    if(fl) fl.style.opacity=(x>2)?'1':'0'; }
+  list.addEventListener('scroll',fades,{passive:true});
+  window.addEventListener('resize',fades);
+  setTimeout(fades,0);
+  var down=false, dragged=false, startX=0, startL=0, suppress=false;
+  list.addEventListener('pointerdown',function(e){ if(e.pointerType==='touch') return;
+    down=true; dragged=false; startX=e.clientX; startL=list.scrollLeft; });
+  list.addEventListener('pointermove',function(e){ if(!down) return;
+    var dx=e.clientX-startX;
+    if(!dragged&&Math.abs(dx)>8){ dragged=true; list.classList.add('dragging'); }
+    if(dragged) list.scrollLeft=startL-dx; });
+  function endDrag(){ if(down&&dragged){ suppress=true; setTimeout(function(){ list.classList.remove('dragging'); },60); } down=false; }
+  list.addEventListener('pointerup',endDrag);
+  list.addEventListener('pointercancel',endDrag);
+  list.addEventListener('click',function(e){ if(suppress){ e.preventDefault(); e.stopPropagation(); suppress=false; } },true);
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!reduce) setTimeout(function(){
+    if(list.scrollLeft!==0||list.scrollWidth-list.clientWidth<10) return;
+    var t0=null;
+    function step(ts){ if(!t0) t0=ts; var p=(ts-t0)/650;
+      if(p>=1){ list.scrollLeft=0; fades(); return; }
+      list.scrollLeft=26*Math.sin(p*Math.PI); requestAnimationFrame(step); }
+    requestAnimationFrame(step);
+  },700);
 })();
 </script>
 
