@@ -89,9 +89,10 @@ h2{font-size:22px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin:2
 @media (prefers-reduced-motion: reduce){.header-tip .jar{animation:none}.header-tip{animation:none}}
 </style>
 <style>
-/* Ticker bar (Dave, Nov 4, 2026) — the IN THIS EDITION strip is ONE sticky row in ticker style:
-   it sticks under the topbar, and the section list slides horizontally (drag with mouse, swipe on
-   touch, wheel/trackpad natively). The builder script below still generates the items live from the
+/* Ticker bar (Dave, Nov 4, 2026; drift + grabbable loop Nov 5, 2026) — the IN THIS EDITION strip is
+   ONE sticky row in ticker style: it sticks under the topbar and DRIFTS slowly on its own in a
+   seamless loop; a reader can grab and drag it with mouse or touch (vertical page scroll always
+   wins, touch-action: pan-y). The builder script below still generates the items live from the
    page's own <h2>s; the static items in #toc-list are only a no-JS fallback. */
 #toc{position:sticky;top:52px;z-index:55;display:flex;align-items:center;gap:10px;background:var(--bg);border-top:3px double var(--ink);border-bottom:1px solid var(--border);padding:7px 0;margin:16px 0 6px}
 .ticker-slug{flex:none;font-family:-apple-system,sans-serif;font-size:10.5px;font-weight:800;letter-spacing:.14em;color:var(--gold);text-transform:uppercase;white-space:nowrap}
@@ -657,42 +658,78 @@ document.getElementById('sugg-send').addEventListener('click', function(){
   chips.forEach(function(c){var a=document.createElement('a');a.href='#'+c.id;a.textContent=c.label;a.className='ticker-item';list.appendChild(a);});
   extras.forEach(function(e){var a=document.createElement('a');a.href=e[0];a.textContent=e[1];a.className='ticker-item ticker-arch';list.appendChild(a);});
 })();
-/* Ticker bar behavior (Dave, Nov 4, 2026): stick exactly under the topbar; edge fades + chevrons show
-   there is more to slide to; mouse drag slides the row (past an 8px threshold a drag is not a tap);
-   touch swipe is native and vertical page scroll always wins (touch-action: pan-y). One gentle nudge
-   on load shows the row moves — never under prefers-reduced-motion, never auto-scrolls after. */
+/* Ticker bar behavior (Dave, Nov 4, 2026; auto-scroll + grabbable loop Nov 5, 2026): stick exactly
+   under the topbar; the tape DRIFTS on its own at a slow, readable pace and loops seamlessly (the
+   item set is duplicated once and the scroll position is normalized inside the seam, so the wrap
+   is invisible). A reader can grab the tape with mouse or touch and drag it either way — dragging
+   pauses the drift, and it resumes after a 3-second idle beat; a clean tap (under the 8px drag
+   threshold) still jumps to the section. Vertical page scroll always wins on touch (pan-y).
+   prefers-reduced-motion: no drift, no nudge — the drag and the taps still work. */
 (function(){
   var toc=document.getElementById('toc'), list=document.getElementById('toc-list'); if(!toc||!list) return;
   var topbar=document.querySelector('.topbar');
   function stickTop(){ if(topbar) toc.style.top=topbar.offsetHeight+'px'; }
   stickTop(); window.addEventListener('resize',stickTop);
   var fl=document.getElementById('ticker-fade-l'), fr=document.getElementById('ticker-fade-r');
-  function fades(){ var max=list.scrollWidth-list.clientWidth, x=list.scrollLeft;
-    if(fr) fr.style.opacity=(max>2&&x<max-2)?'1':'0';
-    if(fl) fl.style.opacity=(x>2)?'1':'0'; }
-  list.addEventListener('scroll',fades,{passive:true});
-  window.addEventListener('resize',fades);
-  setTimeout(fades,0);
-  var down=false, dragged=false, startX=0, startL=0, suppress=false;
-  list.addEventListener('pointerdown',function(e){ if(e.pointerType==='touch') return;
-    down=true; dragged=false; startX=e.clientX; startL=list.scrollLeft; });
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* --- seamless loop: duplicate the set once, rest in the seam range [setW, 2*setW) --- */
+  var setW=0, loopOK=false;
+  function buildLoop(){
+    if(loopOK) return;
+    var w=list.scrollWidth;
+    if(!w||w<=list.clientWidth+2) return;
+    setW=w;
+    Array.prototype.slice.call(list.children).forEach(function(n){
+      var c=n.cloneNode(true); c.classList.add('ticker-dup'); c.setAttribute('aria-hidden','true');
+      if(c.tagName==='A') c.tabIndex=-1;
+      list.appendChild(c);
+    });
+    loopOK=true;
+    list.scrollLeft=setW;
+  }
+  var normalizing=false;
+  function normalize(){
+    if(!loopOK||normalizing) return;
+    var x=list.scrollLeft;
+    if(x>=2*setW||x<setW){
+      normalizing=true;
+      list.scrollLeft=setW+(((x-setW)%setW)+setW)%setW;
+      normalizing=false;
+    }
+  }
+  function fades(){ var on=loopOK||list.scrollWidth>list.clientWidth+2;
+    if(fr) fr.style.opacity=on?'1':'0';
+    if(fl) fl.style.opacity=on?'1':'0'; }
+  list.addEventListener('scroll',function(){ normalize(); },{passive:true});
+  window.addEventListener('resize',function(){ buildLoop(); normalize(); fades(); });
+  buildLoop(); fades();
+  /* --- drag (mouse + touch via pointer events; pan-y leaves vertical scroll to the page) --- */
+  var down=false, dragged=false, startX=0, startL=0, suppress=false, resumeAt=0;
+  function pauseFor(ms){ resumeAt=Math.max(resumeAt, performance.now()+ms); }
+  list.addEventListener('pointerdown',function(e){
+    down=true; dragged=false; startX=e.clientX; startL=list.scrollLeft; pauseFor(4000); });
   list.addEventListener('pointermove',function(e){ if(!down) return;
     var dx=e.clientX-startX;
     if(!dragged&&Math.abs(dx)>8){ dragged=true; list.classList.add('dragging'); }
-    if(dragged) list.scrollLeft=startL-dx; });
-  function endDrag(){ if(down&&dragged){ suppress=true; setTimeout(function(){ list.classList.remove('dragging'); },60); } down=false; }
-  list.addEventListener('pointerup',endDrag);
-  list.addEventListener('pointercancel',endDrag);
+    if(dragged){ list.scrollLeft=startL-dx; normalize(); pauseFor(4000); } });
+  function endDrag(){ if(down&&dragged){ suppress=true; setTimeout(function(){ list.classList.remove('dragging'); },60); }
+    if(down) pauseFor(3000);
+    down=false; }
+  window.addEventListener('pointerup',endDrag);
+  window.addEventListener('pointercancel',endDrag);
   list.addEventListener('click',function(e){ if(suppress){ e.preventDefault(); e.stopPropagation(); suppress=false; } },true);
-  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(!reduce) setTimeout(function(){
-    if(list.scrollLeft!==0||list.scrollWidth-list.clientWidth<10) return;
-    var t0=null;
-    function step(ts){ if(!t0) t0=ts; var p=(ts-t0)/650;
-      if(p>=1){ list.scrollLeft=0; fades(); return; }
-      list.scrollLeft=26*Math.sin(p*Math.PI); requestAnimationFrame(step); }
-    requestAnimationFrame(step);
-  },700);
+  /* --- the drift: 36 px/s — a readable glide, resumed 3s after any interaction --- */
+  var SPEED=36, lastT=0;
+  list.addEventListener('mouseenter',function(){ pauseFor(600); });
+  list.addEventListener('mouseleave',function(){ pauseFor(300); });
+  function drift(ts){
+    requestAnimationFrame(drift);
+    if(!loopOK||down||dragged) { lastT=ts; return; }
+    if(ts<resumeAt) { lastT=ts; return; }
+    if(lastT&&ts-lastT<100){ list.scrollLeft+=(ts-lastT)/1000*SPEED; normalize(); }
+    lastT=ts;
+  }
+  if(!reduce&&loopOK) setTimeout(function(){ requestAnimationFrame(drift); },1200);
 })();
 </script>
 
