@@ -116,6 +116,7 @@ h2{font-size:22px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin:2
 #toc-list.dragging a{pointer-events:none}
 .ticker-item{flex:none;white-space:nowrap;color:var(--text);text-decoration:none;font-family:-apple-system,sans-serif;font-size:13px;font-weight:600;line-height:1.5;padding:3px 0}
 .ticker-item:hover{color:var(--accent)}
+.ticker-item.on{color:var(--accent);box-shadow:inset 0 -2px 0 var(--gold)}
 .ticker-item + .ticker-item::before{content:'•';margin:0 9px;color:var(--gold);font-weight:400}
 .ticker-arch{color:var(--gold);font-weight:700}
 .ticker-fade{position:absolute;top:0;bottom:0;width:46px;pointer-events:none;display:flex;align-items:center;transition:opacity .25s}
@@ -731,6 +732,77 @@ document.getElementById('sugg-send').addEventListener('click', function(){
   var SPEED=36, lastT=0;
   list.addEventListener('mouseenter',function(){ pauseFor(600); });
   list.addEventListener('mouseleave',function(){ pauseFor(300); });
+  /* Scroll-spy (Dave, Nov 6, 2026): the tape also tracks the reader — as the page scrolls, the
+     item for the section currently under the sticky bars lights up (accent + gold underline)
+     and the tape re-aligns so that item is on screen; while the reader is down in the paper
+     the drift parks (the tape is a you-are-here marker, not a showcase), and back at the top
+     the showcase drift resumes. The reference line is the sections' own scroll-margin (150px),
+     so the spy agrees with where a tapped item lands. Archive items have no section on this
+     page and never spy. */
+  var spyItems=[], spySections=[], activeIdx=-1;
+  function buildSpy(){
+    spyItems=[]; spySections=[];
+    Array.prototype.slice.call(list.querySelectorAll('a.ticker-item')).forEach(function(a){
+      if(a.classList.contains('ticker-dup')||a.classList.contains('ticker-arch')) return;
+      var href=a.getAttribute('href')||'';
+      if(href.charAt(0)!=='#') return;
+      var el=document.getElementById(href.slice(1));
+      if(el){ spyItems.push(a); spySections.push(el); }
+    });
+  }
+  buildSpy();
+  window.addEventListener('resize',function(){ setTimeout(buildSpy,350); });
+  function currentSection(y){
+    var n=spySections.length; if(!n) return -1;
+    for(var i=0;i<n;i++){
+      var r=spySections[i].getBoundingClientRect();
+      if(r.top<=150) { if(r.bottom>150||i===n-1) return i; }
+      else return i-1;
+    }
+    return n-1;
+  }
+  function itemOffset(a){
+    var lr=list.getBoundingClientRect();
+    return a.getBoundingClientRect().left - lr.left + list.scrollLeft;
+  }
+  function alignTape(){
+    if(!loopOK||activeIdx<0||down) return;
+    var orig=spyItems[activeIdx]; if(!orig) return;
+    var cands=[orig];
+    Array.prototype.slice.call(list.querySelectorAll('a.ticker-dup')).forEach(function(d){
+      if(d.getAttribute('href')===orig.getAttribute('href')) cands.push(d);
+    });
+    var sl=list.scrollLeft, vw=list.clientWidth, best=null, bestGap=1e18;
+    cands.forEach(function(c){
+      var off=itemOffset(c), w=c.getBoundingClientRect().width;
+      var gap=(off>=sl-2&&off+w<=sl+vw+2)?0:Math.min(Math.abs(off-sl),Math.abs(off+w-(sl+vw)));
+      if(gap<bestGap){ bestGap=gap; best={off:off,w:w}; }
+    });
+    if(!best||bestGap===0) return;
+    var target;
+    if(best.off<sl) target=best.off-10;
+    else target=best.off+best.w-vw+10;
+    if(target<0) target=0;
+    if(Math.abs(target-sl)>1){ list.scrollLeft=target; normalize(); }
+  }
+  function spy(y){
+    if(!spySections.length||down) return -1;
+    var idx=currentSection(y);
+    if(idx!==activeIdx){
+      var old=activeIdx; activeIdx=idx;
+      [old,idx].forEach(function(k){
+        if(k<0||!spyItems[k]) return;
+        var href=spyItems[k].getAttribute('href');
+        Array.prototype.slice.call(list.querySelectorAll('a.ticker-item')).forEach(function(a){
+          if(a.getAttribute('href')!==href) return;
+          if(k===idx){ a.classList.add('on'); if(!a.classList.contains('ticker-dup')) a.setAttribute('aria-current','true'); }
+          else { a.classList.remove('on'); a.removeAttribute('aria-current'); }
+        });
+      });
+    }
+    alignTape();
+    return idx;
+  }
   /* Page rest detection (v3, Nov 5, 2026 — v2 still failed on Dave's iPhone: "the scrollable
      area is not auto-scrolling when the page is static for more than about 1 second").
      Why v2 failed live: iOS Safari reports scrollY as a FRACTION, and its momentum tail crawls
@@ -755,11 +827,13 @@ document.getElementById('sugg-send').addEventListener('click', function(){
     samples.push([ts,y]);
     while(samples.length&&ts-samples[0][0]>1600) samples.shift();
     var settled = rangeOver(500,ts)<2 || rangeOver(1500,ts)<4;
+    var cur = spy(y); /* highlight + alignment update; -1 until sections resolve */
+    var spyPark = cur>0; /* down in the paper: the tape marks the reader's place */
     var extBlocked = performance.now()<resumeAt;
-    var blocked = !loopOK || down || dragged || extBlocked || !settled || ts<startAt;
+    var blocked = !loopOK || down || dragged || extBlocked || !settled || ts<startAt || spyPark;
     if(extBlocked && settled && !down && !dragged){
       if(!blockedSince) blockedSince=ts;
-      if(ts-blockedSince>4000){ resumeAt=0; blockedSince=0; blocked = !loopOK || ts<startAt; }
+      if(ts-blockedSince>4000){ resumeAt=0; blockedSince=0; blocked = !loopOK || ts<startAt || spyPark; }
     } else blockedSince=0;
     if(blocked) { lastT=ts; return; }
     if(lastT&&ts-lastT<100){ list.scrollLeft+=(ts-lastT)/1000*SPEED; normalize(); }
