@@ -128,6 +128,7 @@ else{el.classList.remove('on');el.style.transform='translate(-50%,-70px)';}});})
   document.addEventListener('click',function(e){
     var t=e.target;
     if(t===lb){close();return;}
+    if(t&&t.closest&&t.closest('a'))return; /* a linked image (e.g. an archive thumbnail inside its edition link) navigates — the lightbox only opens unlinked photos */
     if(t&&t.tagName==='IMG'&&!lb.contains(t)){
       e.preventDefault();
       var cap='',fig=(t.closest?t.closest('figure'):null);
