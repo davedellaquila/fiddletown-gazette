@@ -116,6 +116,14 @@ h2{font-size:22px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin:2
 #toc-list.dragging a{pointer-events:none}
 .ticker-item{flex:none;white-space:nowrap;color:var(--text);text-decoration:none;font-family:-apple-system,sans-serif;font-size:13px;font-weight:600;line-height:1.5;padding:3px 0}
 .ticker-item:hover{color:var(--accent)}
+#ticker-menu{position:absolute;top:calc(100% + 4px);left:0;z-index:90;min-width:280px;max-width:88vw;max-height:62vh;overflow-y:auto;background:var(--paper-card,#fffdf6);border:1px solid var(--border);border-radius:10px;box-shadow:0 14px 34px rgba(0,0,0,.30);padding:6px}
+#ticker-menu[hidden]{display:none}
+#ticker-menu a{display:block;padding:9px 12px;border-radius:7px;color:var(--ink);text-decoration:none;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#ticker-menu a:hover,#ticker-menu a:focus-visible{background:rgba(0,0,0,.06);outline:none}
+#ticker-menu a.on{color:var(--accent);font-weight:700}
+.ticker-slug{cursor:pointer}
+.ticker-slug:hover,.ticker-slug:focus-visible{color:var(--ink);outline:none;text-decoration:underline;text-underline-offset:3px}
+.ticker-slug .tm-caret{font-size:8.5px;letter-spacing:0;margin-left:3px}
 .ticker-item.on{color:var(--accent);text-decoration:underline;text-decoration-color:var(--gold);text-decoration-thickness:2px;text-underline-offset:4px}
 .ticker-item + .ticker-item::before{content:'•';margin:0 9px;color:var(--gold);font-weight:400}
 .ticker-arch{color:var(--gold);font-weight:700}
@@ -713,6 +721,59 @@ document.getElementById('sugg-send').addEventListener('click', function(){
   list.addEventListener('scroll',function(){ normalize(); },{passive:true});
   window.addEventListener('resize',function(){ buildLoop(); normalize(); fades(); });
   buildLoop(); fades();
+  /* --- "In this edition" drop-down menu (Dave, Nov 6, 2026): click the slug ->
+     a full section list; tap one to jump. Built from the same items as the tape,
+     so it always carries every section. --- */
+  var slug=document.querySelector('.ticker-slug');
+  if(slug){
+    slug.setAttribute('role','button'); slug.setAttribute('tabindex','0');
+    slug.setAttribute('aria-haspopup','true'); slug.setAttribute('aria-expanded','false');
+    slug.title='Jump to a section';
+    slug.insertAdjacentHTML('beforeend','<span class="tm-caret" aria-hidden="true">▾</span>');
+    var menu=document.createElement('div');
+    menu.id='ticker-menu'; menu.setAttribute('role','menu'); menu.hidden=true;
+    var srcItems=[].slice.call(list.querySelectorAll('a.ticker-item:not(.ticker-dup)'));
+    srcItems.forEach(function(a){
+      var m=document.createElement('a');
+      m.href=a.getAttribute('href'); m.textContent=a.textContent;
+      m.setAttribute('role','menuitem');
+      if(a.getAttribute('href').charAt(0)==='#') m.setAttribute('data-spy-id',a.getAttribute('href').slice(1));
+      if(a.classList.contains('ticker-arch')) m.classList.add('ticker-arch');
+      menu.appendChild(m);
+    });
+    var nav=document.getElementById('toc');
+    nav.appendChild(menu);
+    var menuOpen=false;
+    function setMenu(open){
+      menuOpen=open; menu.hidden=!open;
+      slug.setAttribute('aria-expanded',open?'true':'false');
+      if(open){ var cur=list.querySelector('a.ticker-item.on:not(.ticker-dup)');
+        menu.querySelectorAll('a').forEach(function(m){
+          m.classList.toggle('on',!!cur && m.getAttribute('href')===cur.getAttribute('href'));
+        });
+        var onEl=menu.querySelector('a.on');
+        if(onEl && onEl.scrollIntoView) onEl.scrollIntoView({block:'nearest'});
+      }
+    }
+    slug.addEventListener('click',function(){ setMenu(!menuOpen); });
+    slug.addEventListener('keydown',function(e){
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); setMenu(!menuOpen); }
+      if(e.key==='Escape') setMenu(false);
+    });
+    menu.addEventListener('click',function(e){
+      var a=e.target.closest('a'); if(!a) return;
+      e.preventDefault(); setMenu(false);
+      var href=a.getAttribute('href');
+      if(href.charAt(0)==='#'){
+        var el=document.getElementById(href.slice(1));
+        if(el){ el.scrollIntoView({behavior:'smooth',block:'start'}); history.replaceState(null,'',href); }
+      } else { window.location.href=href; }
+    });
+    document.addEventListener('click',function(e){
+      if(menuOpen && !menu.contains(e.target) && !slug.contains(e.target)) setMenu(false);
+    });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') setMenu(false); });
+  }
   /* --- drag (mouse + touch via pointer events; pan-y leaves vertical scroll to the page) --- */
   var down=false, dragged=false, startX=0, startL=0, suppress=false, resumeAt=0, lastDragEnd=-1e9;
   function pauseFor(ms){ resumeAt=Math.max(resumeAt, performance.now()+ms); }
