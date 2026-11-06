@@ -745,10 +745,12 @@ document.getElementById('sugg-send').addEventListener('click', function(){
   var SPEED=36, lastT=0;
   list.addEventListener('mouseenter',function(){ pauseFor(600); });
   list.addEventListener('mouseleave',function(){ pauseFor(300); });
-  /* Page scrolling holds the tape (Dave, Nov 5, 2026): while the reader scrolls the page, the
-     drift pauses; it resumes ~1s after the last scroll event — the tape never competes with
-     the reader's own scrolling. The tape's own horizontal scroll is not a page scroll. */
-  window.addEventListener('scroll',function(e){ if(e.target!==list) pauseFor(1000); },{passive:true});
+  /* Page scrolling holds the tape (Dave, Nov 5, 2026; resume tightened the same evening at his
+     word — "when the user stops scrolling the page, then start the table of contents scrolling"):
+     while the reader scrolls the page, the drift pauses; the moment the scrolling stops — a
+     200ms settle so momentum bursts don't stutter it — the drift starts again. The tape's own
+     horizontal scroll is not a page scroll. */
+  window.addEventListener('scroll',function(e){ if(e.target!==list) pauseFor(200); },{passive:true});
   function drift(ts){
     requestAnimationFrame(drift);
     if(!loopOK||down||dragged) { lastT=ts; return; }
