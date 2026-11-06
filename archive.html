@@ -57,10 +57,11 @@ body.fg-lb-lock{overflow:hidden}
 body img{cursor:zoom-in}
 </style>
 <style id="ed-thumbs-style">
-.arch-entry{display:flex;gap:12px;align-items:flex-start;margin:0 0 14px;list-style:none}
-.ed-thumb-link{flex:0 0 auto;line-height:0}
-.ed-thumb{width:96px;height:72px;object-fit:cover;border-radius:8px;flex:0 0 auto;display:block;border:1px solid var(--border)}
-@media (max-width:560px){.ed-thumb{width:72px;height:56px}.arch-entry{gap:10px}}
+.arch-entry{display:block;margin:0 0 16px;list-style:none}
+.arch-entry::after{content:"";display:block;clear:both}
+.ed-thumb-link{float:left;line-height:0;margin:2px 14px 6px 0}
+.ed-thumb{width:168px;height:126px;object-fit:cover;border-radius:8px;display:block;border:1px solid var(--border)}
+@media (max-width:560px){.ed-thumb{width:118px;height:92px}.ed-thumb-link{margin:2px 10px 4px 0}}
 </style>
 </head>
 <body>
