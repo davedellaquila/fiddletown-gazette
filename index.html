@@ -745,16 +745,28 @@ document.getElementById('sugg-send').addEventListener('click', function(){
   var SPEED=36, lastT=0;
   list.addEventListener('mouseenter',function(){ pauseFor(600); });
   list.addEventListener('mouseleave',function(){ pauseFor(300); });
-  /* Page scrolling holds the tape (Dave, Nov 5, 2026; resume tightened the same evening at his
-     word — "when the user stops scrolling the page, then start the table of contents scrolling"):
-     while the reader scrolls the page, the drift pauses; the moment the scrolling stops — a
-     200ms settle so momentum bursts don't stutter it — the drift starts again. The tape's own
-     horizontal scroll is not a page scroll. */
-  window.addEventListener('scroll',function(e){ if(e.target!==list) pauseFor(200); },{passive:true});
+  /* Page rest detection (REBUILT Nov 5, 2026, after Dave's iPhone report: "It didn't scroll after
+     the page comes to rest"). The old build keyed the resume to scroll EVENTS and compared a
+     performance.now() deadline against the rAF clock — under iOS momentum scrolling both are
+     unreliable (events trail off; the two clocks drift apart), so the resume could never fire and
+     the tape stayed frozen. Now the drift loop WATCHES THE PAGE'S ACTUAL POSITION: scrollY is
+     sampled every frame; while it changes, the page is moving and the tape holds; once it has
+     been unchanged for 250ms of frames, the page is at rest and the tape starts. One clock (the
+     rAF timestamp) for the settle, and the drag/hover deadline is checked in its own clock.
+     A watchdog force-clears any block that outlasts 4s while the position is still, so the tape
+     can never stay frozen past a beat after visible rest, whatever a browser does. */
+  var lastY=window.scrollY||0, yMovedAt=-1e9, blockedSince=0;
   function drift(ts){
     requestAnimationFrame(drift);
-    if(!loopOK||down||dragged) { lastT=ts; return; }
-    if(ts<resumeAt) { lastT=ts; return; }
+    var y=window.scrollY||0;
+    if(y!==lastY){ lastY=y; yMovedAt=ts; }
+    var pageSettled=(ts-yMovedAt>=250);
+    var blocked = !loopOK || down || dragged || (performance.now()<resumeAt) || !pageSettled;
+    if(blocked){
+      if(!blockedSince) blockedSince=ts;
+      if(!down && !dragged && pageSettled && ts-blockedSince>4000){ resumeAt=0; blockedSince=0; blocked=false; }
+    } else blockedSince=0;
+    if(blocked) { lastT=ts; return; }
     if(lastT&&ts-lastT<100){ list.scrollLeft+=(ts-lastT)/1000*SPEED; normalize(); }
     lastT=ts;
   }
