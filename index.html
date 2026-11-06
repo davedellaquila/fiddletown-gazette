@@ -755,32 +755,41 @@ document.getElementById('sugg-send').addEventListener('click', function(){
   var SPEED=36, lastT=0;
   list.addEventListener('mouseenter',function(){ pauseFor(600); });
   list.addEventListener('mouseleave',function(){ pauseFor(300); });
-  /* Page rest detection (REBUILT Nov 5, 2026, after Dave's iPhone report: "It didn't scroll after
-     the page comes to rest"). The old build keyed the resume to scroll EVENTS and compared a
-     performance.now() deadline against the rAF clock — under iOS momentum scrolling both are
-     unreliable (events trail off; the two clocks drift apart), so the resume could never fire and
-     the tape stayed frozen. Now the drift loop WATCHES THE PAGE'S ACTUAL POSITION: scrollY is
-     sampled every frame; while it changes, the page is moving and the tape holds; once it has
-     been unchanged for 250ms of frames, the page is at rest and the tape starts. One clock (the
-     rAF timestamp) for the settle, and the drag/hover deadline is checked in its own clock.
-     A watchdog force-clears any block that outlasts 4s while the position is still, so the tape
-     can never stay frozen past a beat after visible rest, whatever a browser does. */
-  var lastY=window.scrollY||0, yMovedAt=-1e9, blockedSince=0;
+  /* Page rest detection (v3, Nov 5, 2026 — v2 still failed on Dave's iPhone: "the scrollable
+     area is not auto-scrolling when the page is static for more than about 1 second").
+     Why v2 failed live: iOS Safari reports scrollY as a FRACTION, and its momentum tail crawls
+     at sub-pixel rates for seconds after the page looks perfectly still — v2 demanded the
+     position be exactly unchanged for 250ms, a moment that arrives far too late, and its
+     watchdog required that same exact settle, so it never rescued. Rest is now judged the way
+     a reader sees it — by HOW MUCH the page moved lately, not whether it moved at all:
+     the loop keeps the last ~1.6s of positions; the page is at rest when the trailing ~0.5s
+     spans under 2px of movement, or the trailing ~1.5s spans under 4px (the slow fractional
+     tail). Genuine scrolling spans far more and keeps the tape held. The drag/hover deadline
+     is still checked in its own clock, and the watchdog now guards only that deadline: if it
+     ever stays stuck 4s past a settled page, it is force-cleared. */
+  var samples=[], startAt=0, blockedSince=0;
+  function rangeOver(win,ts){ var lo=Infinity,hi=-Infinity,seen=false;
+    for(var i=samples.length-1;i>=0;i--){ if(ts-samples[i][0]>win) break; seen=true;
+      if(samples[i][1]<lo)lo=samples[i][1]; if(samples[i][1]>hi)hi=samples[i][1]; }
+    return seen?(hi-lo):999; }
   function drift(ts){
     requestAnimationFrame(drift);
+    if(!startAt) startAt=ts+1200;
     var y=window.scrollY||0;
-    if(y!==lastY){ lastY=y; yMovedAt=ts; }
-    var pageSettled=(ts-yMovedAt>=250);
-    var blocked = !loopOK || down || dragged || (performance.now()<resumeAt) || !pageSettled;
-    if(blocked){
+    samples.push([ts,y]);
+    while(samples.length&&ts-samples[0][0]>1600) samples.shift();
+    var settled = rangeOver(500,ts)<2 || rangeOver(1500,ts)<4;
+    var extBlocked = performance.now()<resumeAt;
+    var blocked = !loopOK || down || dragged || extBlocked || !settled || ts<startAt;
+    if(extBlocked && settled && !down && !dragged){
       if(!blockedSince) blockedSince=ts;
-      if(!down && !dragged && pageSettled && ts-blockedSince>4000){ resumeAt=0; blockedSince=0; blocked=false; }
+      if(ts-blockedSince>4000){ resumeAt=0; blockedSince=0; blocked = !loopOK || ts<startAt; }
     } else blockedSince=0;
     if(blocked) { lastT=ts; return; }
     if(lastT&&ts-lastT<100){ list.scrollLeft+=(ts-lastT)/1000*SPEED; normalize(); }
     lastT=ts;
   }
-  if(!reduce&&loopOK) setTimeout(function(){ requestAnimationFrame(drift); },1200);
+  if(!reduce&&loopOK) requestAnimationFrame(drift);
 })();
 </script>
 
