@@ -160,13 +160,22 @@ body img{cursor:zoom-in}
 .fc-pop{font-family:-apple-system,sans-serif;font-size:10.5px;color:#4a7fa5;min-height:1.25em;margin-top:1px}
 @media (max-width:380px){.fc-day svg{width:28px;height:28px}.fc-temps{font-size:14px}.fc-name{font-size:10px}.fc-cond{font-size:10px}}
 </style>
-<script id="fsctl-boot">/* Text-size control (Dave, Nov 5, 2026): apply the reader's saved level before first paint. */
-try{var n=parseInt(localStorage.getItem('fg-font-size'),10);if(!(n>=0&&n<=4))n=2;document.documentElement.classList.add('fs-'+n);}catch(e){document.documentElement.classList.add('fs-2');}</script>
+<script id="fsctl-boot">/* Text-size control (Dave, Nov 5, 2026; rebased): apply the reader's saved level before
+   first paint. Default is level 0 — the new floor, which renders at the paper's normal size.
+   A level saved under the pre-rebase scale is migrated once, preserving the reader's chosen
+   size where the new scale has it (old 2/3/4 → new 0/1/2; old 0/1 land on the new floor). */
+try{var v2=localStorage.getItem('fg-font-size-v2'),n=parseInt(localStorage.getItem('fg-font-size'),10);
+if(!v2){ if(n>=0&&n<=4){ n=Math.max(0,n-2); try{localStorage.setItem('fg-font-size',String(n));}catch(e){} } else n=0;
+  try{localStorage.setItem('fg-font-size-v2','1');}catch(e){} }
+if(!(n>=0&&n<=4))n=0;document.documentElement.classList.add('fs-'+n);}catch(e){document.documentElement.classList.add('fs-0');}</script>
 <style id="fsctl-style">
-/* Text-size control (Dave, Nov 5, 2026): five reader-chosen levels, default in the middle (level 3 of 5).
-   The paper's type is set in px throughout, so levels scale the whole page with CSS zoom on <html>;
-   the choice persists in localStorage ('fg-font-size'). Standing element — preserve in every rebuild. */
-html.fs-0{zoom:.88}html.fs-1{zoom:.94}html.fs-2{zoom:1}html.fs-3{zoom:1.08}html.fs-4{zoom:1.16}
+/* Text-size control (Dave, Nov 5, 2026; scale REBASED the same evening at Dave's direction):
+   five reader-chosen levels, but today's "normal" is now the FLOOR and the default — level 1
+   (zoom 1) is the size the paper always rendered at; the steps climb from there to 1.32, past
+   the old top of 1.16. The paper's type is set in px throughout, so levels scale the whole page
+   with CSS zoom on <html>; the choice persists in localStorage ('fg-font-size', scale version
+   'fg-font-size-v2'). Standing element — preserve in every rebuild. */
+html.fs-0{zoom:1}html.fs-1{zoom:1.08}html.fs-2{zoom:1.16}html.fs-3{zoom:1.24}html.fs-4{zoom:1.32}
 .fsctl{display:flex;align-items:center;gap:7px;flex:none}
 .fs-btn{background:none;border:none;color:var(--text);cursor:pointer;font-family:Georgia,serif;font-weight:700;line-height:1;padding:4px 2px;-webkit-tap-highlight-color:transparent}
 .fs-btn.fs-down{font-size:11px}
@@ -816,11 +825,16 @@ else{el.classList.remove('on');el.style.transform='translate(-50%,-70px)';}});})
 </script>
 
 <script id="fsctl-script">
-/* Text-size control behavior (Dave, Nov 5, 2026): small A steps down, big A steps up, the five dots
-   show the level and jump straight to it. Level persists per reader in localStorage. */
+/* Text-size control behavior (Dave, Nov 5, 2026; scale rebased the same evening — level 0 is the
+   floor at the paper's normal size and the default; levels climb to 1.32): small A steps down,
+   big A steps up, the five dots show the level and jump straight to it. Level persists per
+   reader in localStorage; a pre-rebase saved level is migrated once, size preserved. */
 (function(){
-  var KEY='fg-font-size', lvl=2;
-  try{var n=parseInt(localStorage.getItem(KEY),10); if(n>=0&&n<=4) lvl=n;}catch(e){}
+  var KEY='fg-font-size', VKEY='fg-font-size-v2', lvl=0;
+  try{var v2=localStorage.getItem(VKEY), n=parseInt(localStorage.getItem(KEY),10);
+    if(!v2){ if(n>=0&&n<=4) n=Math.max(0,n-2); else n=0;
+      try{localStorage.setItem(KEY,String(n)); localStorage.setItem(VKEY,'1');}catch(e){} }
+    if(n>=0&&n<=4) lvl=n;}catch(e){}
   var root=document.documentElement;
   var dots=[].slice.call(document.querySelectorAll('.fs-dot'));
   var down=document.getElementById('fs-down'), up=document.getElementById('fs-up');
