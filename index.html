@@ -116,11 +116,13 @@ h2{font-size:22px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin:2
 #toc-list.dragging a{pointer-events:none}
 .ticker-item{flex:none;white-space:nowrap;color:var(--text);text-decoration:none;font-family:-apple-system,sans-serif;font-size:13px;font-weight:600;line-height:1.5;padding:3px 0}
 .ticker-item:hover{color:var(--accent)}
-#ticker-menu{position:absolute;top:calc(100% + 4px);left:0;z-index:90;min-width:280px;max-width:88vw;max-height:62vh;overflow-y:auto;background:var(--paper-card,#fffdf6);border:1px solid var(--border);border-radius:10px;box-shadow:0 14px 34px rgba(0,0,0,.30);padding:6px}
+#ticker-menu{position:absolute;top:calc(100% + 4px);left:0;z-index:90;min-width:280px;max-width:88vw;max-height:62vh;overflow-y:auto;background:var(--paper);border:1px solid var(--border);border-radius:10px;box-shadow:0 14px 34px rgba(0,0,0,.30);padding:6px}
 #ticker-menu[hidden]{display:none}
 #ticker-menu a{display:block;padding:9px 12px;border-radius:7px;color:var(--ink);text-decoration:none;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #ticker-menu a:hover,#ticker-menu a:focus-visible{background:rgba(0,0,0,.06);outline:none}
 #ticker-menu a.on{color:var(--accent);font-weight:700}
+@media (prefers-color-scheme: dark){#ticker-menu{box-shadow:0 12px 34px rgba(0,0,0,.6)}#ticker-menu a:hover,#ticker-menu a:focus-visible{background:rgba(255,255,255,.09)}#ticker-menu a.on{color:var(--accent)}}
+/* Dark mode (Dave’s screenshot, Nov 6, 2026): the menu panel must ride var(--paper) — an earlier draft named an undefined --paper-card, so the panel fell back to cream in BOTH modes while its links took dark mode’s near-white --ink: white-on-cream ghosts. Never give the panel a light fallback the theme variables don’t override. */
 .ticker-slug{cursor:pointer}
 .ticker-slug:hover,.ticker-slug:focus-visible{color:var(--ink);outline:none;text-decoration:underline;text-underline-offset:3px}
 .ticker-slug .tm-caret{font-size:8.5px;letter-spacing:0;margin-left:3px}
@@ -762,7 +764,7 @@ document.getElementById('sugg-send').addEventListener('click', function(){
           m.classList.toggle('on',!!cur && m.getAttribute('href')===cur.getAttribute('href'));
         });
         var onEl=menu.querySelector('a.on');
-        if(onEl && onEl.scrollIntoView) onEl.scrollIntoView({block:'nearest'});
+        if(onEl){var mt=onEl.offsetTop-6;var mx=menu.scrollHeight-menu.clientHeight;menu.scrollTop=Math.max(0,Math.min(mt,mx));}
       }
     }
     slug.addEventListener('click',function(){ setMenu(!menuOpen); });
