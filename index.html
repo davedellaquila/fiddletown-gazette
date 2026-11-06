@@ -459,6 +459,7 @@ html.fs-0{zoom:1}html.fs-1{zoom:1.08}html.fs-2{zoom:1.16}html.fs-3{zoom:1.24}htm
     <p style="margin-top:6px">Whisk the flour, baking soda, cornstarch, and salt together in a medium bowl and set it aside. In a second bowl, cream the butter, bananas, and both sugars until light and fluffy, then beat in the vanilla. Stir the flour mixture in just until combined, then fold in the chocolate chips. Chill the dough for 30 minutes. Heat the oven to 375°F and line two cookie sheets with parchment, or spray them lightly. Scoop the dough onto the sheets and bake 9 to 10 minutes, just until the tops start to turn light golden brown. Let the cookies cool completely right on the sheets.</p>
     <p style="margin-top:6px"><b>Nan's note, from her email:</b> “I made these for the first time, they were delicious! I doubled the recipe and used an entire bag of semi-sweet chocolate chunks. I let the dough sit in the fridge for a few hours before baking them which helps them stay fluffy while baking. They turned out thick and yummy!” (Her card, dated Nov 5, carries the same report — and her verdict that she would definitely make them again.)</p>
     <p class="meta" style="margin-top:6px">Nan's recipe card: <a href="https://recipekeeperonline.com/recipe/imbMasYZ_0ySYDKqGCNjDA">Recipe Keeper</a> · Original recipe: <a href="https://www.momontimeout.com/chocolate-chip-banana-cookies/">Mom On Timeout</a></p>
+    <p style="margin-top:6px">🍪 <b>Pool-night watch:</b> rumor has it a batch of these may make an appearance at tonight's pool night. The desk cannot confirm the cookie jar's travel plans — but it has its hopes, and they are up.</p>
     <p style="margin-top:6px">📚 <a href="recipes.html"><b>The Recipe Archive</b></a> — every recipe Nan files, kept on the record.</p>
   </div>
   <h2>🍺 Swager's Clubhouse</h2>
@@ -466,6 +467,7 @@ html.fs-0{zoom:1}html.fs-1{zoom:1.08}html.fs-2{zoom:1.16}html.fs-3{zoom:1.24}htm
     <p class="meta" style="margin-bottom:6px">BEER &amp; ASTRONOMY — WHAT TO SIP, WHAT TO SEE</p>
     <p><b>The pour:</b> a mostly sunny 68° afternoon that turns clear and cold by nightfall calls for a brown ale again — malty, steady, built for a sky-watching evening that starts at a 4:57 PM sunset and cools toward 48°. Two clear nights running; the brown holds its title.</p>
     <p style="margin-top:6px"><b>The sky:</b> clear end to end tonight. Saturn is high in the south from dusk, peaking at 53° around 9:35 PM (see the Star Chart on the front page). The Southern Taurids are still active and throwing the odd fireball after midnight; the Moon stays down until about 5:10 AM, so the dark is uninterrupted.</p>
+    <p style="margin-top:6px"><b>🎱 Pool's on tonight:</b> the Friday game is a go — racks at the usual table, the usual hour. Form notes below; bring your stroke and your excuses in equal measure.</p>
     <p style="margin-top:6px"><b>🎱 The pool book:</b> Swager keeps the form book now — who won the last games, who's on fire, and whose stroke is pure. Last session's racks went the way they've gone all month: the quiet run-out artist from the end of the bar closed three straight, the chalk-dust veteran is <i>on fire</i> (hasn't missed a makeable eight in two weeks), and the best pure form at the table belongs, as ever, to the mechanic — textbook stance, no drama, ball goes where the eyes went first. The book stays open: send real scores through the Suggestion Box and they'll run here, names and all.</p>
     <p style="margin-top:6px"><b>Swager's rule:</b> never trust a man who pairs a light lager with a meteor shower.</p>
     <p class="meta" style="margin-top:6px">Swager's Clubhouse — beer &amp; astronomy, every edition · Updated Nov 6</p>
@@ -712,7 +714,7 @@ document.getElementById('sugg-send').addEventListener('click', function(){
   window.addEventListener('resize',function(){ buildLoop(); normalize(); fades(); });
   buildLoop(); fades();
   /* --- drag (mouse + touch via pointer events; pan-y leaves vertical scroll to the page) --- */
-  var down=false, dragged=false, startX=0, startL=0, suppress=false, resumeAt=0;
+  var down=false, dragged=false, startX=0, startL=0, suppress=false, resumeAt=0, lastDragEnd=-1e9;
   function pauseFor(ms){ resumeAt=Math.max(resumeAt, performance.now()+ms); }
   list.addEventListener('pointerdown',function(e){
     down=true; dragged=false; startX=e.clientX; startL=list.scrollLeft; pauseFor(4000); });
@@ -720,9 +722,9 @@ document.getElementById('sugg-send').addEventListener('click', function(){
     var dx=e.clientX-startX;
     if(!dragged&&Math.abs(dx)>8){ dragged=true; list.classList.add('dragging'); }
     if(dragged){ list.scrollLeft=startL-dx; normalize(); pauseFor(4000); } });
-  function endDrag(){ if(down&&dragged){ suppress=true; setTimeout(function(){ list.classList.remove('dragging'); },60); }
+  function endDrag(){ if(down&&dragged){ suppress=true; lastDragEnd=performance.now(); setTimeout(function(){ list.classList.remove('dragging'); suppress=false; },60); }
     if(down) pauseFor(3000);
-    down=false; }
+    down=false; dragged=false; }
   window.addEventListener('pointerup',endDrag);
   window.addEventListener('pointercancel',endDrag);
   list.addEventListener('click',function(e){ if(suppress){ e.preventDefault(); e.stopPropagation(); suppress=false; } },true);
@@ -764,7 +766,8 @@ document.getElementById('sugg-send').addEventListener('click', function(){
     return a.getBoundingClientRect().left - lr.left + list.scrollLeft;
   }
   function alignTape(){
-    if(!loopOK||activeIdx<0||down) return;
+    if(!loopOK||activeIdx<0||down||dragged) return;
+    if(performance.now()-lastDragEnd<3500) return; /* a fresh hand placement outranks the spy for a beat */
     var orig=spyItems[activeIdx]; if(!orig) return;
     var cands=[orig];
     Array.prototype.slice.call(list.querySelectorAll('a.ticker-dup')).forEach(function(d){
