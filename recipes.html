@@ -94,6 +94,19 @@ h2{font-size:22px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin:2
 body.fg-lb-lock{overflow:hidden}
 body img{cursor:zoom-in}
 </style>
+<style id="recipe-cards-style">
+/* Recipe Archive cards (Dave, Nov 6, 2026): every dish runs with the photo filed with it —
+   photo left, name + description right on desktop; photo on top on phones. Photos tap into
+   the page's standing lightbox. Entries without a submitted photo stay imageless — never
+   stock- or AI-filled (see PUBLISHING.md). */
+.rcard{display:flex;gap:16px;border:1px solid var(--line);border-radius:10px;padding:14px;background:#fff;margin-bottom:14px}
+.rcard figure{margin:0;flex:0 0 190px}
+.rcard figure img{width:100%;height:100%;max-height:200px;object-fit:cover;border-radius:8px;display:block}
+.rcard figcaption{font-size:12px;color:var(--muted,#6b6259);margin-top:6px;line-height:1.35}
+.rcard-body h3{margin:0 0 4px;font-size:20px}
+.rcard-body p{margin:0 0 6px}
+@media (max-width:640px){.rcard{flex-direction:column}.rcard figure{flex:none}.rcard figure img{max-height:240px}}
+</style>
 </head><body>
 <div id="fg-lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
   <button id="fg-lb-close" type="button" aria-label="Close photo">✕</button>
@@ -106,13 +119,10 @@ body img{cursor:zoom-in}
 <header class="masthead"><p class="kicker">NAN'S RECIPE CORNER · THE COMPLETE RECORD</p><h1 style="font-size:40px">The Recipe Archive</h1>
 <p class="dateline">Every recipe Nan Dell'Aquila has filed with the Gazette — browsable, permanent, and in order.</p></header>
 <main style="max-width:760px;margin:0 auto">
-  <div class="card"><table style="width:100%;border-collapse:collapse;font-size:15px">
-  <tr style="border-bottom:2px solid var(--ink)"><th style="text-align:left;padding:6px 4px">Recipe</th><th style="text-align:left;padding:6px 4px">Received</th><th style="text-align:left;padding:6px 4px">Published</th><th style="text-align:left;padding:6px 4px">Read it</th></tr>
-  <tr style="border-bottom:1px solid var(--line)"><td style="padding:8px 4px"><b>Chicken Parmesan Rolls</b><br><span class="meta">By Nan Dell'Aquila · via her Recipe Keeper card; original recipe Southern Living</span></td><td style="padding:8px 4px">Sun Nov 1, 2026 · 8:40 AM</td><td style="padding:8px 4px">Sun Nov 1, 2026</td><td style="padding:8px 4px"><a href="index.html#recipe-corner">Nan's Recipe Corner</a></td></tr>
-  <tr style="border-bottom:1px solid var(--line)"><td style="padding:8px 4px"><b>Bourbon Maple Old Fashioned</b><br><span class="meta">By Nan Dell'Aquila · via her Recipe Keeper card; original recipe The Wall Street Journal</span></td><td style="padding:8px 4px">Sat Oct 31, 2026 · 11:12 AM</td><td style="padding:8px 4px">Sat Oct 31, 2026</td><td style="padding:8px 4px"><a href="index.html#recipe-corner">Nan's Recipe Corner</a></td></tr>
-  <tr style="border-bottom:1px solid var(--line)"><td style="padding:8px 4px"><b>Pecan Pie Brownies</b><br><span class="meta">By Nan Dell'Aquila · via her Recipe Keeper card; original recipe The Slow Roasted Italian</span></td><td style="padding:8px 4px">Sat Oct 31, 2026 · 10:10 AM</td><td style="padding:8px 4px">Sat Oct 31, 2026</td><td style="padding:8px 4px"><a href="index.html#recipe-corner">Nan's Recipe Corner</a></td></tr>
-  </table>
-  <p class="meta" style="margin-top:10px">The Recipe Archive is the complete record of Nan's filed recipes — one row per recipe, kept current by the Gazette's intake. Nothing she sends gets lost in an edition's scroll.</p></div>
+  <div class="rcard"><figure><img src="media/chicken-parmesan-rolls.jpg" alt="Chicken Parmesan Rolls — a baking dish of the rolls under tomato sauce and melted mozzarella, topped with basil"><figcaption>Chicken Parmesan Rolls — the photo from Nan's recipe card (original recipe: Southern Living)</figcaption></figure><div class="rcard-body"><h3>Chicken Parmesan Rolls</h3><p class="meta">By Nan Dell'Aquila · via her Recipe Keeper card; original recipe Southern Living</p><p>Nan's own note from her card: made it Oct 21, 2026 — delicious, easy, good for a small group over pasta.</p><p class="meta">Received Sun Nov 1, 2026 · 8:40 AM · Published Sun Nov 1, 2026</p><p><a href="index.html#recipe-corner">Read it in Nan's Recipe Corner</a></p></div></div>
+  <div class="rcard"><figure><img src="media/bourbon-maple-old-fashioned.jpg" alt="Bourbon Maple Old Fashioned — the cocktail in a cut-glass rocks glass with a big ice cube and an orange twist"><figcaption>Bourbon Maple Old Fashioned — the photo from Nan's recipe card (original recipe: The Wall Street Journal)</figcaption></figure><div class="rcard-body"><h3>Bourbon Maple Old Fashioned</h3><p class="meta">By Nan Dell'Aquila · via her Recipe Keeper card; original recipe The Wall Street Journal</p><p class="meta">Received Sat Oct 31, 2026 · 11:12 AM · Published Sat Oct 31, 2026</p><p><a href="index.html#recipe-corner">Read it in Nan's Recipe Corner</a></p></div></div>
+  <div class="rcard"><figure><img src="media/pecan-pie-brownies.jpg" alt="Pecan Pie Brownies — a hand holding one brownie topped with candied pecans"><figcaption>Pecan Pie Brownies — the photo from Nan's recipe card (original recipe: The Slow Roasted Italian)</figcaption></figure><div class="rcard-body"><h3>Pecan Pie Brownies</h3><p class="meta">By Nan Dell'Aquila · via her Recipe Keeper card; original recipe The Slow Roasted Italian</p><p class="meta">Received Sat Oct 31, 2026 · 10:10 AM · Published Sat Oct 31, 2026</p><p><a href="index.html#recipe-corner">Read it in Nan's Recipe Corner</a></p></div></div>
+  <p class="meta" style="margin-top:10px">The Recipe Archive is the complete record of Nan's filed recipes — one card per recipe, each with the photo that ran with it, kept current by the Gazette's intake. Tap any photo to see it full-screen. Nothing she sends gets lost in an edition's scroll.</p></div>
 </main>
 <footer><p>The Recipe Archive · The Fiddletown Gazette · Opened Oct 31, 2026</p>
 <p style="margin-top:6px"><a href="index.html">← Back to the front page</a> · <a href="archive.html">Editions Archive</a></p></footer>
