@@ -1,0 +1,15 @@
+/* Reader voting — The Fiddletown Gazette (standing element, Nov 7, 2026).
+   Controls are injected by votes.js onto every section header and article.
+   Pre-endpoint the counts stay hidden — the paper never prints a tally it
+   doesn't have. See PUBLISHING.md, "Reader voting". */
+.fg-vote{display:inline-flex;align-items:center;gap:3px;margin-left:10px;vertical-align:middle;white-space:nowrap}
+.fg-vote button{appearance:none;-webkit-appearance:none;background:transparent;border:1px solid var(--line,#cbbf9f);border-radius:999px;min-width:44px;min-height:38px;padding:3px 9px;font-size:16px;line-height:1;cursor:pointer;color:inherit}
+.fg-vote button:hover{border-color:var(--gold,#b8860b)}
+.fg-vote button[aria-pressed="true"]{background:var(--gold,#b8860b);border-color:var(--gold,#b8860b);box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.fg-vote .fg-c{font-size:13px;font-weight:700;min-width:1.2em;text-align:left}
+.fg-vote-row{display:flex;justify-content:flex-end;margin-top:8px}
+.fg-vote-row .fg-vote{margin-left:0}
+@media (max-width:640px){
+  .fg-vote button{min-height:42px;padding:4px 10px}
+  h2 .fg-vote{margin-left:8px}
+}
