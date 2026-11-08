@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Astro" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata><name>Cat Creek Road Loop — Cabin to Cabin via Cook's Station, Ham's Station, Cat Creek Rd, North-South Rd and Omo Ranch Rd</name><time>2026-11-08T17:43:00Z</time></metadata>
+  <wpt lat="38.49676" lon="-120.6758"><name>Start — Cabin, 19891 Cedar Pines Dr, Fiddletown</name></wpt>
+  <wpt lat="38.51291" lon="-120.48504"><name>Shake Ridge Rd at Highway 88</name></wpt>
+  <wpt lat="38.52653" lon="-120.43346"><name>Cook's Station — 31950 Highway 88, Pioneer</name></wpt>
+  <wpt lat="38.54452" lon="-120.37655"><name>Ham's Station — 34950 Highway 88, Pioneer</name></wpt>
+  <wpt lat="38.54419" lon="-120.36638"><name>Turn left — Cat Creek Rd at Highway 88</name></wpt>
+  <wpt lat="38.59902" lon="-120.44744"><name>Turn left — Cat Creek Rd at North-South Rd</name></wpt>
+  <wpt lat="38.53352" lon="-120.45086"><name>Turn left — North-South Rd at Omo Ranch Rd</name></wpt>
+  <wpt lat="38.52789" lon="-120.44229"><name>Omo Ranch Rd at Highway 88</name></wpt>
+  <wpt lat="38.49676" lon="-120.6758"><name>Finish — Cabin, 19891 Cedar Pines Dr, Fiddletown</name></wpt>
+  <rte><name>Cat Creek Road Loop — cabin → Fiddletown Rd → Shake Ridge → Hwy 88 (Cook's Station, Ham's Station) → Cat Creek Rd → North-South Rd → Omo Ranch Rd → Hwy 88 → Shake Ridge → cabin</name>
+    <rtept lat="38.49676" lon="-120.6758"><name>Start — Cabin, 19891 Cedar Pines Dr, Fiddletown</name></rtept>
+    <rtept lat="38.51291" lon="-120.48504"><name>Shake Ridge Rd at Highway 88</name></rtept>
+    <rtept lat="38.52653" lon="-120.43346"><name>Cook's Station — 31950 Highway 88, Pioneer</name></rtept>
+    <rtept lat="38.54452" lon="-120.37655"><name>Ham's Station — 34950 Highway 88, Pioneer</name></rtept>
+    <rtept lat="38.54419" lon="-120.36638"><name>Turn left — Cat Creek Rd at Highway 88</name></rtept>
+    <rtept lat="38.59902" lon="-120.44744"><name>Turn left — Cat Creek Rd at North-South Rd</name></rtept>
+    <rtept lat="38.53352" lon="-120.45086"><name>Turn left — North-South Rd at Omo Ranch Rd</name></rtept>
+    <rtept lat="38.52789" lon="-120.44229"><name>Omo Ranch Rd at Highway 88</name></rtept>
+    <rtept lat="38.49676" lon="-120.6758"><name>Finish — Cabin, 19891 Cedar Pines Dr, Fiddletown</name></rtept>
+  </rte>
+</gpx>

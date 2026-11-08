@@ -153,6 +153,10 @@ h2{font-size:22px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin:2
 #fg-lb-hint{color:#b9ac93;font-family:-apple-system,system-ui,sans-serif;font-size:12.5px;padding:4px 0 12px}
 body.fg-lb-lock{overflow:hidden}
 body img{cursor:zoom-in}
+
+#fg-lb-prev,#fg-lb-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.45);color:#fff;border:0;border-radius:999px;width:52px;height:52px;font-size:26px;cursor:pointer;z-index:5;display:none}
+#fg-lb-prev{left:10px}#fg-lb-next{right:10px}
+#fg-lb-count{position:absolute;top:14px;left:16px;color:#fff;font-family:-apple-system,sans-serif;font-size:13px;background:rgba(0,0,0,.45);padding:3px 10px;border-radius:999px;display:none;z-index:5}
 </style>
 <style id="forecast-panel-style">
 /* Forecast panel (Dave, Nov 5, 2026): visual five-day outlook at the top of the front page,
@@ -201,13 +205,27 @@ html.fs-0{zoom:1}html.fs-1{zoom:1.08}html.fs-2{zoom:1.16}html.fs-3{zoom:1.24}htm
 .fs-dot.on{background:var(--gold);border-color:var(--gold)}
 @media (max-width:640px){.fsctl{gap:5px}.fs-dot{width:8px;height:8px}}
 </style>
+<style id="fg-wrap-style">
+/* Text wraps around partial-width article photos on wide layouts (Dave, Nov 8, 2026 — house pattern).
+   The photo link floats left, body text fills the space beside it; the trailing meta clears the float.
+   Phones keep the stacked full-width photo. Preserve in rebuilds. */
+.fg-clear{clear:left}
+@media(min-width:760px){
+  .fg-wrap{float:left;margin:8px 14px 6px 0}
+  .fg-wrap img{margin:0}
+  .item::after{content:"";display:block;clear:both}
+}
+</style>
 </head>
 <body>
 <div id="fg-lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
   <button id="fg-lb-close" type="button" aria-label="Close photo">✕</button>
+  <span id="fg-lb-count"></span>
+  <button id="fg-lb-prev" type="button" aria-label="Previous photo">‹</button>
   <img id="fg-lb-img" alt="">
+  <button id="fg-lb-next" type="button" aria-label="Next photo">›</button>
   <div id="fg-lb-cap"></div>
-  <div id="fg-lb-hint">Tap outside the photo, or the ✕, to go back</div>
+  <div id="fg-lb-hint">Tap outside the photo, or the ✕, to go back · ‹ › for more photos in the piece</div>
 </div>
 
 <div class="topbar"><span>🗞️ The Fiddletown Gazette</span><nav><a href="index.html">Front Page</a><a href="archive.html">Editions Archive</a><a href="#colophon">About</a></nav><div class="fsctl" role="group" aria-label="Text size"><button type="button" class="fs-btn fs-down" id="fs-down" aria-label="Smaller text">A</button><span class="fs-dots"><button type="button" class="fs-dot" data-lvl="0" aria-label="Text size level 1 of 7" aria-pressed="false"></button><button type="button" class="fs-dot" data-lvl="1" aria-label="Text size level 2 of 7" aria-pressed="false"></button><button type="button" class="fs-dot" data-lvl="2" aria-label="Text size level 3 of 7" aria-pressed="false"></button><button type="button" class="fs-dot" data-lvl="3" aria-label="Text size level 4 of 7" aria-pressed="false"></button><button type="button" class="fs-dot" data-lvl="4" aria-label="Text size level 5 of 7" aria-pressed="false"></button><button type="button" class="fs-dot" data-lvl="5" aria-label="Text size level 6 of 7" aria-pressed="false"></button><button type="button" class="fs-dot" data-lvl="6" aria-label="Text size level 7 of 7" aria-pressed="false"></button></span><button type="button" class="fs-btn fs-up" id="fs-up" aria-label="Larger text">A</button></div><a class="header-tip" href="https://ko-fi.com/davedellaquila" target="_blank" rel="noopener" aria-label="Tip Jar — if this page helped you, you can leave Dave a tip on Ko-fi"><span class="jar" aria-hidden="true">🫙</span><span>Tip Jar</span></a></div>
@@ -359,11 +377,49 @@ html.fs-0{zoom:1}html.fs-1{zoom:1.08}html.fs-2{zoom:1.16}html.fs-3{zoom:1.24}htm
       <p class="meta">Featured Pets is a standing desk: the pet runs four days, like any contributor article, and the desk takes nominations — email the paper at <a href="mailto:dave@dellaquila.com?subject=Gazette">dave@dellaquila.com</a> with "Gazette" in the subject, your pet's story in your own words, plus photos.</p>
     </div>
   </div>
+
+  <h2>🌙 Date Night</h2>
+  <div class="card" id="date-night">
+    <div class="item">
+      <p class="kicker">DATE NIGHT · NO. 1 · SAT NOV 7, 2026</p>
+      <h3>Nan &amp; Dave's Date Night at Taste</h3>
+      <figure>
+        <img src="media/taste-bar-2026-11-07.jpg" alt="The bar at Taste in Plymouth, looking down its polished wooden length — patrons eating at the rail, pendant lights, the back bar lined with bottles" style="width:100%;height:auto;border-radius:10px;display:block">
+        <figcaption>The bar at Taste, looking down its length — the seats the night actually happened in. 📷 Dave</figcaption>
+      </figure>
+      <p><b>By Dave Dell'Aquila.</b> The plan was a 7 PM table at Taste in Plymouth, the tail of Nan's birthday run. Rezku cancelled the reservation that afternoon — so we took two seats at the bar from about 5:45 instead, and the bar turned out to be the place to be. Executive Chef and GM Micah Malcolm greeted us; our server was Tony.</p>
+      <figure>
+        <img src="media/taste-dining-room-2026-11-07.jpg" alt="The dining room at Taste — white tablecloths, banquette seating, framed photographs on the wall" style="width:100%;height:auto;border-radius:10px;display:block">
+        <figcaption>The dining room we didn't sit in: white tablecloths, banquettes, framed photos on the wall. 📷 Dave</figcaption>
+      </figure>
+      <p>Tony's three picks were all hits. First, the Mushroom Cigars:</p>
+      <figure>
+        <img src="media/taste-mushroom-cigars-2026-11-07.jpg" alt="Mushroom Cigars — two crisp pastry rolls standing on a long white plate with a swoosh of sauce" style="width:100%;height:auto;border-radius:10px;display:block">
+        <figcaption>Tony's first pick: the Mushroom Cigars. 📷 Dave</figcaption>
+      </figure>
+      <p>Then the Double Cut Pork Chop — and Nan went her own way, happily:</p>
+      <figure>
+        <img src="media/taste-pork-chop-2026-11-07.jpg" alt="The Double Cut Pork Chop — a thick seared chop with roasted fruit on top and greens underneath" style="width:100%;height:auto;border-radius:10px;display:block">
+        <figcaption>Tony's second pick: the Double Cut Pork Chop, roasted fruit over greens. 📷 Dave</figcaption>
+      </figure>
+      <figure>
+        <img src="media/taste-burger-2026-11-07.jpg" alt="Nan's burger, halved, with a pile of herbed fries on a long white plate at the bar" style="width:100%;height:auto;border-radius:10px;display:block">
+        <figcaption>Nan's order: the burger, halved, with the herbed fries. 📷 Dave</figcaption>
+      </figure>
+      <p>And dessert was Tony's third pick:</p>
+      <figure>
+        <img src="media/taste-candy-bar-2026-11-07.jpg" alt="The Taste Candy Bar — a chocolate dome with torched meringue, a dramatic chocolate lace, and marigold petals scattered on the plate" style="width:100%;height:auto;border-radius:10px;display:block">
+        <figcaption>Tony's third pick: the Taste Candy Bar — chocolate dome, torched meringue, chocolate lace, marigold petals. 📷 Dave</figcaption>
+      </figure>
+      <p>Verdict from the rail: the cancelled table was the night's first stroke of luck. Three picks, three hits — and the bar seats come with the whole room for a view.</p>
+      <p class="meta">Date Night is a standing desk — the publisher and Nan, out on the town one restaurant at a time. Pieces fly four days; the section stands.</p>
+    </div>
+  </div>
   <h2>✉️ Nan's Corner</h2>
   <div class="card" id="nans-corner">
     <p class="meta" style="margin-bottom:6px">OUR FOUNDING CONTRIBUTOR</p>
     <p>The Gazette has a correspondent. <b>Nan Dell'Aquila</b> writes this corner — dispatches, notes, and observations from her side of the foothills — filed by email and printed under her byline, as she sends them. (Her cooking lives in Nan's Recipe Corner, over in the rail; this corner is for everything else.)</p>
-    <div id="nan-pieces"><div class="item nan-piece" id="nan-1a1b6fc7"><h3>Gochujang Pumpkin Alla Vodka</h3><p class="meta">By Nan Dell'Aquila · Sat Nov 7, 2026</p><a href="https://recipekeeperonline.com/recipe/A1pYbs6hWUy0PApsVtciGg"><img src="media/gochujang-pumpkin-alla-vodka.jpg" alt="A bowl of Gochujang Pumpkin Alla Vodka — rigatoni in a creamy orange pumpkin-vodka sauce, topped with grated Parmesan, cracked pepper and fresh basil" style="width:100%;max-width:230px;border-radius:10px;display:block;margin:8px 0"></a><p>Nan's newest filing is a pasta with a kick: <b>Gochujang Pumpkin Alla Vodka</b>, from her recipe card — paccheri in a pumpkin-vodka cream sauce warmed through with gochujang. She made it last night for pool night at the Swagers', found it a bit spicier than she had imagined, tamed it with a little extra milk, and reports it quite delicious — she would make it again. It runs in full in <a href="#recipe-corner">Nan's Recipe Corner</a>, photo included and tappable to the original, per her standing request.</p><p class="meta" style="margin-top:5px">Filed by email · Her card: <a href="https://recipekeeperonline.com/recipe/A1pYbs6hWUy0PApsVtciGg">Recipe Keeper — Gochujang Pumpkin Alla Vodka</a> · Original recipe: Food &amp; Wine</p></div><div class="item nan-piece" id="nan-1a1b21cb"><h3>Chocolate Chip Banana Cookies</h3><p class="meta">By Nan Dell'Aquila · Fri Nov 6, 2026</p><a href="https://recipekeeperonline.com/recipe/imbMasYZ_0ySYDKqGCNjDA"><img src="media/chocolate-chip-banana-cookies.jpg" alt="A stack of Chocolate Chip Banana Cookies on a wooden board, the top cookie with a bite taken out" style="width:100%;max-width:230px;border-radius:10px;display:block;margin:8px 0"></a><p>Nan's newest filing is a cookie: <b>Chocolate Chip Banana Cookies</b>, from her recipe card — bananas creamed right into the dough, a chill in the fridge, nine minutes in the oven. She doubled her first batch, used a whole bag of chocolate chunks, let the dough rest a few hours cold so they stayed fluffy, and reports them thick and yummy. It runs in full in <a href="#recipe-corner">Nan's Recipe Corner</a>, photo included and tappable to the original, per her standing request.</p><p class="meta" style="margin-top:5px">Filed by email · Her card: <a href="https://recipekeeperonline.com/recipe/imbMasYZ_0ySYDKqGCNjDA">Recipe Keeper — Chocolate Chip Banana Cookies</a> · Original recipe: Mom On Timeout</p></div><div class="item nan-piece" id="nan-1a1932a0"><h3>Bourbon Maple Old Fashioned</h3><p class="meta">By Nan Dell'Aquila · Sat Oct 31, 2026</p><a href="https://recipekeeperonline.com/recipe/Khzi-slNwU28iCbO6X4kcA"><img src="media/bourbon-maple-old-fashioned.jpg" alt="A Bourbon Maple Old Fashioned over one large cube, orange twist on the rim" style="width:100%;max-width:230px;border-radius:10px;display:block;margin:8px 0"></a><p>Nan's second filing of the day swaps the oven for the cocktail shaker: a <b>Bourbon Maple Old Fashioned</b>, straight from her recipe card — bourbon, maple syrup, and bitters, shaken twenty times and poured over one big cube. It runs in full in <a href="#recipe-corner">Nan's Recipe Corner</a>, photo included and tappable to the original, per her standing request.</p><p class="meta" style="margin-top:5px">Filed by email · Her card: <a href="https://recipekeeperonline.com/recipe/Khzi-slNwU28iCbO6X4kcA">Recipe Keeper — Bourbon Maple Old Fashioned</a> · Original recipe: The Wall Street Journal</p></div><div class="item nan-piece" id="nan-1a192f0d"><h3>Pecan Pie Brownies</h3><p class="meta">By Nan Dell'Aquila · Sat Oct 31, 2026</p><a href="https://recipekeeperonline.com/recipe/mYASZ4Kl80i3wPVxEw8I6g"><img src="media/pecan-pie-brownies.jpg" alt="Pecan pie brownie — Nan's first filed recipe" style="width:100%;max-width:230px;border-radius:10px;display:block;margin:8px 0"></a><p>Nan's first piece for the paper arrived the way her best things do — no preamble, just the goods: a link to her recipe card for <b>Pecan Pie Brownies</b>. It runs in full in <a href="#recipe-corner">Nan's Recipe Corner</a>, over in the rail. Welcome to the masthead, Nan.</p><p class="meta" style="margin-top:5px">Filed by email · Her card: <a href="https://recipekeeperonline.com/recipe/mYASZ4Kl80i3wPVxEw8I6g">Recipe Keeper — Pecan Pie Brownies</a></p></div></div>
+    <div id="nan-pieces"><div class="item nan-piece" id="nan-1a1b6fc7"><h3>Gochujang Pumpkin Alla Vodka</h3><p class="meta">By Nan Dell'Aquila · Sat Nov 7, 2026</p><a class="fg-wrap" href="https://recipekeeperonline.com/recipe/A1pYbs6hWUy0PApsVtciGg"><img src="media/gochujang-pumpkin-alla-vodka.jpg" alt="A bowl of Gochujang Pumpkin Alla Vodka — rigatoni in a creamy orange pumpkin-vodka sauce, topped with grated Parmesan, cracked pepper and fresh basil" style="width:100%;max-width:230px;border-radius:10px;display:block;margin:8px 0"></a><p>Nan's newest filing is a pasta with a kick: <b>Gochujang Pumpkin Alla Vodka</b>, from her recipe card — paccheri in a pumpkin-vodka cream sauce warmed through with gochujang. She made it last night for pool night at the Swagers', found it a bit spicier than she had imagined, tamed it with a little extra milk, and reports it quite delicious — she would make it again. It runs in full in <a href="#recipe-corner">Nan's Recipe Corner</a>, photo included and tappable to the original, per her standing request.</p><p class="meta fg-clear" style="margin-top:5px">Filed by email · Her card: <a href="https://recipekeeperonline.com/recipe/A1pYbs6hWUy0PApsVtciGg">Recipe Keeper — Gochujang Pumpkin Alla Vodka</a> · Original recipe: Food &amp; Wine</p></div><div class="item nan-piece" id="nan-1a1b21cb"><h3>Chocolate Chip Banana Cookies</h3><p class="meta">By Nan Dell'Aquila · Fri Nov 6, 2026</p><a class="fg-wrap" href="https://recipekeeperonline.com/recipe/imbMasYZ_0ySYDKqGCNjDA"><img src="media/chocolate-chip-banana-cookies.jpg" alt="A stack of Chocolate Chip Banana Cookies on a wooden board, the top cookie with a bite taken out" style="width:100%;max-width:230px;border-radius:10px;display:block;margin:8px 0"></a><p>Nan's newest filing is a cookie: <b>Chocolate Chip Banana Cookies</b>, from her recipe card — bananas creamed right into the dough, a chill in the fridge, nine minutes in the oven. She doubled her first batch, used a whole bag of chocolate chunks, let the dough rest a few hours cold so they stayed fluffy, and reports them thick and yummy. It runs in full in <a href="#recipe-corner">Nan's Recipe Corner</a>, photo included and tappable to the original, per her standing request.</p><p class="meta fg-clear" style="margin-top:5px">Filed by email · Her card: <a href="https://recipekeeperonline.com/recipe/imbMasYZ_0ySYDKqGCNjDA">Recipe Keeper — Chocolate Chip Banana Cookies</a> · Original recipe: Mom On Timeout</p></div><div class="item nan-piece" id="nan-1a1932a0"><h3>Bourbon Maple Old Fashioned</h3><p class="meta">By Nan Dell'Aquila · Sat Oct 31, 2026</p><a class="fg-wrap" href="https://recipekeeperonline.com/recipe/Khzi-slNwU28iCbO6X4kcA"><img src="media/bourbon-maple-old-fashioned.jpg" alt="A Bourbon Maple Old Fashioned over one large cube, orange twist on the rim" style="width:100%;max-width:230px;border-radius:10px;display:block;margin:8px 0"></a><p>Nan's second filing of the day swaps the oven for the cocktail shaker: a <b>Bourbon Maple Old Fashioned</b>, straight from her recipe card — bourbon, maple syrup, and bitters, shaken twenty times and poured over one big cube. It runs in full in <a href="#recipe-corner">Nan's Recipe Corner</a>, photo included and tappable to the original, per her standing request.</p><p class="meta fg-clear" style="margin-top:5px">Filed by email · Her card: <a href="https://recipekeeperonline.com/recipe/Khzi-slNwU28iCbO6X4kcA">Recipe Keeper — Bourbon Maple Old Fashioned</a> · Original recipe: The Wall Street Journal</p></div><div class="item nan-piece" id="nan-1a192f0d"><h3>Pecan Pie Brownies</h3><p class="meta">By Nan Dell'Aquila · Sat Oct 31, 2026</p><a class="fg-wrap" href="https://recipekeeperonline.com/recipe/mYASZ4Kl80i3wPVxEw8I6g"><img src="media/pecan-pie-brownies.jpg" alt="Pecan pie brownie — Nan's first filed recipe" style="width:100%;max-width:230px;border-radius:10px;display:block;margin:8px 0"></a><p>Nan's first piece for the paper arrived the way her best things do — no preamble, just the goods: a link to her recipe card for <b>Pecan Pie Brownies</b>. It runs in full in <a href="#recipe-corner">Nan's Recipe Corner</a>, over in the rail. Welcome to the masthead, Nan.</p><p class="meta fg-clear" style="margin-top:5px">Filed by email · Her card: <a href="https://recipekeeperonline.com/recipe/mYASZ4Kl80i3wPVxEw8I6g">Recipe Keeper — Pecan Pie Brownies</a></p></div></div>
     <p style="margin-top:8px"><b>Retired today:</b> Nan's <b>Chicken Parmesan Rolls</b> piece (Nov 1) leaves the front page on the paper's four-day rule for contributed pieces. The recipe itself is not going anywhere — it stands on the permanent record in the <a href="recipes.html">Recipe Archive</a>.</p>
     <p class="meta" style="margin-top:8px">Nan's Corner opened Oct 31, 2026</p>
   </div>
@@ -475,6 +531,7 @@ html.fs-0{zoom:1}html.fs-1{zoom:1.08}html.fs-2{zoom:1.16}html.fs-3{zoom:1.24}htm
         <figcaption>Side profile on the bridge at about 5,220 feet: door roundel out, and the rear window's sticker gallery — Snowball Rally, Faultline 500 and friends. 📷 Dave</figcaption>
       </figure>
       <p>Nobody else was out there. Just a dusty, stickered vintage rally car wearing its patina proudly — two hours, no destination.</p>
+      <p style="margin-top:6px"><a href="media/cat-creek-loop.gpx" download>🗺️ Download the route (GPX) — the Cat Creek loop</a> · Opens in inRoute and other GPS route apps.</p>
       <figure>
         <img src="media/cat-creek-bridge-front-2026-11-06.jpg" alt="The rally MGB GT from the driver's side front on the bridge, headlights on, a fall-yellow tree glowing behind the guardrail">
         <figcaption>On the bridge in the deep woods, the light going gold behind the guardrail. 📷 Dave</figcaption>
@@ -503,7 +560,30 @@ html.fs-0{zoom:1}html.fs-1{zoom:1.08}html.fs-2{zoom:1.16}html.fs-3{zoom:1.24}htm
     <p class="meta" style="margin-top:8px">— The Editor · Published by Dave Dell'Aquila, Fiddletown</p>
   </div>
 
-    <h2>🚜 What's Carl Working On</h2>
+  
+  <h2>🎁 Free Stuff</h2>
+  <div class="card" id="free-stuff">
+    <div class="item">
+      <p class="kicker">FREE STUFF · LISTING NO. 1 · SUN NOV 8, 2026</p>
+      <h3>Free: A Christmas Dinnerware Set</h3>
+      <figure>
+        <img src="media/free-stuff-christmas-set-2026-11-08.jpg" alt="The full Christmas dinnerware set on a table — stacks of dinner plates, smaller plates and bowls in the holly-and-tree pattern, with the matching tree mugs" style="width:100%;height:auto;border-radius:10px;display:block">
+        <figcaption>The whole set: plates, smaller plates, bowls and tree mugs. 📷 Kathy Towne</figcaption>
+      </figure>
+      <p><b>Free to a good home:</b> a full Christmas dinnerware set in the holly-and-tree pattern — dinner plates, smaller plates and bowls, and the matching mugs (roughly service for eight, going by the stacks) — plus two raised-relief decorative platters, a Santa and a snowman, included.</p>
+      <figure>
+        <img src="media/free-stuff-christmas-plate-2026-11-08.jpg" alt="A dinner plate close-up — holly and berries around the rim, a Christmas tree in the center with a rocking horse, gifts and a teddy bear beneath it" style="width:100%;height:auto;border-radius:10px;display:block">
+        <figcaption>The dinner plate up close: holly at the rim, the tree — rocking horse, gifts and all — in the middle. 📷 Kathy Towne</figcaption>
+      </figure>
+      <figure>
+        <img src="media/free-stuff-christmas-platters-2026-11-08.jpg" alt="Two raised-relief decorative platters — Santa's face on the left, a snowman with his broom on the right" style="width:100%;height:auto;border-radius:10px;display:block">
+        <figcaption>The two platters that go with the set: Santa, and the snowman with his broom. 📷 Kathy Towne</figcaption>
+      </figure>
+      <p><b>Price: free.</b> For these dishes and plates, <b>contact Kathy</b>.</p>
+      <p class="meta">Free Stuff is a standing desk — neighbors giving good things away. Listings fly four days; the section stands.</p>
+    </div>
+  </div>
+  <h2>🚜 What's Carl Working On</h2>
   <div class="card" id="carl">
     <p>The shop's gone quiet, the bench swept clean —<br>no fresh dispatch has yet been seen.<br>So tell us, Carl, what's underway?<br>What are you working on today?</p>
     <p style="margin-top:8px">Carl — this corner is yours whenever you're ready. To file an update, email the paper at <a href="mailto:dave@dellaquila.com?subject=Gazette">dave@dellaquila.com</a> with “Gazette” in the subject: your project in your own words, plus any photos. It runs right here, in this section, under your name.</p>
@@ -964,23 +1044,27 @@ else{el.classList.remove('on');el.style.transform='translate(-50%,-70px)';}});})
 
 <script id="fg-lightbox-script">
 (function(){
-  var lb=document.getElementById('fg-lightbox'),lbImg=document.getElementById('fg-lb-img'),lbCap=document.getElementById('fg-lb-cap'),lbClose=document.getElementById('fg-lb-close');
+  var lb=document.getElementById('fg-lightbox'),lbImg=document.getElementById('fg-lb-img'),lbCap=document.getElementById('fg-lb-cap'),lbClose=document.getElementById('fg-lb-close'),lbPrev=document.getElementById('fg-lb-prev'),lbNext=document.getElementById('fg-lb-next'),lbCnt=document.getElementById('fg-lb-count');
   if(!lb||!lbImg||!lbClose)return;
-  function open(src,cap){lbImg.src=src;lbCap.textContent=cap||'';lb.classList.add('open');document.body.classList.add('fg-lb-lock');try{lbClose.focus();}catch(e){}}
+  var group=[],idx=0;
+  function capFor(img){var fig=(img.closest?img.closest('figure'):null);if(fig){var fc=fig.querySelector('figcaption');if(fc)return fc.textContent.trim();}return img.getAttribute('alt')||'';}
+  function render(){var img=group[idx];lbImg.src=img.currentSrc||img.src;lbCap.textContent=capFor(img);var multi=group.length>1;if(lbPrev)lbPrev.style.display=multi?'block':'none';if(lbNext)lbNext.style.display=multi?'block':'none';if(lbCnt){lbCnt.style.display=multi?'block':'none';lbCnt.textContent=(idx+1)+' / '+group.length;}}
+  function open(img){var host=(img.closest?img.closest('.item'):null);group=host?[].slice.call(host.querySelectorAll('img')):[img];idx=group.indexOf(img);if(idx<0)idx=0;render();lb.classList.add('open');document.body.classList.add('fg-lb-lock');try{lbClose.focus();}catch(e){}}
   function close(){lb.classList.remove('open');document.body.classList.remove('fg-lb-lock');lbImg.removeAttribute('src');}
+  function step(d){if(group.length<2)return;idx=(idx+d+group.length)%group.length;render();}
   document.addEventListener('click',function(e){
-    var t=e.target;
-    if(t===lb){close();return;}
-    if(t&&t.tagName==='IMG'&&!lb.contains(t)){
+    var tg=e.target;
+    if(tg===lb){close();return;}
+    if(tg&&tg.tagName==='IMG'&&!lb.contains(tg)){
+      if(tg.closest&&tg.closest('a'))return;
       e.preventDefault();
-      var cap='',fig=(t.closest?t.closest('figure'):null);
-      if(fig){var fc=fig.querySelector('figcaption');if(fc)cap=fc.textContent.trim();}
-      if(!cap)cap=t.getAttribute('alt')||'';
-      open(t.currentSrc||t.src,cap);
+      open(tg);
     }
   });
   lbClose.addEventListener('click',function(e){e.stopPropagation();close();});
-  document.addEventListener('keydown',function(e){if((e.key==='Escape'||e.keyCode===27)&&lb.classList.contains('open'))close();});
+  if(lbPrev)lbPrev.addEventListener('click',function(e){e.stopPropagation();step(-1);});
+  if(lbNext)lbNext.addEventListener('click',function(e){e.stopPropagation();step(1);});
+  document.addEventListener('keydown',function(e){if(!lb.classList.contains('open'))return;if(e.key==='Escape'||e.keyCode===27)close();else if(e.key==='ArrowLeft')step(-1);else if(e.key==='ArrowRight')step(1);});
 })();
 </script>
 
