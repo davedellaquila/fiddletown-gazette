@@ -105,6 +105,13 @@ body img{cursor:zoom-in}
 .rcard figcaption{font-size:12px;color:var(--muted,#6b6259);margin-top:6px;line-height:1.35}
 .rcard-body h3{margin:0 0 4px;font-size:20px}
 .rcard-body p{margin:0 0 6px}
+/* Contrast pin (Nov 7, 2026, Dave's screenshot): the card's background is fixed #fff in BOTH
+   schemes, so its text must never inherit the dark scheme's pale body colors — everything
+   inside .rcard is pinned to dark-on-white values (title ~15:1, meta/caption ~6:1, links ~9:1). */
+.rcard{color:#2a251e}
+.rcard-body h3{color:#1c1917}
+.rcard .meta,.rcard figcaption{color:#6b6259}
+.rcard a{color:#8a1f1f}
 @media (max-width:640px){.rcard{flex-direction:column}.rcard figure{flex:none}.rcard figure img{max-height:240px}}
 </style>
 </head><body>
