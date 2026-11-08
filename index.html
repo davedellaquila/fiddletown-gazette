@@ -48,7 +48,7 @@ a{color:var(--accent)}
 .rule{height:4px;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);margin:16px 0}
 .banner{border:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--paper));border-radius:12px;padding:16px 20px;margin-bottom:18px}
 .banner b{color:var(--accent)}
-.grid{display:grid;grid-template-columns:1fr;gap:22px}@media(min-width:760px){.grid{grid-template-columns:2fr 1fr}}
+.grid{display:grid;grid-template-columns:minmax(0,1fr);gap:22px}.grid>*{min-width:0}@media(min-width:760px){.grid{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}}img{max-width:100%;height:auto}
 h2{font-size:22px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin:26px 0 12px}
 .lead h2{border-bottom:0;font-size:clamp(26px,4.5vw,38px);line-height:1.15;margin-top:0}
 .item{padding:10px 0;border-bottom:1px dashed var(--border)}.item:last-child{border-bottom:0}
