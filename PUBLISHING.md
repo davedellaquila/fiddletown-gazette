@@ -163,6 +163,11 @@ The front page and archive carry a `PTR:BEGIN … PTR:END` block before `</body>
 
 - **Star Chart heading flaw — snapshot LEFT AS-RUN (Dave's ruling, Nov 7, 2026):** the Nov 7 Morning build ate the opening of the Star Chart <h2> on the front page (the tail "— Tonight over Fiddletown" rendered as loose text). The LIVE front page was fixed the same morning (commit 8d25e9c); Dave ruled the archived snapshot editions/2026-11-07-morning.html stays exactly as it ran — do NOT patch it. Recorded here so no future desk "helpfully" repairs it.
 
+## Rail integrity — no stray closes (Dave's report, Nov 11, 2026)
+
+- The right rail is ONE `<aside>` holding every rail section in order. A stray extra `</div>` after the Around Town card once force-closed the aside AND the layout grid in the browser's parser, dumping the Community Wire, Editor's Desk, and every rail section below it out of the rail (they rendered as stray wide blocks far down the page; the Around Town card itself looked fine). Dave caught it Nov 11, 2026: "nothing's appearing under the around town section."
+- **Edition jobs: after building, verify the rail in the parsed page, not just the text** — every rail section id (around-town, community-wire, editors-desk, free-stuff, carl, kathys-corner, recipe-corner, swagger, marcis-corner, more-gazette) must sit inside the `<aside>`, and the aside must hold all ten rail `<h2>`s. Text searches are not proof: the stray close is invisible to grep-style checks. The same stray close also appears in the frozen Nov 8 evening and Nov 11 snapshots, which stay as-run.
+
 ## Say it once — no duplicate reporting (Dave's direction, Nov 10, 2026)
 Dave flagged redundancy across the paper (road conditions were the example). Every fact has ONE home section; everywhere else it appears as at most a short pointer clause, never a restatement:
 - **Roads & incidents live ONLY in the Safety Wire** (the full CHP/Caltrans report, per-highway detail, read times). The Lead gets at most one short clause inside its roundup ("no alerts in effect, and the roads empty across the beat — the full report is in the Safety Wire"). No board timestamps, no highway lists, no Caltrans rundown in the Lead. When a banner or a developing closure is the day's lead story, the Lead may carry the headline fact; the detail still lives in the Wire alone.
