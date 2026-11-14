@@ -838,7 +838,7 @@ document.getElementById('sugg-send').addEventListener('click', function(){
     var dx=e.clientX-startX;
     if(!dragged&&Math.abs(dx)>8){ dragged=true; list.classList.add('dragging'); }
     if(dragged){ list.scrollLeft=startL-dx; normalize(); pauseFor(4000); } });
-  function endDrag(){ if(down&&dragged){ suppress=true; lastDragEnd=performance.now(); setTimeout(function(){ list.classList.remove('dragging'); suppress=false; },60); }
+  function endDrag(){ if(down&&dragged){ suppress=true; lastDragEnd=performance.now(); handHold=true; setTimeout(function(){ list.classList.remove('dragging'); suppress=false; },60); }
     if(down) pauseFor(3000);
     down=false; dragged=false; }
   window.addEventListener('pointerup',endDrag);
@@ -856,6 +856,11 @@ document.getElementById('sugg-send').addEventListener('click', function(){
      so the spy agrees with where a tapped item lands. Archive items have no section on this
      page and never spy. */
   var spyItems=[], spySections=[], activeIdx=-1;
+  /* handHold (Nov 14, 2026 — Dave's "ticker looks locked up" report): once the reader drags
+     the tape by hand, their placement stands until they scroll into a DIFFERENT section.
+     Before this, alignTape re-centered on the active item 3.5s after every drag — down in
+     the paper, where the drift parks, that read as the tape being locked: slide it, and it
+     snapped back to the same spot. */
   function buildSpy(){
     spyItems=[]; spySections=[];
     Array.prototype.slice.call(list.querySelectorAll('a.ticker-item')).forEach(function(a){
@@ -884,6 +889,7 @@ document.getElementById('sugg-send').addEventListener('click', function(){
   function alignTape(){
     if(!loopOK||activeIdx<0||down||dragged) return;
     if(performance.now()-lastDragEnd<3500) return; /* a fresh hand placement outranks the spy for a beat */
+    if(handHold) return; /* a hand placement stands until the reader reaches another section */
     var orig=spyItems[activeIdx]; if(!orig) return;
     var cands=[orig];
     Array.prototype.slice.call(list.querySelectorAll('a.ticker-dup')).forEach(function(d){
@@ -902,23 +908,33 @@ document.getElementById('sugg-send').addEventListener('click', function(){
     if(target<0) target=0;
     if(Math.abs(target-sl)>1){ list.scrollLeft=target; normalize(); }
   }
+  /* Section changes must PERSIST ~150ms before the spy adopts them (Nov 14, 2026 — Dave's
+     "ticker jittering between a couple of values" report): iOS reports fractional scrollY
+     and its momentum tail hovers at section boundaries, so an instant-adopt spy flipped the
+     highlight — and re-aligned the tape — back and forth between two neighbouring sections
+     while Dave scrolled slowly. The tape also only re-aligns ON an adopted change now, not
+     every frame, so alignment can never fight itself or the reader's hand. */
+  var pendingIdx=-2, pendingSince=0;
   function spy(y){
     if(!spySections.length||down) return -1;
     var idx=currentSection(y);
-    if(idx!==activeIdx){
-      var old=activeIdx; activeIdx=idx;
-      [old,idx].forEach(function(k){
-        if(k<0||!spyItems[k]) return;
-        var href=spyItems[k].getAttribute('href');
-        Array.prototype.slice.call(list.querySelectorAll('a.ticker-item')).forEach(function(a){
-          if(a.getAttribute('href')!==href) return;
-          if(k===idx){ a.classList.add('on'); if(!a.classList.contains('ticker-dup')) a.setAttribute('aria-current','true'); }
-          else { a.classList.remove('on'); a.removeAttribute('aria-current'); }
-        });
+    if(idx===activeIdx){ pendingIdx=-2; return activeIdx; }
+    var now=performance.now();
+    if(idx!==pendingIdx){ pendingIdx=idx; pendingSince=now; return activeIdx; }
+    if(now-pendingSince<150) return activeIdx;
+    handHold=false; /* new section adopted: the spy may align the tape to it again */
+    var old=activeIdx; activeIdx=idx; pendingIdx=-2;
+    [old,idx].forEach(function(k){
+      if(k<0||!spyItems[k]) return;
+      var href=spyItems[k].getAttribute('href');
+      Array.prototype.slice.call(list.querySelectorAll('a.ticker-item')).forEach(function(a){
+        if(a.getAttribute('href')!==href) return;
+        if(k===idx){ a.classList.add('on'); if(!a.classList.contains('ticker-dup')) a.setAttribute('aria-current','true'); }
+        else { a.classList.remove('on'); a.removeAttribute('aria-current'); }
       });
-    }
+    });
     alignTape();
-    return idx;
+    return activeIdx;
   }
   /* Page rest detection (v3, Nov 5, 2026 — v2 still failed on Dave's iPhone: "the scrollable
      area is not auto-scrolling when the page is static for more than about 1 second").
