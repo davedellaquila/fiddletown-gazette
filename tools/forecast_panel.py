@@ -23,6 +23,16 @@ noteworthy flags (frost, thunderstorms, fog, gusty wind) read off the hourly
 data, and any NWS alert overlapping the date. The same run generates the five
 pages and prunes day pages outside the current five. The alerts fetch is
 best-effort: if it fails the pages still generate, without the alerts block.
+
+ALMANAC CARD (Dave, Nov 16, 2026): every day page also carries a "🌅 The
+Almanac — <date>" card under its summary card: first light (civil dawn),
+sunrise, solar noon, sunset, last light (civil dusk), day length, moonrise,
+moonset, and the moon's phase + illumination at local noon. Sun times extend
+this script's NOAA calc to the 96° civil-twilight zenith; moon data comes from
+tools/almanac_moon.py run under the sky desk's venv python
+(~/workspace/briefings/.venv-sky, skyfield + the cached de421.bsp in
+~/workspace/briefings/ephemeris) — best-effort: if that call fails, the card
+prints its sun rows only and the run still succeeds.
 """
 import json
 import re
@@ -233,8 +243,9 @@ def render(days, stamp):
 import math
 from datetime import timedelta, timezone
 
-def sun_times(d):
-    """Sunrise/sunset for the Fiddletown point (NOAA approximation, ±~2 min)."""
+def sun_times(d, zenith=90.833):
+    """Sunrise/sunset for the Fiddletown point (NOAA approximation, ±~2 min).
+    Zenith 90.833 = sunrise/sunset; 96.0 = civil twilight (first/last light)."""
     N = d.timetuple().tm_yday
     lng_hour = LON / 15.0
     def calc(sunrise):
@@ -246,13 +257,51 @@ def sun_times(d):
         RA /= 15.0
         sin_dec = 0.39782 * math.sin(math.radians(L))
         cos_dec = math.cos(math.asin(sin_dec))
-        cos_h = (math.cos(math.radians(90.833)) - sin_dec * math.sin(math.radians(LAT))) / (cos_dec * math.cos(math.radians(LAT)))
+        cos_h = (math.cos(math.radians(zenith)) - sin_dec * math.sin(math.radians(LAT))) / (cos_dec * math.cos(math.radians(LAT)))
         H = ((360 - math.degrees(math.acos(cos_h))) if sunrise else math.degrees(math.acos(cos_h))) / 15.0
         T = H + RA - 0.06571 * t - 6.622
         UT = (T - lng_hour) % 24
         base = datetime(d.year, d.month, d.day, tzinfo=timezone.utc) + timedelta(hours=UT)
-        return base.astimezone(PT)
+        local = base.astimezone(PT)
+        # The % 24 wrap can land an evening event on the previous local date
+        # (its time-of-day is still right, which hid this until solar noon was
+        # computed as the sunrise-sunset midpoint, Nov 16, 2026). Every event
+        # for date d happens ON date d locally — normalize the date, keep the
+        # computed time-of-day.
+        while local.date() < d:
+            local += timedelta(days=1)
+        while local.date() > d:
+            local -= timedelta(days=1)
+        return local
     return calc(True), calc(False)
+
+def sun_events(d):
+    """The day's sun listing: civil dawn, sunrise, solar noon, sunset, civil dusk."""
+    sr, ss = sun_times(d)
+    dawn, dusk = sun_times(d, zenith=96.0)
+    noon = sr + (ss - sr) / 2
+    return {"sunrise": sr, "sunset": ss, "dawn": dawn, "dusk": dusk, "noon": noon}
+
+MOON_HELPER = Path(__file__).resolve().parent / "almanac_moon.py"
+SKY_PYTHON = Path.home() / "workspace" / "briefings" / ".venv-sky" / "bin" / "python"
+
+def moon_data(dates):
+    """Moonrise/moonset/phase per date via tools/almanac_moon.py under the sky
+    desk's venv python (skyfield + the cached de421 ephemeris). Best-effort:
+    any failure returns {} and the Almanac cards print their sun rows only."""
+    if not SKY_PYTHON.exists():
+        return {}
+    try:
+        import subprocess
+        out = subprocess.run(
+            [str(SKY_PYTHON), str(MOON_HELPER)] + [d.isoformat() for d in dates],
+            capture_output=True, text=True, timeout=90)
+        if out.returncode != 0:
+            return {}
+        return {datetime.strptime(k, "%Y-%m-%d").date(): v
+                for k, v in json.loads(out.stdout).items()}
+    except Exception:
+        return {}
 
 def _max_mph(s):
     nums = [int(x) for x in re.findall(r"\d+", s or "")]
@@ -423,11 +472,34 @@ def chart_wind(slots):
     parts.append('</svg>')
     return "".join(parts)
 
-def day_page(d, hours, day_alerts, stamp, prev_href, next_href, today):
+def day_page(d, hours, day_alerts, stamp, prev_href, next_href, today, moon=None):
     date = d["date"]
-    sr, ss = sun_times(date)
+    ev = sun_events(date)
+    sr, ss = ev["sunrise"], ev["sunset"]
     daylen = ss - sr
     dl = f"{daylen.seconds // 3600} hours {(daylen.seconds % 3600) // 60} minutes"
+    # --- The Almanac card (Dave, Nov 16, 2026): the day's full sun + moon listing ---
+    def _t(dt):
+        return dt.strftime("%-I:%M %p")
+    alm_rows = [
+        ("First light — civil dawn", _t(ev["dawn"])),
+        ("Sunrise", _t(sr)),
+        ("Solar noon", _t(ev["noon"])),
+        ("Sunset", _t(ss)),
+        ("Last light — civil dusk", _t(ev["dusk"])),
+        ("Day length", dl),
+    ]
+    if moon:
+        alm_rows.append(("Moonrise", moon.get("moonrise", "— none on this date")))
+        alm_rows.append(("Moonset", moon.get("moonset", "— none on this date")))
+        if moon.get("phase"):
+            alm_rows.append(("Moon", f'{moon["phase"]} · {moon.get("illum", "")}% lit'))
+    alm_html = ('<div class="card"><h2 style="margin-top:0">🌅 The Almanac — '
+                + date.strftime("%A, %B %-d") + '</h2>'
+                + '<table class="wx">'
+                + "".join(f'<tr><td class="t">{k}</td><td>{v}</td></tr>' for k, v in alm_rows)
+                + '</table>'
+                + '<p class="meta">Computed for the Fiddletown point (38.5035°, −120.7574°) by the Gazette sky desk — sun times by the NOAA approximation, moon times and phase by skyfield, the same engine as the nightly Star Chart.</p></div>')
     temps = [h["temperature"] for h in hours]
     hi = d["hi"] if d["hi"] is not None else (max(temps) if temps else None)
     lo = d["lo"] if d["lo"] is not None else (min(temps) if temps else None)
@@ -516,7 +588,7 @@ def day_page(d, hours, day_alerts, stamp, prev_href, next_href, today):
 {detail_day}{detail_night}
 <p class="meta">☀️ Sunrise {sr.strftime('%-I:%M %p')} · 🌇 Sunset {ss.strftime('%-I:%M %p')} · {dl} of daylight{wind_line}</p>
 </div>
-{charts_html}{notes_html}
+{alm_html}{charts_html}{notes_html}
 <div class="card">
 <h2 style="margin-top:0">Hour by Hour</h2>
 <table class="wx"><tr><th>Hour</th><th>Temp</th><th>Precip</th><th>Conditions</th><th>Wind</th></tr>
@@ -542,6 +614,7 @@ def build_day_pages(days, hourly_periods, alerts, stamp):
         h["_dt"] = dt
         by_date.setdefault(dt.date(), []).append(h)
     today = datetime.now(PT).date()
+    moons = moon_data([d["date"] for d in days])
     names = {d["date"]: d["date"].strftime("%a") for d in days}
     written = []
     for i, d in enumerate(days):
@@ -561,7 +634,7 @@ def build_day_pages(days, hourly_periods, alerts, stamp):
                                    "expires": expires.strftime("%a %-I:%M %p") if expires else "further notice"})
         prev_href = (f'wx-{days[i-1]["date"].isoformat()}.html', names[days[i-1]["date"]]) if i > 0 else None
         next_href = (f'wx-{days[i+1]["date"].isoformat()}.html', names[days[i+1]["date"]]) if i < len(days) - 1 else None
-        html = day_page(d, by_date.get(date, []), day_alerts, stamp, prev_href, next_href, today)
+        html = day_page(d, by_date.get(date, []), day_alerts, stamp, prev_href, next_href, today, moon=moons.get(date))
         fn = REPO / f"wx-{date.isoformat()}.html"
         fn.write_text(html, encoding="utf-8")
         written.append(fn.name)
