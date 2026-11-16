@@ -910,7 +910,7 @@ document.getElementById('sugg-send').addEventListener('click', function(){
   window.addEventListener('pointercancel',endDrag);
   list.addEventListener('click',function(e){ if(suppress){ e.preventDefault(); e.stopPropagation(); suppress=false; } },true);
   /* --- the drift: 36 px/s — a readable glide, resumed 3s after any interaction --- */
-  var SPEED=36, lastT=0;
+  var SPEED=36, lastT=0, driftAcc=0;
   list.addEventListener('mouseenter',function(){ pauseFor(600); });
   list.addEventListener('mouseleave',function(){ pauseFor(300); });
   /* Scroll-spy (Dave, Nov 6, 2026): the tape also tracks the reader — as the page scrolls, the
@@ -994,7 +994,7 @@ document.getElementById('sugg-send').addEventListener('click', function(){
     if(best.off<sl) target=best.off-10;
     else target=best.off+best.w-vw+10;
     if(target<0) target=0;
-    if(Math.abs(target-sl)>1){ list.scrollLeft=target; normalize(); }
+    if(Math.abs(target-sl)>2.5){ list.scrollLeft=target; normalize(); } /* 2.5px deadband (Nov 16, 2026): fractional rect wobble at rest must not micro-nudge the tape */
   }
   /* Section changes must PERSIST ~150ms before the spy adopts them (Nov 14, 2026 — Dave's
      "ticker jittering between a couple of values" report): iOS reports fractional scrollY
@@ -1072,7 +1072,17 @@ document.getElementById('sugg-send').addEventListener('click', function(){
     while(samples.length&&ts-samples[0][0]>1600) samples.shift();
     var settled = rangeOver(500,ts)<2 || rangeOver(1500,ts)<4;
     var cur = spy(y); /* highlight + alignment update; -1 until sections resolve */
-    var spyPark = cur>0; /* down in the paper: the tape marks the reader's place */
+    /* Park on scroll DEPTH as well as on adoption (Nov 16, 2026 — Dave, reading the
+       Roadside feature, found the banner showing the Recipe Archive, and jittering):
+       the showcase drift is a top-of-page pleasure, but the old gate parked it only
+       once the spy had ADOPTED a section past the first — any adoption lag on a real
+       phone left the tape free-drifting deep into the set while the reader was down
+       the page, where it could sit on the archive items at the seam's end. Now the
+       moment the reader scrolls to read (y past ~120px), the drift parks regardless
+       of adoption state; the settled alignment below still walks the tape to the
+       reader's section. */
+    var spyPark = cur>0 || y>120; /* down in the paper: the tape marks the reader's place */
+    normalize(); /* every frame, not only on scroll events — iOS can swallow those */
     /* Alignment retry (Nov 16, 2026): adoption attempts alignment exactly once, and a
        transient guard (a fresh hand drag, the 3.5s post-drag beat) can veto that one
        attempt with no second chance — parked in a long section, the tape then never
@@ -1087,7 +1097,13 @@ document.getElementById('sugg-send').addEventListener('click', function(){
       if(ts-blockedSince>4000){ resumeAt=0; blockedSince=0; blocked = !loopOK || ts<startAt || spyPark; }
     } else blockedSince=0;
     if(blocked) { lastT=ts; return; }
-    if(lastT&&ts-lastT<100){ list.scrollLeft+=(ts-lastT)/1000*SPEED; normalize(); }
+    /* Whole-pixel steps with the fraction carried (Nov 16, 2026): 36px/s is ~0.6px
+       per frame, and iOS lands sub-pixel scrollLeft sets unevenly — some dropped,
+       some doubled — which reads as jitter. Accumulate the glide and step whole
+       pixels; the carried fraction keeps the rate exact. */
+    if(lastT&&ts-lastT<100){ driftAcc+=(ts-lastT)/1000*SPEED;
+      var stepPx=Math.floor(driftAcc);
+      if(stepPx>=1){ driftAcc-=stepPx; list.scrollLeft+=stepPx; normalize(); } }
     lastT=ts;
   }
   if(!reduce&&loopOK) requestAnimationFrame(drift);
