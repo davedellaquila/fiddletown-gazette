@@ -98,6 +98,25 @@ body img{cursor:zoom-in}
 .sg-thumb{width:96px;height:72px;object-fit:cover;border-radius:8px;flex:0 0 auto;display:block}
 @media (max-width:560px){.sg-thumb{width:72px;height:56px}}
 </style>
+<style id="sg-responsive-style">
+/* Sightings Archive — phone-first (Dave's bug report, Nov 16, 2026): the desktop table
+   overflowed a phone viewport (Entry column off the right edge, descriptions squeezed
+   a word per line, the whole page panning sideways). At phone widths each row becomes
+   a stacked entry — photo on top, then species + description, then labelled Date /
+   Contributor / Sent / Entry lines. Desktop keeps the table exactly as it was. */
+@media (max-width:700px){
+  main .card{overflow:hidden}
+  main .card table tr:first-child{display:none}
+  main .card table tr{display:block;padding:12px 2px}
+  main .card table td{display:block;padding:3px 2px;border:none}
+  main .card table td>div{flex-direction:column;gap:8px}
+  main .card table .sg-thumb{width:100%;height:auto;max-height:240px}
+  main .card table td:nth-of-type(2)::before{content:"Date — ";font-weight:700}
+  main .card table td:nth-of-type(3)::before{content:"Contributor — ";font-weight:700}
+  main .card table td:nth-of-type(4)::before{content:"Sent — ";font-weight:700}
+  main .card table td:nth-of-type(5)::before{content:"Entry — ";font-weight:700}
+}
+</style>
 </head><body>
 <div id="fg-lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
   <button id="fg-lb-close" type="button" aria-label="Close photo">✕</button>
