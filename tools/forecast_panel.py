@@ -472,6 +472,70 @@ def chart_wind(slots):
     parts.append('</svg>')
     return "".join(parts)
 
+def daylight_chart(date, ev, tev, moon, today):
+    """The Almanac chart (Dave, Nov 16, 2026 — "a chart that shows the almanac
+    versus the current day"): the page day's light drawn as one 24-hour band —
+    slate night, pale twilight, gold daylight, the solar-noon tick, moonrise and
+    moonset marked — against a slimmer band for TODAY underneath, with the
+    daylight difference stated in words. Inline SVG, the wx-chart pattern."""
+    def X(dt):
+        mins = dt.hour * 60 + dt.minute + dt.second / 60
+        return 6 + (mins / 1440) * 348
+    def _ct(dt):
+        return dt.strftime("%-I:%M").lower() + ("a" if dt.hour < 12 else "p")
+    def segs(e, y, h):
+        spans = [(6, X(e["dawn"]), "#5a6a86"), (X(e["dawn"]), X(e["sunrise"]), "#b9c4d6"),
+                 (X(e["sunrise"]), X(e["sunset"]), "#e8c96a"), (X(e["sunset"]), X(e["dusk"]), "#b9c4d6"),
+                 (X(e["dusk"]), 354, "#5a6a86")]
+        out = [f'<rect x="{a:.1f}" y="{y}" width="{max(b - a, 0.5):.1f}" height="{h}" fill="{c}"/>' for a, b, c in spans]
+        out.append(f'<line x1="{X(e["noon"]):.1f}" y1="{y}" x2="{X(e["noon"]):.1f}" y2="{y + h}" stroke="#7a6420" stroke-width="1"/>')
+        return "".join(out)
+    is_today = (date == today)
+    parts = ['<svg class="wxchart" viewBox="0 0 360 %d" role="img" aria-label="Daylight chart comparing this day with today">' % (104 if not is_today else 76)]
+    lbl = "Today" if is_today else date.strftime("%A, %B %-d")
+    parts.append(f'<text x="6" y="10" font-size="8.5" font-weight="700" fill="var(--muted)">{lbl}</text>')
+    parts.append(segs(ev, 14, 22))
+    if moon:
+        for key in ("moonrise", "moonset"):
+            v = moon.get(key)
+            if v and v[0].isdigit():
+                try:
+                    mdt = datetime.combine(date, datetime.strptime(v, "%I:%M %p").time())
+                    parts.append(f'<text x="{X(mdt):.1f}" y="31" font-size="11" text-anchor="middle" fill="#f5efe0" stroke="#2e3a4a" stroke-width="2.5" paint-order="stroke">☾</text>')
+                except ValueError:
+                    pass
+    def lab(dt, name, y):
+        x = min(max(X(dt), 30), 330)
+        return f'<text x="{x:.1f}" y="{y}" font-size="8" text-anchor="middle" fill="var(--muted)">{name} {_ct(dt)}</text>'
+    parts.append(lab(ev["dawn"], "first light", 47))
+    parts.append(lab(ev["sunset"], "sunset", 47))
+    parts.append(lab(ev["sunrise"], "sunrise", 58))
+    parts.append(lab(ev["dusk"], "last light", 58))
+    if not is_today:
+        parts.append(f'<text x="6" y="72" font-size="8.5" font-weight="700" fill="var(--muted)">Today — {today.strftime("%A, %B %-d")}</text>')
+        parts.append(segs(tev, 76, 12))
+        axis_y, h_total = 100, 104
+    else:
+        axis_y, h_total = 72, 76
+    for hh, name in ((0, "12a"), (6, "6a"), (12, "12p"), (18, "6p"), (24, "12a")):
+        x = 6 + (hh / 24) * 348
+        parts.append(f'<text x="{x:.1f}" y="{axis_y}" font-size="8" text-anchor="middle" fill="var(--muted)">{name}</text>')
+    parts.append('</svg>')
+    dl_d = (ev["sunset"] - ev["sunrise"]).total_seconds() / 60
+    dl_t = (tev["sunset"] - tev["sunrise"]).total_seconds() / 60
+    diff = int(round(dl_d - dl_t))
+    if is_today:
+        delta = "This page is today — the band above is the reference the other four days in the outlook are drawn against."
+    elif diff == 0:
+        delta = "Daylight runs the same length as today."
+    elif diff < 0:
+        delta = f"Daylight runs {-diff} minute{'s' if -diff != 1 else ''} shorter than today."
+    else:
+        delta = f"Daylight runs {diff} minute{'s' if diff != 1 else ''} longer than today."
+    note = (f'<p class="meta"><b>{delta}</b> Gold is daylight, pale blue the twilight at either end, '
+            'slate the night; the thin line is solar noon and ☾ marks moonrise and moonset — times in the listing above.</p>')
+    return "".join(parts) + note
+
 def day_page(d, hours, day_alerts, stamp, prev_href, next_href, today, moon=None):
     date = d["date"]
     ev = sun_events(date)
@@ -494,11 +558,13 @@ def day_page(d, hours, day_alerts, stamp, prev_href, next_href, today, moon=None
         alm_rows.append(("Moonset", moon.get("moonset", "— none on this date")))
         if moon.get("phase"):
             alm_rows.append(("Moon", f'{moon["phase"]} · {moon.get("illum", "")}% lit'))
+    tev = sun_events(today)
     alm_html = ('<div class="card"><h2 style="margin-top:0">🌅 The Almanac — '
                 + date.strftime("%A, %B %-d") + '</h2>'
                 + '<table class="wx">'
                 + "".join(f'<tr><td class="t">{k}</td><td>{v}</td></tr>' for k, v in alm_rows)
                 + '</table>'
+                + daylight_chart(date, ev, tev, moon, today)
                 + '<p class="meta">Computed for the Fiddletown point (38.5035°, −120.7574°) by the Gazette sky desk — sun times by the NOAA approximation, moon times and phase by skyfield, the same engine as the nightly Star Chart.</p></div>')
     temps = [h["temperature"] for h in hours]
     hi = d["hi"] if d["hi"] is not None else (max(temps) if temps else None)
