@@ -716,6 +716,26 @@ def fetch_json(url):
     with urllib.request.urlopen(req, timeout=30) as r:
         return json.load(r)
 
+def bake_reader_counts(html):
+    """Bake the current reader total into the front page's [data-visitor-count]
+    spans (Dave, Nov 16, 2026 — "I don't see the reader count on the desktop
+    version"): the spans' number is normally filled at view time by the counter
+    beacon script, so anything on the reader's machine that blocks that script
+    (a privacy/ad blocker on desktop is the usual case) leaves a blank where
+    the number belongs. The baked number is refreshed on every run of this
+    tool (i.e. every edition); where the beacon does run, it overwrites the
+    baked number with the live one. Best-effort: any failure keeps the
+    previously baked number — never blank the spans."""
+    try:
+        url = ("https://visitor-counter.dave-5d7.workers.dev/counts?site=fiddletown-gazette&paths="
+               + urllib.parse.quote("/fiddletown-gazette/", safe=""))
+        data = fetch_json(url)
+        total = data["counts"]["/fiddletown-gazette/"]["total"]
+        return re.sub(r"<span data-visitor-count>\d*</span>",
+                      f"<span data-visitor-count>{total}</span>", html)
+    except Exception:
+        return html
+
 def main():
     dry = "--dry-run" in sys.argv
     data = fetch_json(FORECAST_URL)
@@ -744,6 +764,7 @@ def main():
         if not m:
             sys.exit("ERROR: no FORECAST markers and no lead headline anchor found; index.html untouched.")
         html = html.replace(m.group(1), m.group(1) + panel + "\n", 1)
+    html = bake_reader_counts(html)
     INDEX.write_text(html, encoding="utf-8")
     print(f"Forecast panel spliced into index.html (NWS generated {stamp}); day pages: {', '.join(written)}.")
 
