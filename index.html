@@ -867,6 +867,10 @@ document.getElementById('sugg-send').addEventListener('click', function(){
   }
   buildSpy();
   window.addEventListener('resize',function(){ setTimeout(buildSpy,350); });
+  /* The spy also runs on scroll events (Nov 16, 2026): iOS throttles requestAnimationFrame
+     hard during a scroll, so a spy that only runs inside the drift loop can go blind
+     exactly while the reader is moving. spy() is cheap and idempotent. */
+  window.addEventListener('scroll',function(){ spy(window.scrollY||0); },{passive:true});
   function currentSection(y){
     var n=spySections.length; if(!n) return -1;
     for(var i=0;i<n;i++){
@@ -908,13 +912,23 @@ document.getElementById('sugg-send').addEventListener('click', function(){
      highlight — and re-aligned the tape — back and forth between two neighbouring sections
      while Dave scrolled slowly. The tape also only re-aligns ON an adopted change now, not
      every frame, so alignment can never fight itself or the reader's hand. */
-  var pendingIdx=-2, pendingSince=0;
+  var pendingIdx=-2, pendingSince=0, pendingLast=0;
   function spy(y){
     if(!spySections.length||down) return -1;
     var idx=currentSection(y);
-    if(idx===activeIdx){ pendingIdx=-2; return activeIdx; }
     var now=performance.now();
-    if(idx!==pendingIdx){ pendingIdx=idx; pendingSince=now; return activeIdx; }
+    if(idx===activeIdx){
+      /* A brief blip back to the current section does NOT reset the candidate's clock
+         (Nov 16, 2026 — Dave: "the ticker doesn't follow me down the page"): iOS's
+         fractional momentum tail micro-crosses a section boundary for seconds after a
+         scroll, and resetting on every blip starved adoption indefinitely — the tape
+         stayed sections behind and never scrolled along. The candidate now dies only
+         when it has not been the computed section for ~600ms. */
+      if(pendingIdx>=0&&now-pendingLast>600) pendingIdx=-2;
+      return activeIdx;
+    }
+    if(idx!==pendingIdx){ pendingIdx=idx; pendingSince=now; pendingLast=now; return activeIdx; }
+    pendingLast=now;
     if(now-pendingSince<150) return activeIdx;
     handHold=false; /* new section adopted: the spy may align the tape to it again */
     var old=activeIdx; activeIdx=idx; pendingIdx=-2;
@@ -956,6 +970,13 @@ document.getElementById('sugg-send').addEventListener('click', function(){
     var settled = rangeOver(500,ts)<2 || rangeOver(1500,ts)<4;
     var cur = spy(y); /* highlight + alignment update; -1 until sections resolve */
     var spyPark = cur>0; /* down in the paper: the tape marks the reader's place */
+    /* Alignment retry (Nov 16, 2026): adoption attempts alignment exactly once, and a
+       transient guard (a fresh hand drag, the 3.5s post-drag beat) can veto that one
+       attempt with no second chance — parked in a long section, the tape then never
+       followed the reader at all. While the page rests, re-ask: alignTape self-limits
+       (a no-op when the active item is already on screen) and still honours handHold
+       and the drag guards, so this can never fight the reader's hand. */
+    if(settled&&!down&&!dragged) alignTape();
     var extBlocked = performance.now()<resumeAt;
     var blocked = !loopOK || down || dragged || extBlocked || !settled || ts<startAt || spyPark;
     if(extBlocked && settled && !down && !dragged){
