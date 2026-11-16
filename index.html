@@ -856,20 +856,26 @@ document.getElementById('sugg-send').addEventListener('click', function(){
      the showcase drift resumes. The reference line is the sections' own scroll-margin (150px),
      so the spy agrees with where a tapped item lands. Archive items have no section on this
      page and never spy. */
-  var spyItems=[], spySections=[], activeIdx=-1;
+  var spyItems=[], spySections=[], spyHeads=[], activeIdx=-1;
   /* handHold (Nov 14, 2026 — Dave's "ticker looks locked up" report): once the reader drags
      the tape by hand, their placement stands until they scroll into a DIFFERENT section.
      Before this, alignTape re-centered on the active item 3.5s after every drag — down in
      the paper, where the drift parks, that read as the tape being locked: slide it, and it
      snapped back to the same spot. */
   function buildSpy(){
-    spyItems=[]; spySections=[];
+    spyItems=[]; spySections=[]; spyHeads=[];
+    var heads={};
+    document.querySelectorAll('h2').forEach(function(h2){
+      var host=h2.closest('section[id],div[id],article[id]');
+      var hid=h2.id||(host&&host.id)||(h2.nextElementSibling&&h2.nextElementSibling.id)||'';
+      if(hid&&!heads[hid]) heads[hid]=h2;
+    });
     Array.prototype.slice.call(list.querySelectorAll('a.ticker-item')).forEach(function(a){
       if(a.classList.contains('ticker-dup')||a.classList.contains('ticker-arch')) return;
       var href=a.getAttribute('href')||'';
       if(href.charAt(0)!=='#') return;
       var el=document.getElementById(href.slice(1));
-      if(el){ spyItems.push(a); spySections.push(el); }
+      if(el){ spyItems.push(a); spySections.push(el); spyHeads.push(heads[href.slice(1)]||el); }
     });
   }
   buildSpy();
@@ -878,14 +884,27 @@ document.getElementById('sugg-send').addEventListener('click', function(){
      hard during a scroll, so a spy that only runs inside the drift loop can go blind
      exactly while the reader is moving. spy() is cheap and idempotent. */
   window.addEventListener('scroll',function(){ spy(window.scrollY||0); },{passive:true});
+  /* The spy reads HEADINGS against a line just under the sticky bars (retuned
+     Nov 16, 2026 — Dave's screenshot: the tape still marked Car Shows while the
+     Tasting Room heading was already at the top of the screen and its stories
+     filled the view). The old rule measured each section's CARD against a fixed
+     150px line: a heading reaches the reader's eye a full heading-height before
+     its card crosses that line, so the tape ran a section behind the screen.
+     Now the current section is the LAST one whose heading has crossed the line
+     under the bars — the section the reader is in, from the moment its name
+     reaches the top of the screen. */
+  function spyLine(){
+    var tb=document.querySelector('.topbar'), tc=document.getElementById('toc');
+    var h=(tb?tb.offsetHeight:52)+(tc?tc.offsetHeight:40)+2;
+    return h>40&&h<320?h:150;
+  }
   function currentSection(y){
-    var n=spySections.length; if(!n) return -1;
+    var n=spyHeads.length; if(!n) return -1;
+    var line=spyLine(), cur=-1;
     for(var i=0;i<n;i++){
-      var r=spySections[i].getBoundingClientRect();
-      if(r.top<=150) { if(r.bottom>150||i===n-1) return i; }
-      else return i-1;
+      if(spyHeads[i].getBoundingClientRect().top<=line) cur=i; else break;
     }
-    return n-1;
+    return cur;
   }
   function itemOffset(a){
     var lr=list.getBoundingClientRect();
@@ -936,7 +955,20 @@ document.getElementById('sugg-send').addEventListener('click', function(){
     }
     if(idx!==pendingIdx){ pendingIdx=idx; pendingSince=now; pendingLast=now; return activeIdx; }
     pendingLast=now;
-    if(now-pendingSince<150) return activeIdx;
+    if(now-pendingSince<90) return activeIdx; /* 90ms since the Nov 16, 2026 retune (was 150ms) */
+    /* Decisiveness (Nov 16, 2026 retune): a candidate must be IN by a margin —
+       its heading at least 3px past the line, or the page resting at its bottom.
+       Fractional hover straddling the line (a pixel or two either way) can never
+       meet the margin, so a parked boundary cannot flicker the highlight the way
+       Dave caught on Nov 14; a real scroll crosses 3px in a single frame. The
+       margin is a ratchet: once a section is adopted, the one above cannot
+       reclaim the tape on a hair's retreat — scrolling back up, its heading is
+       far past the line, so upward adoption stays instant after the same 90ms. */
+    if(idx>=0){
+      var hr=spyHeads[idx].getBoundingClientRect().top;
+      var atBottom=y+window.innerHeight>=document.documentElement.scrollHeight-4;
+      if(hr>spyLine()-3&&!atBottom) return activeIdx;
+    }
     handHold=false; /* new section adopted: the spy may align the tape to it again */
     var old=activeIdx; activeIdx=idx; pendingIdx=-2;
     [old,idx].forEach(function(k){
