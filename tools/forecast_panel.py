@@ -290,12 +290,138 @@ table.wx td.pop{color:var(--rain);white-space:nowrap}
 table.wx td.wind{white-space:nowrap;color:var(--muted);font-size:12.5px}
 tr.wx-now td{background:rgba(184,134,11,.13)}
 .nowtag{font-family:-apple-system,sans-serif;font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--gold);text-transform:uppercase}
+.wxh{font-family:-apple-system,sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:16px 0 2px}
+.wxchart{width:100%;height:auto;display:block}
+.wxchart text{font-family:-apple-system,sans-serif;fill:var(--muted)}
 .daynav{display:flex;justify-content:space-between;gap:10px;font-family:-apple-system,sans-serif;font-size:13.5px;font-weight:600;margin:18px 0 6px}
 .daynav a{color:var(--accent);text-decoration:none}
 .foot{border-top:3px double var(--ink);margin-top:22px;padding-top:10px}
 </style>"""
 
 BEACON = '<script async src="https://visitor-counter.dave-5d7.workers.dev/beacon.js" data-site="fiddletown-gazette"></script>'
+
+
+# --- Charts (Dave, Nov 16, 2026): inline SVG from the same hourly data --------
+# The NWS hourly feed for this point carries NO per-hour precipitation amounts
+# and NO gust figures (verified Nov 16, 2026) — the precipitation chart is the
+# probability by hour, and the wind chart is sustained speed; the builders use
+# windGust the day the feed starts carrying it.
+def _cx(h):
+    return 30 + (h + 0.5) * 13.5
+
+def _hour_ticks(y):
+    out = []
+    for h in (0, 3, 6, 9, 12, 15, 18, 21):
+        lab = {0: "12a", 3: "3a", 6: "6a", 9: "9a", 12: "12p", 15: "3p", 18: "6p", 21: "9p"}[h]
+        out.append(f'<text x="{_cx(h):.0f}" y="{y}" font-size="8" text-anchor="middle">{lab}</text>')
+    return "".join(out)
+
+def _slots(hours):
+    return {h["_dt"].hour: h for h in hours}
+
+def _temp_scale(temps, top, bottom):
+    lo, hi = min(temps) - 2, max(temps) + 2
+    return lambda v: top + (hi - v) / (hi - lo) * (bottom - top), lo, hi
+
+def chart_glance(slots, sr, ss):
+    hrs = sorted(slots)
+    temps = [slots[h]["temperature"] for h in hrs]
+    y, tlo, thi = _temp_scale(temps, 16, 84)
+    parts = ['<svg class="wxchart" viewBox="0 0 360 118" role="img" aria-label="Day at a glance: temperature line over precipitation bars, with sunrise and sunset marked.">']
+    for h in hrs:
+        pop = (slots[h].get("probabilityOfPrecipitation") or {}).get("value")
+        if pop:
+            bh = pop / 100 * 44
+            parts.append(f'<rect x="{_cx(h)-4.5:.1f}" y="{88-bh:.1f}" width="9" height="{bh:.1f}" fill="var(--rain)" opacity="0.55"/>')
+    parts.append('<line x1="30" y1="88" x2="354" y2="88" stroke="var(--border)"/>')
+    for dt, lab in ((sr, "sunrise"), (ss, "sunset")):
+        fx = 30 + (dt.hour + dt.minute / 60) / 24 * 324
+        parts.append(f'<line x1="{fx:.1f}" y1="12" x2="{fx:.1f}" y2="88" stroke="var(--gold)" stroke-dasharray="2 3" opacity="0.8"/>')
+        parts.append(f'<text x="{min(max(fx, 34), 326):.0f}" y="9" font-size="6.5" text-anchor="middle">{lab}</text>')
+    pts = " ".join(f"{_cx(h):.1f},{y(slots[h]['temperature']):.1f}" for h in hrs)
+    parts.append(f'<polyline points="{pts}" fill="none" stroke="var(--gold)" stroke-width="2"/>')
+    hi_h = max(hrs, key=lambda h: slots[h]["temperature"])
+    lo_h = min(hrs, key=lambda h: slots[h]["temperature"])
+    parts.append(f'<circle cx="{_cx(hi_h):.1f}" cy="{y(slots[hi_h][chr(39) and 'temperature']):.1f}" r="2.6" fill="var(--accent)"/>')
+    parts.append(f'<text x="{_cx(hi_h):.0f}" y="{y(slots[hi_h]['temperature'])-5:.0f}" font-size="9" font-weight="700" text-anchor="middle" fill="var(--text)">{slots[hi_h]["temperature"]}°</text>')
+    parts.append(f'<circle cx="{_cx(lo_h):.1f}" cy="{y(slots[lo_h]['temperature']):.1f}" r="2.6" fill="var(--rain)"/>')
+    parts.append(f'<text x="{_cx(lo_h):.0f}" y="{y(slots[lo_h]['temperature'])+11:.0f}" font-size="9" font-weight="700" text-anchor="middle" fill="var(--text)">{slots[lo_h]["temperature"]}°</text>')
+    parts.append(_hour_ticks(102))
+    parts.append('</svg>')
+    return "".join(parts)
+
+def chart_temp(slots):
+    hrs = sorted(slots)
+    temps = [slots[h]["temperature"] for h in hrs]
+    y, tlo, thi = _temp_scale(temps, 16, 98)
+    hi_v, lo_v = max(temps), min(temps)
+    mid_v = round((hi_v + lo_v) / 2)
+    parts = ['<svg class="wxchart" viewBox="0 0 360 130" role="img" aria-label="Temperature curve across the day.">']
+    for v in (hi_v, mid_v, lo_v):
+        parts.append(f'<line x1="30" y1="{y(v):.1f}" x2="354" y2="{y(v):.1f}" stroke="var(--border)" stroke-dasharray="1 3"/>')
+        parts.append(f'<text x="26" y="{y(v)+3:.0f}" font-size="8.5" text-anchor="end">{v}°</text>')
+    pts = " ".join(f"{_cx(h):.1f},{y(slots[h]['temperature']):.1f}" for h in hrs)
+    area = f"M{_cx(hrs[0]):.1f},98 L" + " L".join(f"{_cx(h):.1f},{y(slots[h]['temperature']):.1f}" for h in hrs) + f" L{_cx(hrs[-1]):.1f},98 Z"
+    parts.append(f'<path d="{area}" fill="var(--gold)" opacity="0.16"/>')
+    parts.append(f'<polyline points="{pts}" fill="none" stroke="var(--gold)" stroke-width="2.2"/>')
+    hi_h = max(hrs, key=lambda h: slots[h]["temperature"])
+    lo_h = min(hrs, key=lambda h: slots[h]["temperature"])
+    def _hlab(h):
+        return slots[h]["_dt"].strftime("%-I %p")
+    parts.append(f'<circle cx="{_cx(hi_h):.1f}" cy="{y(hi_v):.1f}" r="3.2" fill="var(--accent)"/>')
+    parts.append(f'<text x="{min(max(_cx(hi_h), 62), 298):.0f}" y="{max(y(hi_v)-7, 9):.0f}" font-size="9.5" font-weight="700" text-anchor="middle" fill="var(--text)">High {hi_v}° · {_hlab(hi_h)}</text>')
+    parts.append(f'<circle cx="{_cx(lo_h):.1f}" cy="{y(lo_v):.1f}" r="3.2" fill="var(--rain)"/>')
+    parts.append(f'<text x="{min(max(_cx(lo_h), 62), 298):.0f}" y="{min(y(lo_v)+13, 110):.0f}" font-size="9.5" font-weight="700" text-anchor="middle" fill="var(--text)">Low {lo_v}° · {_hlab(lo_h)}</text>')
+    parts.append(_hour_ticks(114))
+    parts.append('</svg>')
+    return "".join(parts)
+
+def chart_precip(slots):
+    parts = ['<svg class="wxchart" viewBox="0 0 360 112" role="img" aria-label="Precipitation probability by hour.">']
+    for v, lab in ((100, "100%"), (50, "50%"), (0, "0")):
+        yy = 84 - v / 100 * 58
+        parts.append(f'<line x1="30" y1="{yy:.1f}" x2="354" y2="{yy:.1f}" stroke="var(--border)" stroke-dasharray="1 3"/>')
+        parts.append(f'<text x="26" y="{yy+3:.0f}" font-size="8" text-anchor="end">{lab}</text>')
+    best_h, best_v = None, -1
+    for h in sorted(slots):
+        pop = (slots[h].get("probabilityOfPrecipitation") or {}).get("value")
+        if pop is None:
+            continue
+        if pop > best_v:
+            best_v, best_h = pop, h
+        if pop > 0:
+            bh = pop / 100 * 58
+            parts.append(f'<rect x="{_cx(h)-4.5:.1f}" y="{84-bh:.1f}" width="9" height="{bh:.1f}" fill="var(--rain)"/>')
+    if best_h is not None and best_v > 0:
+        parts.append(f'<text x="{_cx(best_h):.0f}" y="{84 - best_v/100*58 - 4:.0f}" font-size="9" font-weight="700" text-anchor="middle" fill="var(--text)">{best_v}%</text>')
+    parts.append(_hour_ticks(98))
+    parts.append('</svg>')
+    return "".join(parts)
+
+def chart_wind(slots):
+    speeds = {h: _max_mph(slots[h].get("windSpeed", "")) for h in slots}
+    gusts = {h: _max_mph(slots[h].get("windGust") or "") for h in slots}
+    top_v = max([10] + list(speeds.values()) + list(gusts.values()))
+    top_v = int(math.ceil(top_v / 10.0) * 10)
+    parts = ['<svg class="wxchart" viewBox="0 0 360 112" role="img" aria-label="Wind speed by hour, sustained, with gusts where the forecast carries them.">']
+    for v in (top_v, top_v // 2, 0):
+        yy = 84 - v / top_v * 58
+        parts.append(f'<line x1="30" y1="{yy:.1f}" x2="354" y2="{yy:.1f}" stroke="var(--border)" stroke-dasharray="1 3"/>')
+        parts.append(f'<text x="26" y="{yy+3:.0f}" font-size="8" text-anchor="end">{v}</text>')
+    for h in sorted(slots):
+        s = speeds[h]
+        if s > 0:
+            bh = s / top_v * 58
+            parts.append(f'<rect x="{_cx(h)-4.5:.1f}" y="{84-bh:.1f}" width="9" height="{bh:.1f}" fill="var(--muted)" opacity="0.75"/>')
+    gpts = [(h, gusts[h]) for h in sorted(slots) if gusts[h] > 0]
+    if gpts:
+        pts = " ".join(f"{_cx(h):.1f},{84 - g/top_v*58:.1f}" for h, g in gpts)
+        parts.append(f'<polyline points="{pts}" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="4 2"/>')
+        for h, g in gpts:
+            parts.append(f'<circle cx="{_cx(h):.1f}" cy="{84 - g/top_v*58:.1f}" r="2.2" fill="var(--accent)"/>')
+    parts.append(_hour_ticks(98))
+    parts.append('</svg>')
+    return "".join(parts)
 
 def day_page(d, hours, day_alerts, stamp, prev_href, next_href, today):
     date = d["date"]
@@ -353,6 +479,18 @@ def day_page(d, hours, day_alerts, stamp, prev_href, next_href, today):
     if next_href:
         mid += f'<a href="{next_href[0]}">{next_href[1]} →</a>'
     nav_html = f'<div class="daynav"><span>{nav[0]}</span><span>{mid}</span></div>'
+    slots = _slots(hours)
+    if slots:
+        maxpop = max(((h.get("probabilityOfPrecipitation") or {}).get("value") or 0) for h in hours)
+        dry_note = '<p class="meta">No precipitation expected — the chance reads 0% in every hour.</p>' if maxpop == 0 else ""
+        charts_html = ('<div class="card"><h2 style="margin-top:0">The Day in Charts</h2>'
+            '<h3 class="wxh">Day at a Glance — temperature over precipitation</h3>' + chart_glance(slots, sr, ss)
+            + '<h3 class="wxh">Temperature</h3>' + chart_temp(slots)
+            + '<h3 class="wxh">Precipitation Chance by Hour</h3>' + chart_precip(slots) + dry_note
+            + '<h3 class="wxh">Wind — sustained speed, mph</h3>' + chart_wind(slots)
+            + '<p class="meta">Charts drawn from the same National Weather Service hourly forecast as the table below. The hourly feed carries no per-hour precipitation amounts and no gust figures for this point — amounts, when the Weather Service states them, appear in the narrative above.</p></div>')
+    else:
+        charts_html = ""
     detail_night = f'<p class="detail"><b>Tonight:</b> {d["detail_night"]}</p>' if d.get("detail_night") else ""
     partial = " Showing the rest of today — the hourly forecast begins at the current hour." if (date == today and 0 < len(hours) < 24) else ""
     detail_day = f'<p class="detail">{d["detail"]}</p>' if d.get("detail") else ""
@@ -378,7 +516,7 @@ def day_page(d, hours, day_alerts, stamp, prev_href, next_href, today):
 {detail_day}{detail_night}
 <p class="meta">☀️ Sunrise {sr.strftime('%-I:%M %p')} · 🌇 Sunset {ss.strftime('%-I:%M %p')} · {dl} of daylight{wind_line}</p>
 </div>
-{notes_html}
+{charts_html}{notes_html}
 <div class="card">
 <h2 style="margin-top:0">Hour by Hour</h2>
 <table class="wx"><tr><th>Hour</th><th>Temp</th><th>Precip</th><th>Conditions</th><th>Wind</th></tr>
