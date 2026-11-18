@@ -626,7 +626,7 @@ def day_page(d, hours, day_alerts, stamp, prev_href, next_href, today, moon=None
             + '<h3 class="wxh">Temperature</h3>' + chart_temp(slots)
             + '<h3 class="wxh">Precipitation Chance by Hour</h3>' + chart_precip(slots) + dry_note
             + '<h3 class="wxh">Wind — sustained speed, mph</h3>' + chart_wind(slots)
-            + '<p class="meta">Charts drawn from the same National Weather Service hourly forecast as the table below. The hourly feed carries no per-hour precipitation amounts and no gust figures for this point — amounts, when the Weather Service states them, appear in the narrative above.</p></div>')
+            + '<p class="meta">Charts drawn from the same National Weather Service hourly forecast as the table below. The hourly feed carries no per-hour precipitation amounts and no gust figures for this point — amounts, when the Weather Service states them, appear in the narrative below.</p></div>')
     else:
         charts_html = ""
     detail_night = f'<p class="detail"><b>Tonight:</b> {d["detail_night"]}</p>' if d.get("detail_night") else ""
@@ -649,12 +649,13 @@ def day_page(d, hours, day_alerts, stamp, prev_href, next_href, today, moon=None
 <h1>{date.strftime('%A, %B %-d, %Y')}</h1>
 <p class="sub">Fiddletown, California · National Weather Service, Sacramento</p>
 {alerts_html}
+{charts_html}
 <div class="card">
 <div class="bigtemps">{(str(hi) + '°') if hi is not None else ''}{(' <span class="lo">/ ' + str(lo) + '°</span>') if lo is not None else ''}</div>
 {detail_day}{detail_night}
 <p class="meta">☀️ Sunrise {sr.strftime('%-I:%M %p')} · 🌇 Sunset {ss.strftime('%-I:%M %p')} · {dl} of daylight{wind_line}</p>
 </div>
-{alm_html}{charts_html}{notes_html}
+{notes_html}
 <div class="card">
 <h2 style="margin-top:0">Hour by Hour</h2>
 <table class="wx"><tr><th>Hour</th><th>Temp</th><th>Precip</th><th>Conditions</th><th>Wind</th></tr>
@@ -662,6 +663,7 @@ def day_page(d, hours, day_alerts, stamp, prev_href, next_href, today, moon=None
 </table>
 <p class="meta">Precipitation is the National Weather Service's probability for that hour. Hours are Pacific Time.{partial}</p>
 </div>
+{alm_html}
 {nav_html}
 <div class="foot">
 <p class="meta">Source: National Weather Service forecast for the Fiddletown point (Sacramento office, gridpoint 66,60) · Page generated {stamp} by the Gazette weather desk · <a class="backlink" href="index.html#the-lead">Back to the five-day outlook</a></p>
