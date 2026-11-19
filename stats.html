@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stats for Nerds — The Fiddletown Gazette</title>
+<!-- SEO:BEGIN — search & sharing head block (standing, Nov 5, 2026; preserve in rebuilds) -->
+<meta name="description" content="The Fiddletown Gazette by the numbers — readership, weather, the wire, wine country, and the fun ledger. Every figure labeled with its window and its source.">
+<link rel="canonical" href="https://fiddletowngazette.com/stats.html">
+<meta property="og:site_name" content="The Fiddletown Gazette">
+<meta property="og:type" content="website">
+<meta property="og:title" content="What&#8217;s New — The Fiddletown Gazette">
+<meta property="og:description" content="What&#8217;s new in The Fiddletown Gazette — a short note for the neighbors: a winery-events section, restaurant news in Around Town, a phone fix for the Sightings Archive, and a new Listening Archive.">
+<meta property="og:url" content="https://fiddletowngazette.com/stats.html">
+<meta property="og:image" content="https://davedellaquila.github.io/fiddletown-gazette/media/giant-fiddle-closeup-masthead.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Recipe Archive — The Fiddletown Gazette">
+<meta name="twitter:description" content="What&#8217;s new in The Fiddletown Gazette — a short note for the neighbors: a winery-events section, restaurant news in Around Town, a phone fix for the Sightings Archive, and a new Listening Archive.">
+<meta name="twitter:image" content="https://davedellaquila.github.io/fiddletown-gazette/media/giant-fiddle-closeup-masthead.jpg">
+<!-- SEO:END -->
+<style>
+:root{--bg:#f7f1e3;--paper:#fffdf6;--text:#1c1917;--muted:#6b6259;--border:#d8cdb4;--ink:#1c1917;--accent:#8a1f1f;--gold:#b8860b;--ok:#1b7a2e}
+@media (prefers-color-scheme: dark){:root{--bg:#141210;--paper:#1e1b18;--text:#ece5d8;--muted:#a89f92;--border:#3d362e;--ink:#ece5d8;--accent:#e0685f;--gold:#e3b341;--ok:#5fd08a}}
+*{box-sizing:border-box;margin:0;padding:0} body{font-family:Georgia,'Times New Roman',serif;background:var(--bg);color:var(--text);line-height:1.55;padding:0 16px 48px;max-width:1020px;margin:0 auto;overflow-x:hidden}
+a{color:var(--accent)}
+.topbar{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:10px;background:var(--bg);border-bottom:3px double var(--ink);padding:10px 2px;font-family:-apple-system,sans-serif;font-weight:700}
+.topbar nav{margin-left:auto;display:flex;gap:14px;font-size:13.5px}.topbar nav a{color:var(--text);text-decoration:none}.topbar nav a:hover{text-decoration:underline}
+.masthead{text-align:center;padding:30px 8px 16px}
+.kicker{font-family:-apple-system,sans-serif;letter-spacing:.22em;text-transform:uppercase;font-size:11px;color:var(--gold);font-weight:800}
+.masthead h1{font-size:clamp(36px,7.5vw,64px);line-height:1.02;margin:8px 0 6px}
+.dateline{color:var(--muted);font-style:italic}
+.weatherbug{display:inline-block;margin-top:10px;border:1px solid var(--border);border-radius:999px;padding:5px 14px;background:var(--paper);font-size:13.5px;font-family:-apple-system,sans-serif}
+.rule{height:4px;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);margin:16px 0}
+.banner{border:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--paper));border-radius:12px;padding:16px 20px;margin-bottom:18px}
+.banner b{color:var(--accent)}
+.grid{display:grid;grid-template-columns:1fr;gap:22px}@media(min-width:760px){.grid{grid-template-columns:2fr 1fr}}
+h2{font-size:22px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin:26px 0 12px}
+.lead h2{border-bottom:0;font-size:clamp(26px,4.5vw,38px);line-height:1.15;margin-top:0}
+.item{padding:10px 0;border-bottom:1px dashed var(--border)}.item:last-child{border-bottom:0}
+.meta{font-family:-apple-system,sans-serif;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.empty{color:var(--muted);font-style:italic;padding:8px 0}
+.card{background:var(--paper);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.footer{margin-top:44px;padding-top:18px;border-top:3px double var(--ink);color:var(--muted);font-size:13.5px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+.header-tip{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:.45em;padding:6px 12px;border-radius:999px;text-decoration:none;font-size:13px;font-weight:800;line-height:1;color:#fff;background:linear-gradient(135deg,#7c4dff,#b388ff);box-shadow:0 4px 14px rgba(124,77,255,.35);animation:tip-breathe 3.2s ease-in-out infinite;white-space:nowrap;font-family:-apple-system,sans-serif}
+.header-tip::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(105deg,rgba(255,255,255,0) 35%,rgba(255,255,255,.45) 50%,rgba(255,255,255,0) 65%);transform:translateX(-110%);animation:tip-sheen 8s ease-in-out infinite}
+.header-tip .jar{display:inline-block;font-size:1.1em}.header-tip:hover .jar{animation:tip-spin .7s cubic-bezier(.34,1.56,.64,1)}
+.header-tip:focus-visible{outline:3px solid #ffd54f;outline-offset:3px}
+@keyframes tip-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+@keyframes tip-sheen{0%{transform:translateX(-110%)}16%{transform:translateX(110%)}100%{transform:translateX(110%)}}
+@keyframes tip-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.header-tip,.header-tip:hover .jar{animation:none}.header-tip::after{display:none}}
+
+.ev{display:flex;gap:14px;background:var(--card);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:10px;padding:12px 14px;margin:10px 0}
+.ev-time{font-weight:800;color:var(--accent);min-width:92px;font-size:14px;line-height:1.4;padding-top:2px}
+.ev-time span{color:var(--muted);font-weight:600;font-size:12.5px}
+.ev-body{flex:1;min-width:0}
+.ev-body h3{font-size:17px;line-height:1.3;margin-bottom:3px}
+.ev-venue{color:var(--muted);font-size:14px;margin-bottom:4px}
+.ev-venue a{color:var(--accent);text-decoration:none}
+.ev-body p{font-size:15px;line-height:1.5}
+.burn-call{display:inline-block;background:var(--accent);color:#fff !important;font-weight:800;font-size:19px;padding:10px 18px;border-radius:999px;text-decoration:none;letter-spacing:.2px}
+@media (max-width:560px){.ev{flex-direction:column;gap:2px}.ev-time{min-width:0}}
+
+.hist-hl{background:linear-gradient(135deg,rgba(212,175,55,.16),rgba(212,175,55,.05));border:1px solid #d4af37;border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.hist-hl b{color:#8a6d1f}
+
+.intro-card{border-top:4px solid var(--accent)}
+.skyfig{margin:0 0 10px}
+.skyfig img{width:100%;height:auto;border-radius:8px;display:block}
+.skyfig figcaption{font-family:-apple-system,system-ui,'Segoe UI',Roboto,sans-serif;font-style:italic;color:var(--muted);font-size:12.5px;line-height:1.45;margin-top:5px}
+.sugg label{display:block;font-weight:700;font-size:13.5px;margin:10px 0 4px}
+.sugg input[type=text],.sugg textarea{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font:inherit;font-size:15px}
+.sugg button{margin-top:12px;background:var(--accent);color:#fff;border:0;font-weight:800;font-size:15px;padding:10px 18px;border-radius:999px;cursor:pointer}
+
+@media (max-width:640px){
+.topbar{flex-wrap:wrap;gap:6px 10px;padding:8px 2px}
+.topbar>span{font-size:14px;white-space:nowrap}
+.topbar nav{order:3;flex:1 1 100%;margin-left:0;gap:16px;font-size:13px;flex-wrap:wrap}
+.topbar nav a{white-space:nowrap}
+.topbar .header-tip{margin-left:auto;font-size:12.5px;padding:6px 11px;flex:none}
+}
+</style>
+<style id="fg-lightbox-style">
+#fg-lightbox{position:fixed;inset:0;z-index:200;background:rgba(12,10,8,.94);display:none;align-items:center;justify-content:center;flex-direction:column}
+#fg-lightbox.open{display:flex}
+#fg-lightbox img{max-width:96vw;max-height:82vh;object-fit:contain;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,.6)}
+#fg-lb-close{position:absolute;top:14px;right:14px;width:56px;height:56px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.55);color:#fff;font-size:30px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:-apple-system,system-ui,sans-serif;z-index:201;-webkit-tap-highlight-color:transparent}
+#fg-lb-close:active{transform:scale(.93)}
+#fg-lb-cap{color:#f3ead8;font-family:-apple-system,system-ui,'Segoe UI',Roboto,sans-serif;font-style:italic;font-size:15px;line-height:1.45;text-align:center;padding:14px 22px 2px;max-width:94vw}
+#fg-lb-hint{color:#b9ac93;font-family:-apple-system,system-ui,sans-serif;font-size:12.5px;padding:4px 0 12px}
+body.fg-lb-lock{overflow:hidden}
+body img{cursor:zoom-in}
+</style>
+<style id="recipe-cards-style">
+/* Recipe Archive cards (Dave, Nov 6, 2026): every dish runs with the photo filed with it —
+   photo left, name + description right on desktop; photo on top on phones. Photos tap into
+   the page's standing lightbox. Entries without a submitted photo stay imageless — never
+   stock- or AI-filled (see PUBLISHING.md). */
+.rcard{display:flex;gap:16px;border:1px solid var(--line);border-radius:10px;padding:14px;background:#fff;margin-bottom:14px}
+.rcard figure{margin:0;flex:0 0 190px}
+.rcard figure img{width:100%;height:100%;max-height:200px;object-fit:cover;border-radius:8px;display:block}
+.rcard figcaption{font-size:12px;color:var(--muted,#6b6259);margin-top:6px;line-height:1.35}
+.rcard-body h3{margin:0 0 4px;font-size:20px}
+.rcard-body p{margin:0 0 6px}
+/* Contrast pin (Nov 7, 2026, Dave's screenshot): the card's background is fixed #fff in BOTH
+   schemes, so its text must never inherit the dark scheme's pale body colors — everything
+   inside .rcard is pinned to dark-on-white values (title ~15:1, meta/caption ~6:1, links ~9:1). */
+.rcard{color:#2a251e}
+.rcard-body h3{color:#1c1917}
+.rcard .meta,.rcard figcaption{color:#6b6259}
+.rcard a{color:#8a1f1f}
+@media (max-width:640px){.rcard{flex-direction:column}.rcard figure{flex:none}.rcard figure img{max-height:240px}}
+</style>
+<style id="stats-style">
+.stat{display:flex;gap:16px;align-items:baseline;padding:9px 0;border-top:1px solid var(--line,#ddd)}
+.stat:first-of-type{border-top:none}
+.stat .num{font-size:27px;font-weight:800;min-width:118px;text-align:right;font-variant-numeric:tabular-nums}
+.stat .what{flex:1}
+.stat .what b{display:block;font-size:16.5px}
+.stat .what span{color:var(--muted);font-size:13.5px}
+@media (max-width:640px){.stat .num{min-width:86px;font-size:22px}}
+</style></head><body>
+<div id="fg-lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button id="fg-lb-close" type="button" aria-label="Close photo">✕</button>
+  <img id="fg-lb-img" alt="">
+  <div id="fg-lb-cap"></div>
+  <div id="fg-lb-hint">Tap outside the photo, or the ✕, to go back</div>
+</div>
+
+<div class="topbar"><span class="brand">🗞️ The Fiddletown Gazette</span><a href="index.html">← Front page</a></div>
+<header class="masthead"><p class="kicker">THE PAPER, BY THE NUMBERS</p><h1 style="font-size:40px">📊 Stats for Nerds</h1>
+<p class="dateline">Figures as of Thu Nov 19, 2026, about 2:30 PM PT. Every number is labeled with its window and its source, and where a series is young, this page says so rather than dressing it up.</p></header>
+<main style="max-width:760px;margin:0 auto">
+<div class="rcard"><div class="rcard-body"><h3>👁 Readership</h3><p class="meta" style="margin:0 0 4px">Source: the paper&#8217;s own visitor counter, kept by Analytics Buddy — each reader counted once a day by a scrambled code that is discarded nightly. No names, no tracking.</p><div class="stat"><div class="num">79</div><div class="what"><b>Readers since counting began</b><span>Window: Nov 6 – Nov 19, 2026 · the front page count, the same one printed in the masthead</span></div></div><div class="stat"><div class="num">15</div><div class="what"><b>Readers so far today</b><span>Thu Nov 19, as of the stamp above</span></div></div><div class="stat"><div class="num">59</div><div class="what"><b>Editions published</b><span>Sat Oct 31 – Thu Nov 19, 2026 · morning, midday, and evening, in the Editions Archive</span></div></div><div class="stat"><div class="num">3</div><div class="what"><b>👍 cast today — the test&#8217;s first day</b><span>The thumbs test began Thu Nov 19, 2026; the board clears nightly, and the all-time table starts today — there is no all-time yet, honestly</span></div></div><div class="stat"><div class="num">2 👍</div><div class="what"><b>Today&#8217;s most-thumbed story so far</b><span>&#8220;The Gazette Gets an Address of Its Own&#8221; — the domain announcement, fittingly</span></div></div></div></div>
+<div class="rcard"><div class="rcard-body"><h3>🌦 Weather &amp; the Roads</h3><p class="meta" style="margin:0 0 4px">Sources: today&#8217;s Almanac card (sun times computed for the Fiddletown point), the Safety Wire, and the Sierra Passes table.</p><div class="stat"><div class="num">9h 58m</div><div class="what"><b>Daylight today</b><span>Sunrise 6:49 AM · sunset 4:47 PM · Thu Nov 19</span></div></div><div class="stat"><div class="num">4h 54m</div><div class="what"><b>Daylight lost since the summer solstice</b><span>The solstice (Jun 21) ran 14h 52m; the year turns back in about a month</span></div></div><div class="stat"><div class="num">33°</div><div class="what"><b>Tonight&#8217;s forecast low — a frost night</b><span>A forecast, not a measurement: NWS, via today&#8217;s paper (Fri night, Nov 20)</span></div></div><div class="stat"><div class="num">Day 2</div><div class="what"><b>Of the SR-88 closure east of Silver Lake</b><span>Closed for avalanche control since Wed Nov 18 · the Safety Wire</span></div></div><div class="stat"><div class="num">7·12·1</div><div class="what"><b>Sierra passes: closed · chain controls · open</b><span>This afternoon&#8217;s table — 20 passes north of Tioga; Echo Summit is the open one</span></div></div></div></div>
+<div class="rcard"><div class="rcard-body"><h3>🚨 Accidents &amp; the Wire</h3><p class="meta" style="margin:0 0 4px">Sources: the CHP incident board (CAD), read by the desk each edition, and the Fiddletown Radio Network.</p><div class="stat"><div class="num">12</div><div class="what"><b>Incidents on the CHP board at this morning&#8217;s read</b><span>6:03 AM, Thu Nov 19 — none of them in the Fiddletown beat</span></div></div><div class="stat"><div class="num">1</div><div class="what"><b>Collision in the beat today</b><span>SR-49 at Vaira Ranch Rd, late morning — no injuries</span></div></div><div class="stat"><div class="num">2 days</div><div class="what"><b>The Hale Rd tree, report to all-clear</b><span>Reported down Wed Nov 18; confirmed clear Thu Nov 19 — and the South Fork Dry Creek crossing is running shallow</span></div></div></div></div>
+<div class="rcard"><div class="rcard-body"><h3>🍇 Wine &amp; Around Town</h3><p class="meta" style="margin:0 0 4px">Counted from today&#8217;s paper (Thu Nov 19) — the sections&#8217; own cards.</p><div class="stat"><div class="num">8</div><div class="what"><b>Winery events in From the Tasting Room</b><span>Release parties, live music, holiday open houses across the Shenandoah Valley</span></div></div><div class="stat"><div class="num">8</div><div class="what"><b>Items in Around Town</b><span>Restaurants, galleries, and town news — the Volcano galleries are the newest</span></div></div><div class="stat"><div class="num">7</div><div class="what"><b>Events in Today in the Foothills</b><span>Today&#8217;s card, Thu Nov 19</span></div></div><div class="stat"><div class="num">3</div><div class="what"><b>Days left to order Thanksgiving bread</b><span>Baked in Amador preorders close Sun Nov 22, 3:00 PM</span></div></div></div></div>
+<div class="rcard"><div class="rcard-body"><h3>🧮 The Fun Ledger</h3><p class="meta" style="margin:0 0 4px">The paper&#8217;s own vital signs — kept by the desks that keep the records.</p><div class="stat"><div class="num">1,305</div><div class="what"><b>Historical markers catalogued</b><span>Marker Buddy&#8217;s Gold Country catalog, eight counties</span></div></div><div class="stat"><div class="num">4</div><div class="what"><b>Markers of the Day featured so far</b><span>No. 4 — Preston Castle, Ione — ran today</span></div></div><div class="stat"><div class="num">27 of 29</div><div class="what"><b>Sierra crest passes crossed</b><span>Dave&#8217;s tracker — Kaiser Pass and Fredonyer Pass still to go</span></div></div><div class="stat"><div class="num">7</div><div class="what"><b>Of Nan&#8217;s recipes in the Recipe Archive</b><span>Cowboy Soup, filed this week, is No. 7</span></div></div><div class="stat"><div class="num">6</div><div class="what"><b>Zen sayings published</b><span>One a day since Zen for Today began, Sat Nov 14</span></div></div><div class="stat"><div class="num">18</div><div class="what"><b>Daily jokes told</b><span>The paper&#8217;s joke ledger — a joke a day, most days with a riddle</span></div></div><div class="stat"><div class="num">2</div><div class="what"><b>Stories in the Sunday Stories collection</b><span>One featured so far: The Kit Carson Story (Sun Nov 15)</span></div></div><div class="stat"><div class="num">1</div><div class="what"><b>Trading Post listing run so far</b><span>The classifieds opened Nov 18 — one free tanker desk, still available</span></div></div><div class="stat"><div class="num">20</div><div class="what"><b>Days of publication</b><span>Sat Oct 31 – Thu Nov 19, 2026 — three editions a day and counting</span></div></div></div></div>
+<div class="rcard"><div class="rcard-body"><h3>How this page is kept</h3><p>The moving numbers — readers, thumbs, the passes — refresh as editions publish; the ledger is brought up to date at least daily. Figures are never dressed up: a young series is labeled young, a forecast is labeled a forecast, and anything the paper couldn&#8217;t verify doesn&#8217;t appear. Kept by the Gazette desk, with Analytics Buddy.</p><p style="margin-top:8px"><a href="index.html"><b>← Back to the front page</b></a></p></div></div>
+</main>
+<footer id="colophon" style="max-width:760px;margin:18px auto 30px;padding:0 14px"><p class="meta">📊 Stats for Nerds — a standing page of The Fiddletown Gazette · <a href="index.html">fiddletowngazette.com</a></p></footer>
+<script async src="https://visitor-counter.dave-5d7.workers.dev/beacon.js" data-site="fiddletown-gazette"></script>
+</body></html>
