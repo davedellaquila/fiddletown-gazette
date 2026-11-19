@@ -159,7 +159,7 @@
     function addAll(sel) { Array.prototype.forEach.call(document.querySelectorAll(sel), function (el) { if (hosts.indexOf(el) < 0) hosts.push(el); }); }
     addAll("article.ev");
     addAll(".item");
-    ["the-lead", "featured-story", "marker-of-the-day", "reading-the-roadside", "gazette-address"].forEach(function (id) {
+    ["the-lead", "featured-story", "marker-of-the-day", "reading-the-roadside", "gazette-address", "zen-today"].forEach(function (id) {
       var el = document.getElementById(id);
       if (el && hosts.indexOf(el) < 0 && !el.querySelector(".item, article.ev")) hosts.push(el);
     });
