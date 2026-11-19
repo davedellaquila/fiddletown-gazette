@@ -644,7 +644,7 @@ def day_page(d, hours, day_alerts, stamp, prev_href, next_href, today, moon=None
 {WX_STYLE}
 </head>
 <body>
-<div class="topbar"><span class="brand">🗞️ The Fiddletown Gazette</span><a href="index.html">Front page →</a></div>
+<div class="topbar"><span class="brand">🗞️ The Fiddletown Gazette</span><a href="index.html">← Front page</a></div>
 <div class="wrap">
 <p class="kicker">🌦️ The Weather Desk — Hour by Hour</p>
 <h1>{date.strftime('%A, %B %-d, %Y')}</h1>
