@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Parsed-structure gate for The Fiddletown Gazette front page.
+r"""Parsed-structure gate for The Fiddletown Gazette front page.
 
 Dave's standing check (Nov 17, 2026) — MANDATORY on every publish.
 Runs against the page as a strict tag-stack parse (NOT a browser's
@@ -14,12 +14,17 @@ error-recovering parse, NOT a text grep) and verifies:
   3. Every rail section sits inside the <aside> — the aside must
      hold exactly the expected rail <h2> count (10) and the known
      rail section ids.
+  4. No literal JSON escape sequences in body text — a \uXXXX or
+     \UXXXXXXXX sequence outside <script>/<style> means contributor
+     text was pasted out of a JSON surface (the Gmail connector)
+     without being decoded (the Nov 19, 2026 Cowboy Soup defect:
+     Nan's recipe printed \u00b7, \u2014, \U0001f4da as raw text).
 
 Usage: python3 tools/dom_gate.py [file-or-url ...]
 Default: index.html in the repo root. Exit 0 = PASS, 1 = FAIL.
 A FAIL blocks the publish announcement until fixed.
 """
-import sys, urllib.request
+import re, sys, urllib.request
 from html.parser import HTMLParser
 
 VOID = {"area","base","br","col","embed","hr","img","input","link","meta",
@@ -84,6 +89,12 @@ def check(html, label):
     g.feed(html)
     g.close()
     fails = list(g.errors)
+    body = re.sub(r"<(script|style)[^>]*>.*?</\1>", "", html, flags=re.S | re.I)
+    esc = re.findall(r"\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}", body)
+    if esc:
+        from collections import Counter
+        top = ", ".join(f"{k} ×{v}" for k, v in Counter(esc).most_common(6))
+        fails.append(f"{len(esc)} literal JSON escape sequence(s) in body text ({top}) — decode contributor text before print")
     nodes = list(walk(g.root))
     grids = [n for n in nodes if "grid" in (n.attrs.get("class") or "").split()]
     if len(grids) != 1:
