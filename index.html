@@ -563,12 +563,16 @@ html.fs-0{zoom:1}html.fs-1{zoom:1.08}html.fs-2{zoom:1.16}html.fs-3{zoom:1.24}htm
 .passes-table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0 4px}
 .passes-table th{text-align:left;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--border);padding:4px 6px}
 .passes-table td{border-bottom:1px solid var(--border);padding:5px 6px;vertical-align:top;line-height:1.4}
+.passes-sort{margin:10px 0 2px;font-size:13.5px;color:var(--muted)}
+.passes-sort button{font:inherit;font-size:13px;padding:2px 10px;margin-left:4px;border:1px solid var(--border);border-radius:999px;background:transparent;color:inherit;cursor:pointer}
+.passes-sort button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink);font-weight:700}
 @media(max-width:640px){.passes-table{font-size:13px}}
 </style>
 <h2>🏔️ Sierra Passes — Open, Chained, or Closed</h2>
 <div class="card" id="sierra-passes">
-  <p class="kicker">The twenty Sierra crest crossings north of Tioga Pass, north to south — refreshed every edition from Caltrans and NDOT.</p>
-  <p>A hard day on the crest: <b>seven crossings closed, twelve under chain control</b>, and only Echo Summit running without restrictions. Elevations from <a href="https://davedellaquila.github.io/sierra-crest-passes/">Dave&#8217;s Sierra Crest Passes tracker</a>.</p>
+  <p class="kicker">The Sierra crest crossings from Morgan Summit to Tioga Pass — refreshed every edition from Caltrans, NDOT, and the Park Service.</p>
+  <p>A hard day on the crest: <b>eight crossings closed, twelve under chain control</b>, and only Echo Summit running without restrictions. Elevations from <a href="https://davedellaquila.github.io/sierra-crest-passes/">Dave&#8217;s Sierra Crest Passes tracker</a>.</p>
+  <p class="passes-sort" role="group" aria-label="Sort the passes">Sort: <button type="button" data-sort="alpha" aria-pressed="true">A&#8211;Z</button><button type="button" data-sort="geo" aria-pressed="false">Geographic</button><button type="button" data-sort="alt" aria-pressed="false">Altitude</button><button type="button" data-sort="status" aria-pressed="false">Status</button></p>
   <table class="passes-table">
     <tr><th>Pass</th><th>Road</th><th>Status</th></tr>
     <tr><td><b>Morgan Summit</b> · 5,760 ft</td><td>SR-36</td><td><b>Chain controls</b> — chains or snow tires, Westwood to Susanville</td></tr>
@@ -591,7 +595,43 @@ html.fs-0{zoom:1}html.fs-1{zoom:1.08}html.fs-2{zoom:1.16}html.fs-3{zoom:1.24}htm
     <tr><td><b>Devil&#8217;s Gate Pass</b> · 7,519 ft</td><td>SR-108</td><td><b>Closed</b> — snow, east of Strawberry toward US 395</td></tr>
     <tr><td><b>Sonora Pass</b> · 9,624 ft</td><td>SR-108</td><td><b>Closed</b> — snow, same SR-108 closure</td></tr>
     <tr><td><b>Conway Summit</b> · 8,143 ft</td><td>US-395</td><td><b>Chain controls</b> — chains required except 4WD with snow tires on the Bridgeport stretch</td></tr>
+    <tr><td><b>Tioga Pass</b> · 9,943 ft</td><td>SR-120</td><td><b>Closed</b> — closed for the season (Yosemite / Caltrans)</td></tr>
   </table>
+<script id="passes-sort-script">
+(function () {
+  var card = document.getElementById("sierra-passes");
+  if (!card) return;
+  var table = card.querySelector(".passes-table");
+  var btns = card.querySelectorAll(".passes-sort button");
+  if (!table || !btns.length) return;
+  var rows = Array.prototype.slice.call(table.querySelectorAll("tr")).slice(1);
+  rows.forEach(function (r, i) {
+    var c1 = r.cells[0], c3 = r.cells[2];
+    var b = c1.querySelector("b");
+    r._name = b ? b.textContent.trim() : c1.textContent.trim();
+    var m = c1.textContent.match(/([\d,]+)\s*ft/);
+    r._elev = m ? parseInt(m[1].replace(/,/g, ""), 10) : 0;
+    var sb = c3.querySelector("b");
+    var st = (sb ? sb.textContent : c3.textContent).toLowerCase();
+    r._status = st.indexOf("closed") >= 0 ? 2 : (st.indexOf("chain") >= 0 ? 1 : 0);
+    r._geo = i;
+  });
+  function apply(mode) {
+    var sorted = rows.slice();
+    if (mode === "alpha") sorted.sort(function (a, b) { return a._name.localeCompare(b._name) || a._geo - b._geo; });
+    else if (mode === "alt") sorted.sort(function (a, b) { return b._elev - a._elev || a._geo - b._geo; });
+    else if (mode === "status") sorted.sort(function (a, b) { return a._status - b._status || a._geo - b._geo; });
+    else sorted.sort(function (a, b) { return a._geo - b._geo; });
+    sorted.forEach(function (r) { table.appendChild(r); });
+    Array.prototype.forEach.call(btns, function (btn) { btn.setAttribute("aria-pressed", btn.getAttribute("data-sort") === mode ? "true" : "false"); });
+    try { localStorage.setItem("fg-passes-sort", mode); } catch (e) {}
+  }
+  Array.prototype.forEach.call(btns, function (btn) { btn.addEventListener("click", function () { apply(btn.getAttribute("data-sort")); }); });
+  var saved = null;
+  try { saved = localStorage.getItem("fg-passes-sort"); } catch (e) {}
+  apply(saved || "alpha");
+})();
+</script>
   <p class="meta">Sources: Caltrans road conditions, read Thu Nov 19, 2026, 12:38 PM · NDOT reports via the Reno Gazette Journal&#8217;s NDOT roundup, Thu morning · Donner Pass Rd per CHP (Wed Nov 18) — a county road, refreshed from county/CHP reports · Statuses refresh every edition; an unread source carries its last known status with its read time.</p>
 </div>
 <h2>🌅 The Almanac</h2>
