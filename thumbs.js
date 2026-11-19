@@ -3,9 +3,9 @@
    API on the same Cloudflare Worker as the visitor counter (collector/API.md).
    Up-only: there is no 👎 in this test. One vote per browser per article per
    edition; the server stores only a salted hash of a random browser marker.
-   Tallies are edition-scoped (article target_id "<edition>/<slug>"), so the
-   count starts fresh with each edition; Analytics Buddy archives each day's
-   results. The footer block (#fg-tallies) re-reads GET /votes on a poll and
+   Tallies are day-scoped (article target_id "<date>/<slug>"), so one tally
+   runs across the day's three editions and clears at day's end; Analytics
+   Buddy archives each day's results. The footer block (#fg-tallies) re-reads GET /votes on a poll and
    after every vote, so the tallies update live.
    NOTE: this file is deliberately separate from votes.js — archived edition
    snapshots load ../votes.js, which stays an inert stub so frozen editions
@@ -17,8 +17,15 @@
   function lsGet(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
   function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode */ } }
   function edition() {
+    // Day-scoped (Dave, Nov 19, 2026): the tally is TODAY's — one key per
+    // calendar day (the fg-edition meta minus its -morning/-midday/-evening
+    // suffix), so votes ride across the day's three editions and the count
+    // clears at day's end. Analytics Buddy archives each day under this key.
     var m = document.querySelector('meta[name="fg-edition"]');
-    return (m && m.content) ? m.content : "front";
+    var v = (m && m.content) ? m.content : "";
+    var d = v.match(/^(\d{4}-\d{2}-\d{2})/);
+    if (d) return d[1];
+    try { return new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" }); } catch (e) { return "front"; }
   }
   var EDITION = edition();
   var picks = lsGet("fg-thumbs-v1", {});   // target_id -> 1
@@ -51,6 +58,7 @@
       ".fg-up:hover{border-color:var(--accent,#b8860b)}" +
       ".fg-up[aria-pressed=\"true\"]{background:#f7e7bd;border-color:#d9b64a}" +
       ".fg-c{min-width:1ch}" +
+      ".fg-note{font-size:12.5px;font-style:italic;transition:opacity .45s ease}" +
       "#fg-tallies .fg-tally-list p{margin-top:3px;font-size:13.5px}";
     document.head.appendChild(s);
   }
@@ -75,7 +83,8 @@
     wrap.className = "fg-vote"; wrap.setAttribute("data-id", id);
     wrap.innerHTML =
       '<button type="button" class="fg-up" aria-label="Give this article a thumbs up" aria-pressed="false">👍</button>' +
-      '<span class="fg-c" hidden></span>';
+      '<span class="fg-c" hidden></span>' +
+      '<span class="fg-note" role="status" hidden></span>';
     if (picks[id]) wrap.querySelector(".fg-up").setAttribute("aria-pressed", "true");
     wrap.querySelector(".fg-up").addEventListener("click", function () { castVote(wrap, id); });
     return wrap;
@@ -85,10 +94,27 @@
     c.textContent = ups; c.hidden = false;
     if (picks[wrap.getAttribute("data-id")]) wrap.querySelector(".fg-up").setAttribute("aria-pressed", "true");
   }
+  function showNote(wrap, msg) {
+    var n = wrap.querySelector(".fg-note");
+    if (!n) return;
+    n.textContent = msg;
+    n.hidden = false; n.style.opacity = "0";
+    void n.offsetWidth; n.style.opacity = "1";
+    if (wrap._nt) clearTimeout(wrap._nt);
+    if (wrap._nt2) clearTimeout(wrap._nt2);
+    wrap._nt = setTimeout(function () {
+      n.style.opacity = "0";
+      wrap._nt2 = setTimeout(function () { n.hidden = true; }, 500);
+    }, 5000);
+  }
   function castVote(wrap, id) {
-    if (picks[id]) return; // already thumbed: the API treats a repeat as a no-op
+    if (picks[id]) { showNote(wrap, "Already counted — today's tallies are in the footer."); return; }
     picks[id] = 1; lsSet("fg-thumbs-v1", picks);
     wrap.querySelector(".fg-up").setAttribute("aria-pressed", "true");
+    var c = wrap.querySelector(".fg-c");
+    var cur = parseInt(c.textContent, 10);
+    c.textContent = (isNaN(cur) ? 0 : cur) + 1; c.hidden = false; // tick up now; the server tally reconciles on return
+    showNote(wrap, "Counted — thanks! Today's tallies are in the footer.");
     api("/vote", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ site: CFG.site, target_type: "article", target_id: id, edition: EDITION, value: 1, marker: marker() })
