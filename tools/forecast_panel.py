@@ -21,7 +21,8 @@ wx-<YYYY-MM-DD>.html in the repo root — an hour-by-hour breakdown for that dat
 high/low and NWS narrative, sunrise/sunset computed for the Fiddletown point,
 noteworthy flags (frost, thunderstorms, fog, gusty wind) read off the hourly
 data, and any NWS alert overlapping the date. The same run generates the five
-pages and prunes day pages outside the current five. The alerts fetch is
+pages and prunes day pages older than a three-day grace window (see
+the prune block in build_day_pages). The alerts fetch is
 best-effort: if it fails the pages still generate, without the alerts block.
 
 ALMANAC CARD (Dave, Nov 16, 2026): every day page also carries a "🌅 The
@@ -707,8 +708,22 @@ def build_day_pages(days, hourly_periods, alerts, stamp):
         fn.write_text(html, encoding="utf-8")
         written.append(fn.name)
     keep = set(written)
+    # Grace window (desk fix, Nov 19, 2026): a day page must outlive the front
+    # pages that link to it. Any still-open copy of a recent edition links that
+    # edition's five days; deleting a page the moment it rolls out of the
+    # window 404s yesterday's paper (Dave hit exactly this on Nov 19, tapping
+    # the Nov 18 column of the previous night's edition after the morning run
+    # had pruned wx-2026-11-18.html). Keep every page dated today-3 or later;
+    # prune only older pages.
+    grace = today - timedelta(days=3)
     for old in REPO.glob("wx-*.html"):
-        if old.name not in keep and re.fullmatch(r"wx-\d{4}-\d{2}-\d{2}\.html", old.name):
+        if old.name in keep or not re.fullmatch(r"wx-\d{4}-\d{2}-\d{2}\.html", old.name):
+            continue
+        try:
+            page_date = datetime.strptime(old.name[3:13], "%Y-%m-%d").date()
+        except ValueError:
+            continue
+        if page_date < grace:
             old.unlink()
     return written
 
