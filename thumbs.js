@@ -108,13 +108,13 @@
     }, 5000);
   }
   function castVote(wrap, id) {
-    if (picks[id]) { showNote(wrap, "Already counted — today's tallies are <a href="#fg-tallies">in the footer</a>."); return; }
+    if (picks[id]) { showNote(wrap, "Already counted — today's tallies are <a href='#fg-tallies'>in the footer</a>."); return; }
     picks[id] = 1; lsSet("fg-thumbs-v1", picks);
     wrap.querySelector(".fg-up").setAttribute("aria-pressed", "true");
     var c = wrap.querySelector(".fg-c");
     var cur = parseInt(c.textContent, 10);
     c.textContent = (isNaN(cur) ? 0 : cur) + 1; c.hidden = false; // tick up now; the server tally reconciles on return
-    showNote(wrap, "Counted — thanks! Today's tallies are <a href="#fg-tallies">in the footer</a>.");
+    showNote(wrap, "Counted — thanks! Today's tallies are <a href='#fg-tallies'>in the footer</a>.");
     api("/vote", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ site: CFG.site, target_type: "article", target_id: id, edition: EDITION, value: 1, marker: marker() })
