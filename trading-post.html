@@ -100,6 +100,7 @@ body img{cursor:zoom-in}
    the page's standing lightbox. Entries without a submitted photo stay imageless — never
    stock- or AI-filled (see PUBLISHING.md). */
 .rcard{display:flex;gap:16px;border:1px solid var(--line);border-radius:10px;padding:14px;background:#fff;margin-bottom:14px}
+.rcard>h2{flex:0 0 168px;margin:0}
 .rcard figure{margin:0;flex:0 0 190px}
 .rcard figure img{width:100%;height:100%;max-height:200px;object-fit:cover;border-radius:8px;display:block}
 .rcard figcaption{font-size:12px;color:var(--muted,#6b6259);margin-top:6px;line-height:1.35}
@@ -112,7 +113,7 @@ body img{cursor:zoom-in}
 .rcard-body h3{color:#1c1917}
 .rcard .meta,.rcard figcaption{color:#6b6259}
 .rcard a{color:#8a1f1f}
-@media (max-width:640px){.rcard{flex-direction:column}.rcard figure{flex:none}.rcard figure img{max-height:240px}}
+@media (max-width:640px){.rcard{flex-direction:column}.rcard>h2{flex:none}.rcard figure{flex:none}.rcard figure img{max-height:240px}}
 </style>
 <style id="stats-style">
 .stat{display:flex;gap:16px;align-items:baseline;padding:9px 0;border-top:1px solid var(--line,#ddd)}
