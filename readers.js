@@ -27,6 +27,40 @@
       })
       .catch(function () { /* baked figures stand */ });
   }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fill); else fill();
+  /* Explainer tooltip (Dave, Nov 20, 2026): the title attribute covers
+     hover; on touch, tapping either count toggles a small note beside it
+     spelling out what the two numbers mean. */
+  var TIP_TEXT = "Readers today / readers all-time: the first number is how many readers have visited today; the second is the all-time total since counting began on Nov 15, 2026. Each reader counts once a day, by a scrambled code that is discarded nightly — no names, no tracking, just the count.";
+  function setupTip() {
+    var spots = document.querySelectorAll(".readers, .tb-readers");
+    if (!spots.length) return;
+    var st = document.createElement("style");
+    st.textContent =
+      "#fg-rc-tip{position:fixed;z-index:9997;max-width:290px;background:#2b2118;color:#f5ead2;" +
+      "font:13px/1.5 -apple-system,system-ui,'Segoe UI',Roboto,sans-serif;padding:9px 12px;" +
+      "border-radius:9px;box-shadow:0 4px 18px rgba(0,0,0,.35)}" +
+      ".readers,.tb-readers{cursor:pointer}";
+    document.head.appendChild(st);
+    var tip = document.createElement("div");
+    tip.id = "fg-rc-tip"; tip.hidden = true; tip.textContent = TIP_TEXT;
+    document.body.appendChild(tip);
+    var hideTimer = null;
+    function hide() { tip.hidden = true; if (hideTimer) clearTimeout(hideTimer); }
+    function toggle(anchor) {
+      if (!tip.hidden) { hide(); return; }
+      var r = anchor.getBoundingClientRect();
+      tip.hidden = false;
+      var x = Math.max(8, Math.min(r.left, window.innerWidth - 306));
+      tip.style.left = x + "px";
+      tip.style.top = (r.bottom + 8) + "px";
+      hideTimer = setTimeout(hide, 7000);
+    }
+    Array.prototype.forEach.call(spots, function (el) {
+      el.addEventListener("click", function (ev) { ev.stopPropagation(); toggle(el); });
+    });
+    document.addEventListener("click", function () { if (!tip.hidden) hide(); });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { fill(); setupTip(); });
+  else { fill(); setupTip(); }
   setInterval(fill, 300000);
 })();
