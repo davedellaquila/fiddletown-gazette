@@ -1,12 +1,16 @@
 /* Thumbs test — The Fiddletown Gazette (Dave's test, Nov 19, 2026).
-   A small, quiet 👍 under every article, counted by Analytics Buddy's votes
-   API on the same Cloudflare Worker as the visitor counter (collector/API.md).
-   Up-only: there is no 👎 in this test. One vote per browser per article per
-   edition; the server stores only a salted hash of a random browser marker.
-   Tallies are day-scoped (article target_id "<date>/<slug>"), so one tally
-   runs across the day's three editions and clears at day's end; Analytics
-   Buddy archives each day's results. The footer block (#fg-tallies) re-reads GET /votes on a poll and
-   after every vote, so the tallies update live.
+   SECTION MODEL (Dave's change, Thu Nov 19, 2026 evening): one small, quiet
+   👍 at the foot of each SECTION of the paper — not per article or item.
+   The reader is voting on whether the section itself belongs in the paper.
+   Counted by Analytics Buddy's votes API on the same Cloudflare Worker as
+   the visitor counter (collector/API.md), target_type "section". Up-only:
+   there is no 👎 in this test. One vote per browser per section per day;
+   the server stores only a salted hash of a random browser marker.
+   Tallies are day-scoped (section target_id "<date>/<section-id>"), so one
+   tally runs across the day's three editions and clears at day's end;
+   Analytics Buddy archives each day's results. The footer block
+   (#fg-tallies) re-reads GET /votes on a poll and after every vote, so the
+   tallies update live.
    NOTE: this file is deliberately separate from votes.js — archived edition
    snapshots load ../votes.js, which stays an inert stub so frozen editions
    never sprout controls. Only the live front page loads thumbs.js. */
@@ -17,10 +21,10 @@
   function lsGet(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
   function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode */ } }
   function edition() {
-    // Day-scoped (Dave, Nov 19, 2026): the tally is TODAY's — one key per
-    // calendar day (the fg-edition meta minus its -morning/-midday/-evening
-    // suffix), so votes ride across the day's three editions and the count
-    // clears at day's end. Analytics Buddy archives each day under this key.
+    // Day-scoped: the tally is TODAY's — one key per calendar day (the
+    // fg-edition meta minus its -morning/-midday/-evening suffix), so votes
+    // ride across the day's three editions and the count clears at day's
+    // end. Analytics Buddy archives each day under this key.
     var m = document.querySelector('meta[name="fg-edition"]');
     var v = (m && m.content) ? m.content : "";
     var d = v.match(/^(\d{4}-\d{2}-\d{2})/);
@@ -29,7 +33,7 @@
   }
   var EDITION = edition();
   var picks = lsGet("fg-thumbs-v1", {});   // target_id -> 1
-  var TITLES = {};                          // target_id -> article title (for the footer)
+  var TITLES = {};                          // target_id -> section title (for the footer)
 
   function marker() {
     var m = null;
@@ -63,26 +67,18 @@
     document.head.appendChild(s);
   }
 
-  function slugify(s) {
-    var out = (s || "").toLowerCase().replace(/&[a-z#0-9]+;/g, " ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60).replace(/-+$/, "");
-    return out || "item";
-  }
-  function firstText(el) {
-    var sels = ["b", "strong", "h3", "h4"], h = null;
-    for (var i = 0; i < sels.length && !h; i++) h = el.querySelector(sels[i]);
-    return (h ? h.textContent : el.textContent).replace(/\s+/g, " ").trim().slice(0, 90);
-  }
-  var usedSlugs = {};
-  function uniqueSlug(base) {
-    if (!usedSlugs[base]) { usedSlugs[base] = 1; return base; }
-    usedSlugs[base] += 1; return base + "-" + usedSlugs[base];
+  function sectionTitle(h) {
+    var t = (h.textContent || "").replace(/\s+/g, " ").trim();
+    t = t.replace(/^[^A-Za-z0-9]+/, "");                       // leading emoji / dingbats
+    t = t.replace(/\s+—\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}$/, ""); // dated headings (This Day in History — Nov 19)
+    return t || "Section";
   }
 
   function makeControl(id) {
     var wrap = document.createElement("span");
     wrap.className = "fg-vote"; wrap.setAttribute("data-id", id);
     wrap.innerHTML =
-      '<button type="button" class="fg-up" aria-label="Give this article a thumbs up" aria-pressed="false">👍</button>' +
+      '<button type="button" class="fg-up" aria-label="Give this section a thumbs up" aria-pressed="false">👍</button>' +
       '<span class="fg-c" hidden></span>' +
       '<span class="fg-note" role="status" hidden></span>';
     if (picks[id]) wrap.querySelector(".fg-up").setAttribute("aria-pressed", "true");
@@ -117,7 +113,7 @@
     showNote(wrap, "Counted — thanks! Today's tallies are <a href='#fg-tallies'>in the footer</a>.");
     api("/vote", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ site: CFG.site, target_type: "article", target_id: id, edition: EDITION, value: 1, marker: marker() })
+      body: JSON.stringify({ site: CFG.site, target_type: "section", target_id: id, edition: EDITION, value: 1, marker: marker() })
     }).then(function (res) {
       if (res && res.tally) paint(wrap, res.tally.ups);
       refresh();
@@ -128,10 +124,10 @@
     var box = document.querySelector("#fg-tallies .fg-tally-list");
     if (!box) return;
     var rows = (targets || []).filter(function (tg) {
-      return tg.target_type === "article" && tg.ups > 0 && TITLES[tg.target_id];
+      return tg.target_type === "section" && tg.ups > 0 && TITLES[tg.target_id];
     }).sort(function (a, b) { return b.ups - a.ups; }).slice(0, 8);
     if (!rows.length) {
-      box.innerHTML = '<p class="meta">No thumbs yet in this edition — tap the small 👍 under any article to cast the first.</p>';
+      box.innerHTML = '<p class="meta">No thumbs yet today — tap the small 👍 at the foot of any section to vote for keeping it in the paper.</p>';
       return;
     }
     box.innerHTML = rows.map(function (tg) {
@@ -144,7 +140,7 @@
     api("/votes?site=" + encodeURIComponent(CFG.site) + "&edition=" + encodeURIComponent(EDITION)).then(function (res) {
       if (!res || !res.targets) return;
       var byId = {};
-      res.targets.forEach(function (tg) { if (tg.target_type === "article") byId[tg.target_id] = tg; });
+      res.targets.forEach(function (tg) { if (tg.target_type === "section") byId[tg.target_id] = tg; });
       Array.prototype.forEach.call(document.querySelectorAll(".fg-vote"), function (w) {
         var tg = byId[w.getAttribute("data-id")];
         paint(w, tg ? tg.ups : 0);
@@ -153,28 +149,29 @@
     });
   }
 
+  // House furniture, not content sections — no vote: the link index, the
+  // reference shelf, and the Free Stuff pointer card.
+  var SKIP = { "more-gazette": 1, "resources": 1, "free-stuff": 1 };
+
   function decorate() {
     ensureStyle();
-    var hosts = [];
-    function addAll(sel) { Array.prototype.forEach.call(document.querySelectorAll(sel), function (el) { if (hosts.indexOf(el) < 0) hosts.push(el); }); }
-    addAll("article.ev");
-    addAll(".item");
-    ["the-lead", "featured-story", "marker-of-the-day", "reading-the-roadside", "gazette-address", "zen-today"].forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el && hosts.indexOf(el) < 0 && !el.querySelector(".item, article.ev")) hosts.push(el);
-    });
-    hosts.forEach(function (el) {
-      if (el.querySelector(":scope > .fg-vote-row")) return;
-      if (el.closest("#toc, #fg-lightbox, header, nav")) return;
-      var title = firstText(el);
-      if (title.indexOf("📬 Get the") === 0) return; // the mail join blocks are house ads, not articles
-      var slug = el.id && el.id !== "the-lead" ? el.id : uniqueSlug(slugify(title));
-      var id = EDITION + "/" + slug;
-      TITLES[id] = title;
+    Array.prototype.forEach.call(document.querySelectorAll("main h2, aside h2"), function (h) {
+      // The section's host is the first following sibling element carrying an
+      // id (its .card or wrapper div) before the next section heading.
+      var host = null, n = h.nextElementSibling;
+      while (n) {
+        if (n.tagName === "H2") break;
+        if (n.nodeType === 1 && n.id) { host = n; break; }
+        n = n.nextElementSibling;
+      }
+      if (!host || SKIP[host.id]) return;
+      if (host.querySelector(":scope > .fg-vote-row")) return;
+      var id = EDITION + "/" + host.id;
+      TITLES[id] = sectionTitle(h);
       var row = document.createElement("div");
       row.className = "fg-vote-row";
       row.appendChild(makeControl(id));
-      el.appendChild(row);
+      host.appendChild(row);
     });
     refresh();
     setInterval(refresh, 45000);
