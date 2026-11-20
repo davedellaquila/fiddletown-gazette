@@ -747,9 +747,18 @@ def bake_reader_counts(html):
         url = ("https://visitor-counter.dave-5d7.workers.dev/counts?site=fiddletown-gazette&paths="
                + urllib.parse.quote("/fiddletown-gazette/", safe=""))
         data = fetch_json(url)
-        total = data["counts"]["/fiddletown-gazette/"]["total"]
-        return re.sub(r"<span data-visitor-count>\d*</span>",
+        counts = data["counts"]["/fiddletown-gazette/"]
+        total = counts["total"]
+        today = counts["today"]
+        html = re.sub(r"<span data-visitor-count>\d*</span>",
                       f"<span data-visitor-count>{total}</span>", html)
+        # Today / all-time pair spans (Dave, Nov 20, 2026 — masthead + topbar,
+        # filled live by readers.js; baked here so they are never blank).
+        html = re.sub(r"<span data-rc-today>\d*</span>",
+                      f"<span data-rc-today>{today}</span>", html)
+        html = re.sub(r"<span data-rc-total>\d*</span>",
+                      f"<span data-rc-total>{total}</span>", html)
+        return html
     except Exception:
         return html
 
