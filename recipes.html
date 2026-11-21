@@ -105,13 +105,23 @@ body img{cursor:zoom-in}
 .rcard figcaption{font-size:12px;color:var(--muted,#6b6259);margin-top:6px;line-height:1.35}
 .rcard-body h3{margin:0 0 4px;font-size:20px}
 .rcard-body p{margin:0 0 6px}
-/* Contrast pin (Nov 7, 2026, Dave's screenshot): the card's background is fixed #fff in BOTH
-   schemes, so its text must never inherit the dark scheme's pale body colors — everything
-   inside .rcard is pinned to dark-on-white values (title ~15:1, meta/caption ~6:1, links ~9:1). */
+/* Contrast pin (Nov 7, 2026, Dave's screenshot): in LIGHT mode the card's background is
+   fixed #fff, so its text is pinned to dark-on-white values (title ~15:1, meta/caption
+   ~6:1, links ~9:1) and must never inherit pale colors. */
 .rcard{color:#2a251e}
 .rcard-body h3{color:#1c1917}
 .rcard .meta,.rcard figcaption{color:#6b6259}
 .rcard a{color:#8a1f1f}
+/* Dark mode (Nov 20, 2026, Dave's request): the cards join the rest of the page — the
+   paper's own dark palette via the same variables the chrome flips with (card #1e1b18,
+   text #ece5d8 13.7:1, meta/caption #a89f92 6.6:1, links #e0685f 5.2:1). Light mode
+   above is unchanged; the lightbox is dark-styled already and untouched. */
+@media (prefers-color-scheme: dark){
+.rcard{background:var(--paper);border:1px solid var(--border);color:var(--text)}
+.rcard-body h3{color:var(--text)}
+.rcard .meta,.rcard figcaption{color:var(--muted)}
+.rcard a{color:var(--accent)}
+}
 @media (max-width:640px){.rcard{flex-direction:column}.rcard figure{flex:none}.rcard figure img{max-height:240px}}
 </style>
 </head><body>
@@ -133,7 +143,7 @@ body img{cursor:zoom-in}
   <div class="rcard"><figure><img src="media/chicken-parmesan-rolls.jpg" alt="Chicken Parmesan Rolls — a baking dish of the rolls under tomato sauce and melted mozzarella, topped with basil"><figcaption>Chicken Parmesan Rolls — the photo from Nan's recipe card (original recipe: Southern Living)</figcaption></figure><div class="rcard-body"><h3>Chicken Parmesan Rolls</h3><p class="meta">By Nan Dell'Aquila · via her Recipe Keeper card; original recipe Southern Living</p><p>Nan's own note from her card: made it Oct 21, 2026 — delicious, easy, good for a small group over pasta.</p><p class="meta">Received Sun Nov 1, 2026 · 8:40 AM · Published Sun Nov 1, 2026</p><p><a href="index.html#recipe-corner">Read it in Nan's Recipe Corner</a></p></div></div>
   <div class="rcard"><figure><img src="media/bourbon-maple-old-fashioned.jpg" alt="Bourbon Maple Old Fashioned — the cocktail in a cut-glass rocks glass with a big ice cube and an orange twist"><figcaption>Bourbon Maple Old Fashioned — the photo from Nan's recipe card (original recipe: The Wall Street Journal)</figcaption></figure><div class="rcard-body"><h3>Bourbon Maple Old Fashioned</h3><p class="meta">By Nan Dell'Aquila · via her Recipe Keeper card; original recipe The Wall Street Journal</p><p class="meta">Received Sat Oct 31, 2026 · 11:12 AM · Published Sat Oct 31, 2026</p><p><a href="index.html#recipe-corner">Read it in Nan's Recipe Corner</a></p></div></div>
   <div class="rcard"><figure><img src="media/pecan-pie-brownies.jpg" alt="Pecan Pie Brownies — a hand holding one brownie topped with candied pecans"><figcaption>Pecan Pie Brownies — the photo from Nan's recipe card (original recipe: The Slow Roasted Italian)</figcaption></figure><div class="rcard-body"><h3>Pecan Pie Brownies</h3><p class="meta">By Nan Dell'Aquila · via her Recipe Keeper card; original recipe The Slow Roasted Italian</p><p class="meta">Received Sat Oct 31, 2026 · 10:10 AM · Published Sat Oct 31, 2026</p><p><a href="index.html#recipe-corner">Read it in Nan's Recipe Corner</a></p></div></div>
-  <p class="meta" style="margin-top:10px">The Recipe Archive is the complete record of Nan's filed recipes — one card per recipe, each with the photo that ran with it, kept current by the Gazette's intake. Tap any photo to see it full-screen. Nothing she sends gets lost in an edition's scroll.</p></div>
+  <p class="meta" style="margin-top:10px">The Recipe Archive is the complete record of Nan's filed recipes — one card per recipe, each with the photo that ran with it, kept current by the Gazette's intake. Tap any photo to see it full-screen. Nothing she sends gets lost in an edition's scroll.</p>
 </main>
 <footer><p>The Recipe Archive · The Fiddletown Gazette · Opened Oct 31, 2026</p>
 <p style="margin-top:6px"><a href="index.html">← Back to the front page</a> · <a href="archive.html">Editions Archive</a></p></footer>
