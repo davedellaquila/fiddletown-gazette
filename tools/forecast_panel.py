@@ -318,6 +318,7 @@ WX_STYLE = """<style>
 body{margin:0;background:var(--bg);color:var(--text);font-family:Georgia,'Times New Roman',serif;line-height:1.5}
 .wrap{max-width:760px;margin:0 auto;padding:0 14px 40px}
 .topbar{position:sticky;top:0;background:var(--paper);border-bottom:2px solid var(--ink);padding:8px 14px;display:flex;justify-content:space-between;align-items:center;z-index:10}
+@media (max-width:640px){.topbar{position:static}}
 .topbar .brand{font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:12.5px}
 .topbar a,.backlink{color:var(--accent);text-decoration:none;font-family:-apple-system,sans-serif;font-size:13px;font-weight:600}
 .kicker{font-family:-apple-system,sans-serif;font-size:11.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:22px 0 2px}
