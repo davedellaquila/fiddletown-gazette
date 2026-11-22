@@ -30,7 +30,7 @@
   /* Explainer tooltip (Dave, Nov 20, 2026): the title attribute covers
      hover; on touch, tapping either count toggles a small note beside it
      spelling out what the two numbers mean. */
-  var TIP_TEXT = "Readers today / readers all-time: the first number is how many readers have visited today; the second is the all-time total since counting began on Nov 15, 2026. Each reader counts once a day, by a scrambled code that is discarded nightly — no names, no tracking, just the count.";
+  var TIP_TEXT = "Readers today / readers all-time: the first number is how many readers have visited today; the second is the all-time total since counting began on Nov 15, 2026. If the readers-today number is showing in red, you’re being counted for the first time today — you are that reader. Each reader counts once a day, by a scrambled code that is discarded nightly — no names, no tracking, just the count.";
   function setupTip() {
     var spots = document.querySelectorAll(".readers, .tb-readers");
     if (!spots.length) return;
@@ -60,7 +60,22 @@
     });
     document.addEventListener("click", function () { if (!tip.hidden) hide(); });
   }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { fill(); setupTip(); });
-  else { fill(); setupTip(); }
+
+  /* First-visit red (Dave, Sat Nov 21, 2026): when this visitor's arrival
+     is the one that incremented today's count, Analytics Buddy's beacon
+     adds the class "vc-new-today" to <html> (and fires "vc:counted" /
+     sets window.vcCounted). The masthead's today number — and only the
+     masthead's; the topbar pair is .tb-readers and stays normal — then
+     shows in the paper's accent red: "you are the Nth reader today."
+     The class is set once per page load and never removed, so the red
+     sticks for the visit while fill() refreshes the number beneath it. */
+  function setupNewToday() {
+    var st = document.createElement("style");
+    st.id = "fg-new-today-style";
+    st.textContent = "html.vc-new-today .readers [data-rc-today]{color:var(--accent)}";
+    document.head.appendChild(st);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { fill(); setupTip(); setupNewToday(); });
+  else { fill(); setupTip(); setupNewToday(); }
   setInterval(fill, 300000);
 })();
