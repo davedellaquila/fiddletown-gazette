@@ -12,7 +12,7 @@ error-recovering parse, NOT a text grep) and verifies:
   2. The layout grid (.grid) has exactly two element children:
      <main> then <aside>.
   3. Every rail section sits inside the <aside> — the aside must
-     hold exactly the expected rail <h2> count (10) and the known
+     hold exactly the expected rail <h2> count (9) and the known
      rail section ids.
   4. No literal JSON escape sequences in body text — a \uXXXX or
      \UXXXXXXXX sequence outside <script>/<style> means contributor
@@ -32,9 +32,9 @@ VOID = {"area","base","br","col","embed","hr","img","input","link","meta",
         "polyline","polygon","stop","use"}
 
 RAIL_IDS = ["around-town","community-wire","editors-desk","free-stuff",
-            "carl","kathys-corner","swagger","marcis-corner",
+            "carl","kathys-corner","marcis-corner",
             "more-gazette","resources"]
-EXPECTED_RAIL_H2 = 10
+EXPECTED_RAIL_H2 = 9
 
 class Node:
     __slots__ = ("tag","attrs","children","parent")
