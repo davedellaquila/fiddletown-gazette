@@ -64,15 +64,16 @@
   /* First-visit red (Dave, Sat Nov 21, 2026): when this visitor's arrival
      is the one that incremented today's count, Analytics Buddy's beacon
      adds the class "vc-new-today" to <html> (and fires "vc:counted" /
-     sets window.vcCounted). The masthead's today number — and only the
-     masthead's; the topbar pair is .tb-readers and stays normal — then
-     shows in the paper's accent red: "you are the Nth reader today."
+     sets window.vcCounted). Both today numbers — the masthead's (.readers)
+     and the sticky topbar pair's (.tb-readers) — then show in the paper's
+     accent red: "you are the Nth reader today." (Extended to both counters
+     at Dave's direction, Mon Nov 23, 2026; originally masthead only.)
      The class is set once per page load and never removed, so the red
      sticks for the visit while fill() refreshes the number beneath it. */
   function setupNewToday() {
     var st = document.createElement("style");
     st.id = "fg-new-today-style";
-    st.textContent = "html.vc-new-today .readers [data-rc-today]{color:var(--accent)}";
+    st.textContent = "html.vc-new-today .readers [data-rc-today],html.vc-new-today .tb-readers [data-rc-today]{color:var(--accent)}";
     document.head.appendChild(st);
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { fill(); setupTip(); setupNewToday(); });
