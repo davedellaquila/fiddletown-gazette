@@ -244,6 +244,15 @@ html.fs-0{zoom:1}html.fs-1{zoom:1.08}html.fs-2{zoom:1.16}html.fs-3{zoom:1.24}htm
 .masthead .vignette.left { left:6px; } .masthead .vignette.right { right:6px; }
 @media (min-width:761px){ .masthead{ padding-left:150px; padding-right:150px; } }
 @media (max-width:760px){ .masthead .vignette.right{ display:none; } .masthead .vignette.left{ transform:scale(.6); transform-origin:bottom left; } }
+/* Seal coexistence (Nov 23, 2026): the Privacy Seal block below sets the masthead overflow visible so the sticker can hang off its corner; the leaves therefore start at the masthead's top edge instead of above it, so none drift over the ticker. This rule dies with the slot on Nov 27. */
+.masthead .gz-leaf{ top:0; }
+</style>
+<style id="gz-seal-style">
+/* PRIVACY SEAL (Jonny's Seal 2 — Dave's pick, Nov 23, 2026): a PERMANENT masthead element, preserved in every rebuild. Die-cut sticker on the masthead's bottom-left corner, +7deg tilt, a third hanging below the rule, a sliver off the side edge; links to the same Ko-fi tip destination as the header pill. overflow:visible lets it hang off the masthead box (the watermark is a background and needs no clipping). Never smaller than 92px (rim-text legibility). */
+.masthead{overflow:visible}
+.masthead .gz-seal{position:absolute;left:-8px;bottom:-33px;width:100px;height:100px;z-index:60;display:block;transform:rotate(7deg)}
+.masthead .gz-seal img{width:100%;height:100%;display:block;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35))}
+@media (max-width:640px){.masthead .gz-seal{width:96px;height:96px;left:-6px;bottom:-30px}}
 </style>
 </head>
 <body>
@@ -319,6 +328,7 @@ html.fs-0{zoom:1}html.fs-1{zoom:1.08}html.fs-2{zoom:1.16}html.fs-3{zoom:1.24}htm
   <div class="season-line">🍂 Thanksgiving Week — giving thanks in the foothills</div>
   <div><span class="weatherbug">☁️ <!-- WEATHER:BUG --> ⛓️ SR-88 chain control still logged at Kirkwood (CHP); Ellis Rd hazard cleared; partly sunny, high 54°; SR-49 no restrictions; no NWS alert (CHP / Caltrans / NWS) <!-- /WEATHER:BUG --></span></div>
   <div class="rule"></div>
+  <a class="gz-seal" href="https://ko-fi.com/davedellaquila" target="_blank" rel="noopener" aria-label="Tip Jar — the Gazette is always free; tips welcome, on Ko-fi"><img src="media/seal-2-fiddletown.png" alt="Privacy Seal: We count readers — never track them. Always free — tips welcome."></a>
 </header>
 
 <!-- BANNER: out-of-cycle safety banner is injected here by the hourly poll when a qualifying event breaks. -->
