@@ -1512,6 +1512,23 @@ h2.gz-is-collapsed .gz-chevron:hover{transform:rotate(-90deg) scale(1.18)}
     }
     return body;
   }
+  function bodyHash(body){
+    var text = "";
+    body.forEach(function(el){
+      var clone = el.cloneNode(true);
+      clone.querySelectorAll(".fg-vote").forEach(function(n){ n.remove(); });
+      text += clone.textContent.replace(/\s+/g, " ").trim() + "\n";
+    });
+    var h = 0x811c9dc5;
+    for (var i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = (h * 0x01000193) >>> 0; }
+    return ("0000000" + h.toString(16)).slice(-8);
+  }
+  function entry(id){
+    var e = store[id];
+    if (e === 1) return { c: 1, h: null };
+    if (e && typeof e === "object") return { c: e.c ? 1 : 0, h: e.h || null };
+    return null;
+  }
   function apply(sec, collapsed){
     sec.collapsed = collapsed;
     sec.body.forEach(function(el){ el.classList.toggle("gz-collapsed-body", collapsed); });
@@ -1522,7 +1539,7 @@ h2.gz-is-collapsed .gz-chevron:hover{transform:rotate(-90deg) scale(1.18)}
   }
   function setCollapsed(sec, collapsed, persist){
     apply(sec, collapsed);
-    if (persist) { if (collapsed) { store[sec.id] = 1; } else { delete store[sec.id]; } save(); }
+    if (persist) { store[sec.id] = { c: collapsed ? 1 : 0, h: sec.hash }; save(); }
   }
   document.querySelectorAll("h2").forEach(function(h2){
     var body = collectBody(h2);
@@ -1553,13 +1570,15 @@ h2.gz-is-collapsed .gz-chevron:hover{transform:rotate(-90deg) scale(1.18)}
     }
     toggle.setAttribute("role", "button");
     toggle.setAttribute("tabindex", "0");
-    var sec = { h2: h2, body: body, toggle: toggle, name: name, id: sectionId(h2, body), collapsed: false };
+    var sec = { h2: h2, body: body, toggle: toggle, name: name, id: sectionId(h2, body), hash: bodyHash(body), collapsed: false };
     sections.push(sec);
     toggle.addEventListener("click", function(ev){ ev.preventDefault(); ev.stopPropagation(); setCollapsed(sec, !sec.collapsed, true); });
     toggle.addEventListener("keydown", function(ev){
       if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); setCollapsed(sec, !sec.collapsed, true); }
     });
-    if (store[sec.id]) apply(sec, true); else apply(sec, false);
+    var e = entry(sec.id);
+    if (e && e.h === sec.hash) { apply(sec, !!e.c); }
+    else { apply(sec, false); store[sec.id] = { c: 0, h: sec.hash }; save(); }
   });
   function expandForHash(){
     var id = (location.hash || "").slice(1);
