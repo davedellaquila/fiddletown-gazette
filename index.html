@@ -1476,5 +1476,105 @@ else{el.classList.remove('on');el.style.transform='translate(-50%,-70px)';}});})
   setInterval(tick,120000);
 })();
 </script>
+<style id="gz-collapse-style">
+.gz-toggle{cursor:pointer;display:inline-block;border-radius:6px;transition:transform .15s ease,opacity .15s ease;-webkit-tap-highlight-color:transparent}
+.gz-toggle:hover{transform:scale(1.18)}
+.gz-toggle:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+h2.gz-is-collapsed .gz-toggle{opacity:.45;filter:grayscale(.55)}
+.gz-chevron{font-size:.7em;vertical-align:.1em;margin-right:.18em}
+h2.gz-is-collapsed .gz-chevron{transform:rotate(-90deg)}
+h2.gz-is-collapsed .gz-chevron:hover{transform:rotate(-90deg) scale(1.18)}
+.gz-collapsed-body{display:none!important}
+</style>
+<script id="gz-collapse-script">
+(function(){
+  "use strict";
+  var KEY = "gz-collapsed@" + location.hostname + "/" + (location.pathname.split("/")[1] || "");
+  var store = {};
+  try { store = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { store = {}; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
+  var EMOJI = /^(\p{Extended_Pictographic}️?(?:‍\p{Extended_Pictographic}️?)*)/u;
+  var sections = [];
+  function sectionId(h2, body){
+    if (h2.id) return h2.id;
+    for (var i = 0; i < body.length; i++) { if (body[i].id) return body[i].id; }
+    var p = h2.parentElement;
+    if (p && p.id) return p.id;
+    var t = h2.textContent.replace(/\s+/g, " ").trim();
+    t = t.split(" — ")[0].split(" - ")[0];
+    return "sec-" + t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  }
+  function collectBody(h2){
+    var body = [], el = h2.nextElementSibling;
+    while (el && el.tagName !== "H2" && el.tagName !== "FOOTER") {
+      if (el.tagName !== "SCRIPT" && el.tagName !== "STYLE") body.push(el);
+      el = el.nextElementSibling;
+    }
+    return body;
+  }
+  function apply(sec, collapsed){
+    sec.collapsed = collapsed;
+    sec.body.forEach(function(el){ el.classList.toggle("gz-collapsed-body", collapsed); });
+    sec.h2.classList.toggle("gz-is-collapsed", collapsed);
+    sec.toggle.setAttribute("aria-expanded", String(!collapsed));
+    sec.toggle.setAttribute("title", collapsed ? "Expand this section" : "Collapse this section");
+    sec.toggle.setAttribute("aria-label", (collapsed ? "Expand " : "Collapse ") + sec.name);
+  }
+  function setCollapsed(sec, collapsed, persist){
+    apply(sec, collapsed);
+    if (persist) { if (collapsed) { store[sec.id] = 1; } else { delete store[sec.id]; } save(); }
+  }
+  document.querySelectorAll("h2").forEach(function(h2){
+    var body = collectBody(h2);
+    if (!body.length) return;
+    var name = h2.textContent.replace(/\s+/g, " ").trim();
+    var toggle = null;
+    var firstText = null;
+    for (var i = 0; i < h2.childNodes.length; i++) {
+      if (h2.childNodes[i].nodeType === 3 && h2.childNodes[i].textContent.trim()) { firstText = h2.childNodes[i]; break; }
+    }
+    if (firstText) {
+      var m = firstText.textContent.match(EMOJI);
+      if (m && m[1]) {
+        toggle = document.createElement("span");
+        toggle.className = "gz-toggle";
+        toggle.textContent = m[1];
+        var rest = document.createTextNode(firstText.textContent.slice(m[1].length));
+        h2.insertBefore(toggle, firstText);
+        h2.insertBefore(rest, firstText);
+        h2.removeChild(firstText);
+      }
+    }
+    if (!toggle) {
+      toggle = document.createElement("span");
+      toggle.className = "gz-toggle gz-chevron";
+      toggle.textContent = "▾";
+      h2.insertBefore(toggle, h2.firstChild);
+    }
+    toggle.setAttribute("role", "button");
+    toggle.setAttribute("tabindex", "0");
+    var sec = { h2: h2, body: body, toggle: toggle, name: name, id: sectionId(h2, body), collapsed: false };
+    sections.push(sec);
+    toggle.addEventListener("click", function(ev){ ev.preventDefault(); ev.stopPropagation(); setCollapsed(sec, !sec.collapsed, true); });
+    toggle.addEventListener("keydown", function(ev){
+      if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); setCollapsed(sec, !sec.collapsed, true); }
+    });
+    if (store[sec.id]) apply(sec, true); else apply(sec, false);
+  });
+  function expandForHash(){
+    var id = (location.hash || "").slice(1);
+    if (!id) return;
+    var target = null;
+    try { target = document.getElementById(id); } catch (e) {}
+    sections.forEach(function(sec){
+      if (sec.id === id || sec.h2 === target || (target && sec.body.indexOf(target) !== -1)) {
+        if (sec.collapsed) setCollapsed(sec, false, true);
+      }
+    });
+  }
+  window.addEventListener("hashchange", expandForHash);
+  expandForHash();
+})();
+</script>
 </body>
 </html>
