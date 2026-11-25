@@ -234,17 +234,7 @@ html.fs-0{zoom:1}html.fs-1{zoom:1.08}html.fs-2{zoom:1.16}html.fs-3{zoom:1.24}htm
 #brand-menu .bm-sep{border-top:1px solid var(--border);margin:5px 4px}
 #brand-menu .bm-head{font-family:-apple-system,sans-serif;font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);padding:7px 10px 3px}
 </style>
-<style id="phone-nosticky">@media (max-width:640px){.topbar{position:static}#toc{position:static}}</style><style id="topbar-even">.topbar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 14px}.tb-tools{display:contents}@media (max-width:640px){.topbar{flex-direction:column;flex-wrap:nowrap;align-items:stretch}.brand-wrap{align-self:center}.tb-tools{display:flex;width:100%;justify-content:space-between;align-items:center}.topbar nav{align-self:center}}</style><style id="gz-seal-style">
-/* PRIVACY SEAL (Jonny's Seal 2 — Dave's pick, Nov 23, 2026): a PERMANENT masthead element, preserved in every rebuild. Die-cut sticker on the masthead's bottom-left corner, +7deg tilt, a third hanging below the rule, a sliver off the side edge; links to the same Ko-fi tip destination as the header pill. overflow:visible lets it hang off the masthead box (the watermark is a background and needs no clipping). Never smaller than 92px (rim-text legibility). */
-.masthead{overflow:visible}
-.masthead .gz-seal{position:absolute;left:-8px;bottom:-33px;width:100px;height:100px;z-index:60;display:block;transform:rotate(7deg)}
-.masthead .gz-seal img{width:100%;height:100%;display:block;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35))}
-@media (max-width:640px){.masthead .gz-seal{width:96px;height:96px;left:-6px;bottom:-30px}}
-
-/* Drawer clearance (Nov 24, 2026): while either section menu is open, the seal steps aside entirely — the menus stack below the seal, so the sticker would otherwise float over the menu's left entries, unreadable and untappable. The seal returns the moment the menu closes; its placement and size are unchanged. */
-body:has(#brand-menu:not([hidden])) .gz-seal,body:has(#ticker-menu:not([hidden])) .gz-seal{visibility:hidden}
-</style>
-<style id="season-slot-style">
+<style id="phone-nosticky">@media (max-width:640px){.topbar{position:static}#toc{position:static}}</style><style id="topbar-even">.topbar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 14px}.tb-tools{display:contents}@media (max-width:640px){.topbar{flex-direction:column;flex-wrap:nowrap;align-items:stretch}.brand-wrap{align-self:center}.tb-tools{display:flex;width:100%;justify-content:space-between;align-items:center}.topbar nav{align-self:center}}</style><style id="season-slot-style">
 /* SEASON SLOT · thanksgiving-2026 PASS 2 (Jonny's refinement, desk implementation Nov 23, 2026): one transparent scene on the paper's own ground — shared ground line, pumpkins grounded whole, hat settled lower. Scoped to the masthead; removal = delete this block + the marked slot markup + the season line. Selectors strengthened with .masthead so the masthead's own child rule can't flatten the absolute positioning. */
 .masthead .gz-leaf{position:absolute;top:-26px;z-index:1;pointer-events:none;opacity:0;animation-name:gzFall;animation-timing-function:linear;animation-iteration-count:infinite}
 @keyframes gzFall{0%{transform:translate3d(0,-26px,0) rotate(0deg);opacity:0}8%{opacity:.92}25%{transform:translate3d(16px,42px,0) rotate(96deg)}50%{transform:translate3d(-12px,86px,0) rotate(184deg)}75%{transform:translate3d(14px,128px,0) rotate(268deg)}92%{opacity:.85}100%{transform:translate3d(-6px,168px,0) rotate(344deg);opacity:0}}
@@ -345,8 +335,7 @@ body:has(#brand-menu:not([hidden])) .gz-seal,body:has(#ticker-menu:not([hidden])
   <div class="season-line">🍂 Thanksgiving Week — giving thanks in the foothills</div>
     <div><span class="weatherbug">☁️ <!-- WEATHER:BUG --> 🐕 Two dogs in the roadway on Shenandoah Rd at Bell Rd (CHP, 5:09 PM); SR-88 tree work done for the day; mostly cloudy tonight, low 48°; no NWS alert (CHP / Caltrans / NWS) <!-- /WEATHER:BUG --></span></div>
   <div class="rule"></div>
-  <a class="gz-seal" href="https://ko-fi.com/davedellaquila" target="_blank" rel="noopener" aria-label="Tip Jar — the Gazette is always free; tips welcome, on Ko-fi"><img src="media/seal-2-fiddletown.png" alt="Privacy Seal: We count readers — never track them. Always free — tips welcome."></a>
-</header>
+  </header>
 
 <!-- BANNER: out-of-cycle safety banner is injected here by the hourly poll when a qualifying event breaks. -->
 <div id="safety-banner"></div>
