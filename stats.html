@@ -132,6 +132,25 @@ body img{cursor:zoom-in}
 .bar-fill.partial{opacity:.45}
 .bar-num{flex:0 0 34px;font-weight:700}
 </style>
+<style id="stats-dark-style">
+/* Stats for Nerds — dark mode completion (Dave, Nov 24, 2026): the page's :root already
+   carries the paper's dark palette; this block finishes the job for the pieces the
+   variables don't reach — the stat-row hairlines (var(--line) was undefined, falling
+   back to bright #ddd), the chart tracks (the dark border color all but vanishes on
+   the dark card, so tracks get their own lighter ground and the partial-day bar
+   keeps more presence), and the .rcard entries (pinned white for light mode on
+   Nov 7, 2026 for contrast; in dark they take the night paper's own surface and
+   ink instead of blazing white). Light mode is untouched. */
+@media (prefers-color-scheme: dark){
+:root{--line:#3d362e}
+.bar-track{background:#4d4436}
+.bar-fill.partial{opacity:.65}
+.rcard{background:var(--paper);color:var(--text);border-color:var(--border)}
+.rcard-body h3{color:var(--text)}
+.rcard .meta,.rcard figcaption{color:var(--muted)}
+.rcard a{color:var(--accent)}
+}
+</style>
 </head><body>
 <div id="fg-lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
   <button id="fg-lb-close" type="button" aria-label="Close photo">✕</button>
