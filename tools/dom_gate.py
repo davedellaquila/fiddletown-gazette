@@ -19,6 +19,15 @@ error-recovering parse, NOT a text grep) and verifies:
      text was pasted out of a JSON surface (the Gmail connector)
      without being decoded (the Nov 19, 2026 Cowboy Soup defect:
      Nan's recipe printed \u00b7, \u2014, \U0001f4da as raw text).
+  5. Masthead effect rotation (Dave, Nov 25, 2026) — when the standing
+     masthead treatment is installed (its <style id="mast-fx-style">
+     is present), the <header class="masthead …"> must carry exactly
+     one fx-* class, and it must be the effect the rotation formula
+     assigns to the page's fg-edition stamp: N = 3 × (days since
+     Fri Nov 27, 2026) + (Morning 0 · Midday 1 · Evening 2);
+     N mod 4 → fx-smoke · fx-twinkle · fx-leaves · fx-snow.
+     A build that carries the previous edition's class forward
+     unchanged fails here — the rotation is the point.
 
 Usage: python3 tools/dom_gate.py [file-or-url ...]
 Default: index.html in the repo root. Exit 0 = PASS, 1 = FAIL.
@@ -122,12 +131,32 @@ def check(html, label):
             leaked = [i for i in RAIL_IDS if i in outside_ids]
             if leaked:
                 fails.append(f"rail section ids found OUTSIDE the aside: {leaked}")
+    # 5. Masthead effect rotation (see docstring).
+    fx_note = ""
+    if 'id="mast-fx-style"' in html:
+        import datetime
+        m = re.search(r'<meta name="fg-edition" content="(\d{4})-(\d{2})-(\d{2})-(morning|midday|evening)"', html)
+        if not m:
+            fails.append("masthead treatment installed but no readable fg-edition stamp — cannot verify the effect rotation")
+        else:
+            y, mo, d = int(m.group(1)), int(m.group(2)), int(m.group(3))
+            ed = {"morning": 0, "midday": 1, "evening": 2}[m.group(4)]
+            days = (datetime.date(y, mo, d) - datetime.date(2026, 11, 27)).days
+            pool = ["fx-smoke", "fx-twinkle", "fx-leaves", "fx-snow"]
+            expected = pool[(3 * days + ed) % 4]
+            hm = re.search(r'<header class="([^"]*)"', html)
+            classes = hm.group(1).split() if hm else []
+            fx = [c for c in classes if c.startswith("fx-")]
+            if fx != [expected]:
+                fails.append(f"masthead effect rotation: header fx classes are {fx}, expected exactly ['{expected}'] for edition {y}-{mo:02d}-{d:02d}-{m.group(4)} (N = 3×{days} + {ed}) — set the class from the rotation formula, never carry it forward")
+            else:
+                fx_note = f" · masthead fx {expected} ✓"
     if fails:
         print(f"DOM GATE FAIL — {label}")
         for f in fails:
             print(f"  ✗ {f}")
         return False
-    print(f"DOM GATE PASS — {label} (tag balance OK · grid = MAIN + ASIDE · {EXPECTED_RAIL_H2} rail h2s inside the aside)")
+    print(f"DOM GATE PASS — {label} (tag balance OK · grid = MAIN + ASIDE · {EXPECTED_RAIL_H2} rail h2s inside the aside{fx_note})")
     return True
 
 def main():

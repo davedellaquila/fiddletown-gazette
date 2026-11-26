@@ -1,32 +1,65 @@
 <!-- ============================================================
-     MASTHEAD TREATMENT — chimney smoke & warm glowing windows
-     (Dave's pick, Wed Nov 25, 2026). Standing masthead furniture:
-     the Thanksgiving doghouse stays on the regular masthead,
-     de-seasoned (no pumpkins, no pilgrim hat, no falling leaves),
-     with a chimney whose smoke curls up and windows that glow warm.
+     MASTHEAD TREATMENT — the rotating effects (Dave's direction,
+     Wed Nov 25, 2026, superseding the single fixed treatment).
+     The doghouse is the CONSTANT: the beagle atop his doghouse,
+     windows glowing warm in every edition. One EFFECT layers on
+     top per edition, rotating — never the same effect twice in a
+     row. The active effect is chosen by ONE class on the masthead:
+       <header class="masthead fx-smoke">   (or fx-twinkle,
+       fx-leaves, fx-snow)
+     ROTATION FORMULA (both papers): let N = 3 × (days since
+     Fri Nov 27, 2026) + (0 Morning · 1 Midday · 2 Evening).
+     N mod 4 → 0 fx-smoke · 1 fx-twinkle · 2 fx-leaves · 3 fx-snow.
+     Every edition build SETS the class from the formula — it is
+     never carried forward unchanged. (First cycle: Fri Nov 27 =
+     smoke / twinkle / leaves; Sat Nov 28 = snow / smoke / twinkle;
+     Sun Nov 29 = leaves / snow / smoke; Mon Nov 30 = twinkle /
+     leaves / snow; then the 4-day pattern repeats.)
      Install: splice this whole fragment as the first child of
-     <header class="masthead">. Editions preserve it verbatim.
-     A season slot replaces it for the slot's run; it returns when
-     the slot retires. Removal = delete this block.
+     <header class="masthead"> AND set the edition's fx-* class on
+     that header. Editions preserve the fragment verbatim; only the
+     class changes. A season slot replaces the whole treatment for
+     the slot's run; the treatment (and the rotation) returns when
+     the slot retires. Removal = delete this block + the fx class.
      ============================================================ -->
 <style id="mast-fx-style">
 .masthead{position:relative}
 .masthead .fx-vignette{position:absolute;bottom:8px;left:6px;z-index:2;overflow:visible;pointer-events:none}
 @media (min-width:761px){ .masthead{ padding-left:150px; padding-right:150px; } }
 @media (max-width:760px){ .masthead .fx-vignette{ transform:scale(.6); transform-origin:bottom left; } }
+/* the constant warm glow */
+.masthead .fx-win{animation:fxGlow 5.5s ease-in-out infinite alternate}
+.masthead .fx-halo{animation:fxHalo 5.5s ease-in-out infinite alternate}
+@keyframes fxGlow{from{opacity:.85}to{opacity:1}}
+@keyframes fxHalo{from{opacity:.5}to{opacity:.95}}
+/* effect layers — exactly one shows, chosen by the masthead's fx-* class */
+.masthead .fx-layer{display:none}
+.masthead.fx-smoke .fx-layer[data-fx="smoke"],
+.masthead.fx-twinkle .fx-layer[data-fx="twinkle"],
+.masthead.fx-leaves .fx-layer[data-fx="leaves"],
+.masthead.fx-snow .fx-layer[data-fx="snow"]{display:block}
+/* smoke */
 .masthead .fx-puff{fill:#d9d3c5;opacity:0;transform-box:fill-box;transform-origin:center;animation-name:fxRise;animation-duration:7.5s;animation-timing-function:linear;animation-iteration-count:infinite}
 .masthead .fx-puff.p2{animation-delay:-1.9s}
 .masthead .fx-puff.p3{animation-delay:-3.8s}
 .masthead .fx-puff.p4{animation-delay:-5.7s}
 @keyframes fxRise{0%{transform:translate(0,0) scale(.45);opacity:0}16%{opacity:.5}55%{opacity:.36}100%{transform:translate(13px,-38px) scale(1.55);opacity:0}}
-.masthead .fx-win{animation:fxGlow 5.5s ease-in-out infinite alternate}
-.masthead .fx-halo{animation:fxHalo 5.5s ease-in-out infinite alternate}
-@keyframes fxGlow{from{opacity:.85}to{opacity:1}}
-@keyframes fxHalo{from{opacity:.5}to{opacity:.95}}
+/* twinkle */
+.masthead .fx-bulb{animation:fxTwinkle 2.4s ease-in-out infinite}
+.masthead .fx-bulb.b2{animation-delay:-.8s}
+.masthead .fx-bulb.b3{animation-delay:-1.6s}
+@keyframes fxTwinkle{0%,100%{opacity:.32}50%{opacity:1}}
+/* leaves */
+.masthead .fx-leaf{position:absolute;top:-26px;z-index:1;pointer-events:none;opacity:0;animation-name:fxFall;animation-timing-function:linear;animation-iteration-count:infinite}
+@keyframes fxFall{0%{transform:translate3d(0,-26px,0) rotate(0deg);opacity:0}8%{opacity:.92}25%{transform:translate3d(16px,42px,0) rotate(96deg)}50%{transform:translate3d(-12px,86px,0) rotate(184deg)}75%{transform:translate3d(14px,128px,0) rotate(268deg)}92%{opacity:.85}100%{transform:translate3d(-6px,168px,0) rotate(344deg);opacity:0}}
+/* snow */
+.masthead .fx-flake{position:absolute;top:-14px;z-index:1;pointer-events:none;border-radius:50%;background:#a9c6d8;box-shadow:0 0 3px rgba(120,155,180,.55);opacity:0;animation-name:fxSnowFall;animation-timing-function:linear;animation-iteration-count:infinite}
+@keyframes fxSnowFall{0%{transform:translate3d(0,-14px,0);opacity:0}10%{opacity:.95}30%{transform:translate3d(10px,50px,0)}55%{transform:translate3d(-8px,100px,0)}80%{transform:translate3d(8px,145px,0);opacity:.9}100%{transform:translate3d(-4px,178px,0);opacity:0}}
 @media (prefers-reduced-motion: reduce){
   .masthead .fx-puff{animation:none;opacity:0}
   .masthead .fx-puff.p3{opacity:.32}
-  .masthead .fx-win,.masthead .fx-halo{animation:none}
+  .masthead .fx-bulb,.masthead .fx-win,.masthead .fx-halo{animation:none}
+  .masthead .fx-layer[data-fx="leaves"],.masthead .fx-layer[data-fx="snow"]{display:none!important}
 }
 </style>
 <svg class="fx-vignette" width="168" height="118" viewBox="0 0 176 124" aria-hidden="true">
@@ -48,15 +81,35 @@
   <!-- the doghouse -->
   <rect x="30" y="78" width="96" height="38" fill="#9c4a2f" stroke="#1c1917" stroke-width="2"/>
   <polygon points="22,80 78,54 134,80" fill="#7c3a22" stroke="#1c1917" stroke-width="2"/>
-  <!-- chimney smoke -->
-  <circle class="fx-puff p1" cx="106.5" cy="39" r="4.5"/>
-  <circle class="fx-puff p2" cx="106.5" cy="39" r="5.5"/>
-  <circle class="fx-puff p3" cx="106.5" cy="39" r="6.5"/>
-  <circle class="fx-puff p4" cx="106.5" cy="39" r="7.5"/>
-  <!-- round gable window, glowing -->
+  <!-- EFFECT · smoke (fx-smoke) -->
+  <g class="fx-layer" data-fx="smoke">
+    <circle class="fx-puff p1" cx="106.5" cy="39" r="4.5"/>
+    <circle class="fx-puff p2" cx="106.5" cy="39" r="5.5"/>
+    <circle class="fx-puff p3" cx="106.5" cy="39" r="6.5"/>
+    <circle class="fx-puff p4" cx="106.5" cy="39" r="7.5"/>
+  </g>
+  <!-- EFFECT · twinkling lights (fx-twinkle) -->
+  <g class="fx-layer" data-fx="twinkle">
+    <path d="M24 78 L78 52 L132 78" stroke="#1c1917" stroke-width="1" fill="none" opacity=".45"/>
+    <path d="M31 85 Q78 97 125 85" stroke="#1c1917" stroke-width="1" fill="none" opacity=".45"/>
+    <g class="fx-bulb b1"><circle cx="33" cy="74.5" r="5.6" fill="#ffd98a" opacity=".28"/><circle cx="33" cy="74.5" r="2.7" fill="#ffd98a"/></g>
+    <g class="fx-bulb b2"><circle cx="44" cy="69.5" r="5.6" fill="#fff3d6" opacity=".28"/><circle cx="44" cy="69.5" r="2.7" fill="#fff3d6"/></g>
+    <g class="fx-bulb b3"><circle cx="56" cy="64.5" r="5.6" fill="#ffb35c" opacity=".28"/><circle cx="56" cy="64.5" r="2.7" fill="#ffb35c"/></g>
+    <g class="fx-bulb b1"><circle cx="67" cy="59.5" r="5.6" fill="#ffd98a" opacity=".28"/><circle cx="67" cy="59.5" r="2.7" fill="#ffd98a"/></g>
+    <g class="fx-bulb b2"><circle cx="78" cy="53.5" r="5.6" fill="#fff3d6" opacity=".28"/><circle cx="78" cy="53.5" r="2.7" fill="#fff3d6"/></g>
+    <g class="fx-bulb b3"><circle cx="89" cy="59.5" r="5.6" fill="#ffb35c" opacity=".28"/><circle cx="89" cy="59.5" r="2.7" fill="#ffb35c"/></g>
+    <g class="fx-bulb b1"><circle cx="100" cy="64.5" r="5.6" fill="#ffd98a" opacity=".28"/><circle cx="100" cy="64.5" r="2.7" fill="#ffd98a"/></g>
+    <g class="fx-bulb b2"><circle cx="112" cy="69.5" r="5.6" fill="#fff3d6" opacity=".28"/><circle cx="112" cy="69.5" r="2.7" fill="#fff3d6"/></g>
+    <g class="fx-bulb b3"><circle cx="123" cy="74.5" r="5.6" fill="#ffb35c" opacity=".28"/><circle cx="123" cy="74.5" r="2.7" fill="#ffb35c"/></g>
+    <g class="fx-bulb b2"><circle cx="44" cy="89.5" r="5.6" fill="#ffb35c" opacity=".28"/><circle cx="44" cy="89.5" r="2.7" fill="#ffb35c"/></g>
+    <g class="fx-bulb b3"><circle cx="60" cy="92.5" r="5.6" fill="#ffd98a" opacity=".28"/><circle cx="60" cy="92.5" r="2.7" fill="#ffd98a"/></g>
+    <g class="fx-bulb b1"><circle cx="78" cy="93.5" r="5.6" fill="#fff3d6" opacity=".28"/><circle cx="78" cy="93.5" r="2.7" fill="#fff3d6"/></g>
+    <g class="fx-bulb b2"><circle cx="96" cy="92.5" r="5.6" fill="#ffb35c" opacity=".28"/><circle cx="96" cy="92.5" r="2.7" fill="#ffb35c"/></g>
+    <g class="fx-bulb b3"><circle cx="112" cy="89.5" r="5.6" fill="#ffd98a" opacity=".28"/><circle cx="112" cy="89.5" r="2.7" fill="#ffd98a"/></g>
+  </g>
+  <!-- the constant warm windows -->
   <circle class="fx-halo" cx="78" cy="67" r="11" fill="url(#fx-halo-g)"/>
   <circle class="fx-win" cx="78" cy="67" r="5.2" fill="url(#fx-win-glow)" stroke="#1c1917" stroke-width="1.4"/>
-  <!-- front window, glowing, with mullions -->
   <circle class="fx-halo" cx="48" cy="96" r="14" fill="url(#fx-halo-g)"/>
   <rect class="fx-win" x="41" y="89" width="14" height="14" rx="2" fill="url(#fx-win-glow)" stroke="#1c1917" stroke-width="1.5"/>
   <path d="M48 89v14 M41 96h14" stroke="#1c1917" stroke-width="1.2"/>
@@ -74,4 +127,32 @@
   <ellipse cx="96" cy="24.5" rx="2.6" ry="2" fill="#1c1917"/>
   <circle cx="82" cy="20" r="1.7" fill="#1c1917"/>
 </svg>
+<!-- EFFECT · falling leaves (fx-leaves) -->
+<span class="fx-layer" data-fx="leaves">
+  <span class="fx-leaf" style="left:6%;  animation-duration:11s; animation-delay:-2s;"><svg width="15" height="19" viewBox="0 0 16 20"><path d="M8 0C13 4 14 10 8 16C2 10 3 4 8 0Z" fill="#c96a1e"/><path d="M8 16v3" stroke="#8a5a1d" stroke-width="1.4"/></svg></span>
+  <span class="fx-leaf" style="left:17%;  animation-duration:9s; animation-delay:-6s;"><svg width="12" height="15" viewBox="0 0 16 20"><path d="M8 0C13 4 14 10 8 16C2 10 3 4 8 0Z" fill="#b8860b"/><path d="M8 16v3" stroke="#8a5a1d" stroke-width="1.4"/></svg></span>
+  <span class="fx-leaf" style="left:31%;  animation-duration:12s; animation-delay:-9s;"><svg width="16" height="20" viewBox="0 0 16 20"><path d="M8 0C13 4 14 10 8 16C2 10 3 4 8 0Z" fill="#9c3d1e"/><path d="M8 16v3" stroke="#7c2d12" stroke-width="1.4"/></svg></span>
+  <span class="fx-leaf" style="left:47%;  animation-duration:10s; animation-delay:-4s;"><svg width="13" height="16" viewBox="0 0 16 20"><path d="M8 0C13 4 14 10 8 16C2 10 3 4 8 0Z" fill="#d9a441"/><path d="M8 16v3" stroke="#8a5a1d" stroke-width="1.4"/></svg></span>
+  <span class="fx-leaf" style="left:58%;  animation-duration:8.5s; animation-delay:-1s;"><svg width="12" height="15" viewBox="0 0 16 20"><path d="M8 0C13 4 14 10 8 16C2 10 3 4 8 0Z" fill="#a8641c"/><path d="M8 16v3" stroke="#8a5a1d" stroke-width="1.4"/></svg></span>
+  <span class="fx-leaf" style="left:71%;  animation-duration:11.5s; animation-delay:-7s;"><svg width="15" height="19" viewBox="0 0 16 20"><path d="M8 0C13 4 14 10 8 16C2 10 3 4 8 0Z" fill="#b5502a"/><path d="M8 16v3" stroke="#7c2d12" stroke-width="1.4"/></svg></span>
+  <span class="fx-leaf" style="left:84%;  animation-duration:9.5s; animation-delay:-5s;"><svg width="13" height="16" viewBox="0 0 16 20"><path d="M8 0C13 4 14 10 8 16C2 10 3 4 8 0Z" fill="#c9902e"/><path d="M8 16v3" stroke="#8a5a1d" stroke-width="1.4"/></svg></span>
+  <span class="fx-leaf" style="left:93%;  animation-duration:10.5s; animation-delay:-8s;"><svg width="12" height="15" viewBox="0 0 16 20"><path d="M8 0C13 4 14 10 8 16C2 10 3 4 8 0Z" fill="#9c3d1e"/><path d="M8 16v3" stroke="#7c2d12" stroke-width="1.4"/></svg></span>
+</span>
+<!-- EFFECT · snowfall (fx-snow) -->
+<span class="fx-layer" data-fx="snow">
+  <span class="fx-flake" style="left:4%;  width:5px; height:5px; animation-duration:9s;  animation-delay:-1s;"></span>
+  <span class="fx-flake" style="left:11%; width:3px; height:3px; animation-duration:12s; animation-delay:-7s;"></span>
+  <span class="fx-flake" style="left:19%; width:6px; height:6px; animation-duration:8s;  animation-delay:-4s;"></span>
+  <span class="fx-flake" style="left:27%; width:3px; height:3px; animation-duration:11s; animation-delay:-9s;"></span>
+  <span class="fx-flake" style="left:35%; width:5px; height:5px; animation-duration:10s; animation-delay:-2s;"></span>
+  <span class="fx-flake" style="left:43%; width:4px; height:4px; animation-duration:13s; animation-delay:-6s;"></span>
+  <span class="fx-flake" style="left:51%; width:6px; height:6px; animation-duration:8.5s; animation-delay:-3s;"></span>
+  <span class="fx-flake" style="left:59%; width:3px; height:3px; animation-duration:12s; animation-delay:-10s;"></span>
+  <span class="fx-flake" style="left:66%; width:5px; height:5px; animation-duration:9.5s; animation-delay:-5s;"></span>
+  <span class="fx-flake" style="left:73%; width:4px; height:4px; animation-duration:11s; animation-delay:-8s;"></span>
+  <span class="fx-flake" style="left:80%; width:6px; height:6px; animation-duration:8s;  animation-delay:-1.5s;"></span>
+  <span class="fx-flake" style="left:87%; width:3px; height:3px; animation-duration:12.5s; animation-delay:-4.5s;"></span>
+  <span class="fx-flake" style="left:93%; width:5px; height:5px; animation-duration:10s; animation-delay:-6.5s;"></span>
+  <span class="fx-flake" style="left:97%; width:4px; height:4px; animation-duration:11.5s; animation-delay:-2.5s;"></span>
+</span>
 <!-- ================= MASTHEAD TREATMENT · END ================= -->
