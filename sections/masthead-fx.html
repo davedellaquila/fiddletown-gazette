@@ -1,0 +1,77 @@
+<!-- ============================================================
+     MASTHEAD TREATMENT — chimney smoke & warm glowing windows
+     (Dave's pick, Wed Nov 25, 2026). Standing masthead furniture:
+     the Thanksgiving doghouse stays on the regular masthead,
+     de-seasoned (no pumpkins, no pilgrim hat, no falling leaves),
+     with a chimney whose smoke curls up and windows that glow warm.
+     Install: splice this whole fragment as the first child of
+     <header class="masthead">. Editions preserve it verbatim.
+     A season slot replaces it for the slot's run; it returns when
+     the slot retires. Removal = delete this block.
+     ============================================================ -->
+<style id="mast-fx-style">
+.masthead{position:relative}
+.masthead .fx-vignette{position:absolute;bottom:8px;left:6px;z-index:2;overflow:visible;pointer-events:none}
+@media (min-width:761px){ .masthead{ padding-left:150px; padding-right:150px; } }
+@media (max-width:760px){ .masthead .fx-vignette{ transform:scale(.6); transform-origin:bottom left; } }
+.masthead .fx-puff{fill:#d9d3c5;opacity:0;transform-box:fill-box;transform-origin:center;animation-name:fxRise;animation-duration:7.5s;animation-timing-function:linear;animation-iteration-count:infinite}
+.masthead .fx-puff.p2{animation-delay:-1.9s}
+.masthead .fx-puff.p3{animation-delay:-3.8s}
+.masthead .fx-puff.p4{animation-delay:-5.7s}
+@keyframes fxRise{0%{transform:translate(0,0) scale(.45);opacity:0}16%{opacity:.5}55%{opacity:.36}100%{transform:translate(13px,-38px) scale(1.55);opacity:0}}
+.masthead .fx-win{animation:fxGlow 5.5s ease-in-out infinite alternate}
+.masthead .fx-halo{animation:fxHalo 5.5s ease-in-out infinite alternate}
+@keyframes fxGlow{from{opacity:.85}to{opacity:1}}
+@keyframes fxHalo{from{opacity:.5}to{opacity:.95}}
+@media (prefers-reduced-motion: reduce){
+  .masthead .fx-puff{animation:none;opacity:0}
+  .masthead .fx-puff.p3{opacity:.32}
+  .masthead .fx-win,.masthead .fx-halo{animation:none}
+}
+</style>
+<svg class="fx-vignette" width="168" height="118" viewBox="0 0 176 124" aria-hidden="true">
+  <defs>
+    <radialGradient id="fx-win-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffe6a6"/>
+      <stop offset="55%" stop-color="#ffcb60"/>
+      <stop offset="100%" stop-color="#f59e2c"/>
+    </radialGradient>
+    <radialGradient id="fx-halo-g" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffca6a" stop-opacity=".55"/>
+      <stop offset="100%" stop-color="#ffca6a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <line x1="2" y1="116" x2="174" y2="116" stroke="#c9b892" stroke-width="2"/>
+  <!-- chimney (drawn first so the roof line crosses its base) -->
+  <rect x="101" y="47" width="11" height="24" fill="#8a4a34" stroke="#1c1917" stroke-width="1.6"/>
+  <rect x="98.5" y="44" width="16" height="5" rx="1" fill="#6e3a28" stroke="#1c1917" stroke-width="1.4"/>
+  <!-- the doghouse -->
+  <rect x="30" y="78" width="96" height="38" fill="#9c4a2f" stroke="#1c1917" stroke-width="2"/>
+  <polygon points="22,80 78,54 134,80" fill="#7c3a22" stroke="#1c1917" stroke-width="2"/>
+  <!-- chimney smoke -->
+  <circle class="fx-puff p1" cx="106.5" cy="39" r="4.5"/>
+  <circle class="fx-puff p2" cx="106.5" cy="39" r="5.5"/>
+  <circle class="fx-puff p3" cx="106.5" cy="39" r="6.5"/>
+  <circle class="fx-puff p4" cx="106.5" cy="39" r="7.5"/>
+  <!-- round gable window, glowing -->
+  <circle class="fx-halo" cx="78" cy="67" r="11" fill="url(#fx-halo-g)"/>
+  <circle class="fx-win" cx="78" cy="67" r="5.2" fill="url(#fx-win-glow)" stroke="#1c1917" stroke-width="1.4"/>
+  <!-- front window, glowing, with mullions -->
+  <circle class="fx-halo" cx="48" cy="96" r="14" fill="url(#fx-halo-g)"/>
+  <rect class="fx-win" x="41" y="89" width="14" height="14" rx="2" fill="url(#fx-win-glow)" stroke="#1c1917" stroke-width="1.5"/>
+  <path d="M48 89v14 M41 96h14" stroke="#1c1917" stroke-width="1.2"/>
+  <!-- the door -->
+  <path d="M66 116 v-16 a12 12 0 0 1 24 0 v16 z" fill="#3a2418"/>
+  <!-- the beagle, atop the doghouse -->
+  <path d="M39 59 q-9 -1 -11 -11" stroke="#1c1917" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M44 64 C40 46 48 34 60 33 C72 32 78 42 76 54 L75 64 Z" fill="#ffffff" stroke="#1c1917" stroke-width="2"/>
+  <ellipse cx="50" cy="64" rx="10" ry="4.5" fill="#ffffff" stroke="#1c1917" stroke-width="1.6"/>
+  <path d="M70 49 L69 63" stroke="#1c1917" stroke-width="3" stroke-linecap="round"/>
+  <path d="M65 31 q9 6 17 1 l-2 6 q-9 3 -17 -1 z" fill="#b5541f"/>
+  <circle cx="80" cy="22" r="12" fill="#ffffff" stroke="#1c1917" stroke-width="2"/>
+  <path d="M72 13 C66 19 65 28 68 35 C72 37 76 33 76 26 C76 20 75 15 72 13 Z" fill="#2b2823"/>
+  <ellipse cx="90" cy="26" rx="7" ry="4.5" fill="#ffffff" stroke="#1c1917" stroke-width="1.6"/>
+  <ellipse cx="96" cy="24.5" rx="2.6" ry="2" fill="#1c1917"/>
+  <circle cx="82" cy="20" r="1.7" fill="#1c1917"/>
+</svg>
+<!-- ================= MASTHEAD TREATMENT · END ================= -->
