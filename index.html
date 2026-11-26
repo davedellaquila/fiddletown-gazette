@@ -1467,7 +1467,19 @@ else{el.classList.remove('on');el.style.transform='translate(-50%,-70px)';}});})
 <script id="pass-cams-script">
 (function(){
   var imgs=[].slice.call(document.querySelectorAll('#pass-cams img.pc-still'));
-  imgs.forEach(function(im){ im.addEventListener('error',function(){ var f=im.closest?im.closest('figure'):null; if(f) f.style.display='none'; }); });
+  function fig(im){ return im.closest?im.closest('figure'):null; }
+  function hide(im){ var f=fig(im); if(f) f.style.display='none'; }
+  function show(im){ var f=fig(im); if(f) f.style.display=''; }
+  imgs.forEach(function(im){
+    im.addEventListener('error',function(){ hide(im); });
+    im.addEventListener('load',function(){ if(im.naturalWidth>0) show(im); });
+    /* A still that already failed before this script ran (a fast 500 fires
+       its error during parsing, before the listener exists) never
+       re-delivers the event — catch it from its settled state instead. */
+    if(im.complete && im.naturalWidth===0 && im.src) hide(im);
+  });
+  /* Every refresh retries every camera, hidden ones included: a tile whose
+     still loads again comes back on its own (the load listener above). */
   function tick(){ var t=Math.floor(Date.now()/120000); imgs.forEach(function(im){ var b=im.getAttribute('data-base'); if(b) im.src=b+(b.indexOf('?')<0?'?t=':'&t=')+t; }); }
   setInterval(tick,120000);
 })();
