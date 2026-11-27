@@ -781,7 +781,7 @@ html.fs-0{zoom:1}html.fs-1{zoom:1.08}html.fs-2{zoom:1.16}html.fs-3{zoom:1.24}htm
 <div class="card" id="sierra-passes">
   <p class="kicker">The Sierra crest crossings from Morgan Summit to Tioga Pass — refreshed every edition from Caltrans, NDOT, and the Park Service.</p>
   <p>The desk re-checked the home crossing this morning — <b>SR-88 carries no chain control</b> and no restriction of any kind: Caltrans&#8217; morning web report lists no restrictions on SR-88, and the CHP CAD board (updated 6:04 AM today) holds one incident — on SR-26, not SR-88 (see the Safety Wire). The other crossings carry the chain-control and closure picture from the last full read (Thu–Fri) in the rows below, with their last-read status and time in the source line. Elevations from <a href="https://davedellaquila.github.io/sierra-crest-passes/">Dave&#8217;s Sierra Crest Passes tracker</a>.</p>
-  <p class="passes-sort" role="group" aria-label="Sort the passes">Sort: <button type="button" data-sort="alpha" aria-pressed="true">A&#8211;Z</button><button type="button" data-sort="geo" aria-pressed="false">North to South</button><button type="button" data-sort="alt" aria-pressed="false">Altitude</button><button type="button" data-sort="status" aria-pressed="false">Status</button></p>
+  <p class="passes-sort" role="group" aria-label="Sort the passes">Sort: <button type="button" data-sort="alpha" aria-pressed="false">A&#8211;Z</button><button type="button" data-sort="geo" aria-pressed="false">North to South</button><button type="button" data-sort="alt" aria-pressed="false">Altitude</button><button type="button" data-sort="status" aria-pressed="true">Status</button></p>
   <table class="passes-table">
     <tr><th>Pass</th><th>Road</th><th>Status</th></tr>
     <tr><td><b>Morgan Summit</b> · 5,760 ft</td><td>SR-36</td><td><b>Chain controls</b> — chains or snow tires, Westwood to Susanville</td></tr>
@@ -797,7 +797,7 @@ html.fs-0{zoom:1}html.fs-1{zoom:1.08}html.fs-2{zoom:1.16}html.fs-3{zoom:1.24}htm
     <tr><td><b>Daggett Pass</b> · 7,339 ft</td><td>SR-207 (Nev.)</td><td><b>Chain controls</b> — NDOT: chains required, Stateline to the Carson Valley</td></tr>
     <tr><td><b>Echo Summit</b> · 7,377 ft</td><td>US-50</td><td><b>Chain controls</b> — chains required except 4WD with snow tires, Placerville to Meyers (controls extended past Kyburz this evening)</td></tr>
     <tr><td><b>Luther Pass</b> · 7,735 ft</td><td>SR-89</td><td><b>Chain controls</b> — chains required except 4WD with snow tires, US-50 to Meyers</td></tr>
-    <tr><td><b>Carson Pass</b> · 8,573 ft</td><td>SR-88</td><td><b>Open — no chain control</b> reported on SR-88 (CHP CAD + Caltrans, 6:04 AM today); no closure listed</td></tr>
+    <tr><td><b>Carson Pass</b> · 8,573 ft</td><td>SR-88</td><td><b>Open</b> — no chain control reported on SR-88 (CHP CAD + Caltrans, 6:04 AM today); no closure listed</td></tr>
     <tr><td><b>Monitor Pass</b> · 8,321 ft</td><td>SR-89</td><td><b>Closed</b> — snow, US 395 to SR-4</td></tr>
     <tr><td><b>Ebbetts Pass</b> · 8,732 ft</td><td>SR-4</td><td><b>Closed</b> — snow, Mt. Reba turnoff to SR-89</td></tr>
     <tr><td><b>Pacific Grade Summit</b> · 8,051 ft</td><td>SR-4</td><td><b>Closed</b> — snow, same SR-4 closure</td></tr>
@@ -833,12 +833,14 @@ html.fs-0{zoom:1}html.fs-1{zoom:1.08}html.fs-2{zoom:1.16}html.fs-3{zoom:1.24}htm
     else sorted.sort(function (a, b) { return a._geo - b._geo; });
     sorted.forEach(function (r) { table.appendChild(r); });
     Array.prototype.forEach.call(btns, function (btn) { btn.setAttribute("aria-pressed", btn.getAttribute("data-sort") === mode ? "true" : "false"); });
-    try { localStorage.setItem("fg-passes-sort", mode); } catch (e) {}
   }
   Array.prototype.forEach.call(btns, function (btn) { btn.addEventListener("click", function () { apply(btn.getAttribute("data-sort")); }); });
-  var saved = null;
-  try { saved = localStorage.getItem("fg-passes-sort"); } catch (e) {}
-  apply(saved || "alpha");
+  // Dave, Fri Nov 27, 2026: the section OPENS sorted by status on every
+  // load — open first, then chain controls, then closed; ties keep
+  // geographic (source) order. The buttons still re-sort for the visit,
+  // but a reader's earlier choice no longer carries to the next load —
+  // this supersedes the saved-choice persistence of Nov 19, 2026.
+  apply("status");
 })();
 </script>
   <p class="meta">Sources: Caltrans road conditions, read Thu Nov 19, 2026, 12:38 PM · NDOT reports via the Reno Gazette Journal&#8217;s NDOT roundup, Thu morning · Donner Pass Rd per CHP (Wed Nov 18) — a county road, refreshed from county/CHP reports · Statuses refresh every edition; an unread source carries its last known status with its read time.</p>
