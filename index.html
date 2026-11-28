@@ -822,7 +822,7 @@ html.fs-0{zoom:1}html.fs-1{zoom:1.15}html.fs-2{zoom:1.32}html.fs-3{zoom:1.52}htm
     r._elev = m ? parseInt(m[1].replace(/,/g, ""), 10) : 0;
     var sb = c3.querySelector("b");
     var st = (sb ? sb.textContent : c3.textContent).toLowerCase();
-    r._status = st.indexOf("closed") >= 0 ? 2 : (st.indexOf("chain") >= 0 ? 1 : 0);
+    r._status = st.indexOf("closed") >= 0 ? 3 : (st.indexOf("check") >= 0 ? 1 : (st.indexOf("chain") >= 0 ? 2 : 0));
     r._geo = i;
   });
   function apply(mode) {
@@ -836,7 +836,8 @@ html.fs-0{zoom:1}html.fs-1{zoom:1.15}html.fs-2{zoom:1.32}html.fs-3{zoom:1.52}htm
   }
   Array.prototype.forEach.call(btns, function (btn) { btn.addEventListener("click", function () { apply(btn.getAttribute("data-sort")); }); });
   // Dave, Fri Nov 27, 2026: the section OPENS sorted by status on every
-  // load — open first, then chain controls, then closed; ties keep
+  // load — open first, then "check before you go" (his refinement, later
+  // that day), then chain controls, then closed; ties keep
   // geographic (source) order. The buttons still re-sort for the visit,
   // but a reader's earlier choice no longer carries to the next load —
   // this supersedes the saved-choice persistence of Nov 19, 2026.
