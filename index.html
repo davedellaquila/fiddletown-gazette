@@ -202,8 +202,8 @@ if(!(n>=0&&n<=6))n=0;document.documentElement.classList.add('fs-'+n);}catch(e){d
    there at the old +.08 cadence to 1.48 — at least two full steps above the old top of 1.16
    (it lands four above), with no step stretched thinner to get there. The paper's type is set in px throughout, so levels scale the whole page
    with CSS zoom on <html>; the choice persists in localStorage ('fg-font-size', scale version
-   'fg-font-size-v2'). Standing element — preserve in every rebuild. */
-html.fs-0{zoom:1}html.fs-1{zoom:1.08}html.fs-2{zoom:1.16}html.fs-3{zoom:1.24}html.fs-4{zoom:1.32}html.fs-5{zoom:1.4}html.fs-6{zoom:1.48}
+   'fg-font-size-v2'). WIDENED (Dave, Fri Nov 27, 2026): the +.08 cadence felt too subtle tap to tap, so the steps now compound at about +15% a level — 1 / 1.15 / 1.32 / 1.52 / 1.75 / 2 / 2.3 — the same widened scale on both papers; the control and the persistence are unchanged. Standing element — preserve in every rebuild. */
+html.fs-0{zoom:1}html.fs-1{zoom:1.15}html.fs-2{zoom:1.32}html.fs-3{zoom:1.52}html.fs-4{zoom:1.75}html.fs-5{zoom:2}html.fs-6{zoom:2.3}
 .fsctl{display:flex;align-items:center;gap:7px;flex:none}
 .fs-btn{background:none;border:none;color:var(--text);cursor:pointer;font-family:Georgia,serif;font-weight:700;line-height:1;padding:4px 2px;-webkit-tap-highlight-color:transparent}
 .fs-btn.fs-down{font-size:11px}
