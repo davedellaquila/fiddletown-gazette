@@ -829,7 +829,7 @@ html.fs-0{zoom:1}html.fs-1{zoom:1.15}html.fs-2{zoom:1.32}html.fs-3{zoom:1.52}htm
     var sorted = rows.slice();
     if (mode === "alpha") sorted.sort(function (a, b) { return a._name.localeCompare(b._name) || a._geo - b._geo; });
     else if (mode === "alt") sorted.sort(function (a, b) { return b._elev - a._elev || a._geo - b._geo; });
-    else if (mode === "status") sorted.sort(function (a, b) { return a._status - b._status || a._geo - b._geo; });
+    else if (mode === "status") sorted.sort(function (a, b) { return a._status - b._status || a._name.localeCompare(b._name); });
     else sorted.sort(function (a, b) { return a._geo - b._geo; });
     sorted.forEach(function (r) { table.appendChild(r); });
     Array.prototype.forEach.call(btns, function (btn) { btn.setAttribute("aria-pressed", btn.getAttribute("data-sort") === mode ? "true" : "false"); });
@@ -837,8 +837,9 @@ html.fs-0{zoom:1}html.fs-1{zoom:1.15}html.fs-2{zoom:1.32}html.fs-3{zoom:1.52}htm
   Array.prototype.forEach.call(btns, function (btn) { btn.addEventListener("click", function () { apply(btn.getAttribute("data-sort")); }); });
   // Dave, Fri Nov 27, 2026: the section OPENS sorted by status on every
   // load — open first, then "check before you go" (his refinement, later
-  // that day), then chain controls, then closed; ties keep
-  // geographic (source) order. The buttons still re-sort for the visit,
+  // that day), then chain controls, then closed; within a status
+  // group, passes run by NAME (Dave's refinement, same evening — it
+  // replaced geographic order within groups). The buttons still re-sort for the visit,
   // but a reader's earlier choice no longer carries to the next load —
   // this supersedes the saved-choice persistence of Nov 19, 2026.
   apply("status");
